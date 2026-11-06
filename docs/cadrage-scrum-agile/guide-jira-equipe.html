@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide Simplifié Jira Cloud – Équipe Ingénieurs EMSI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .jira-blue { color: #0052CC; }
+    .bg-jira-blue { background-color: #0052CC; }
+    .border-jira-blue { border-color: #0052CC; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 text-white px-4 py-2.5 text-center text-sm font-medium shadow-sm">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-white text-emerald-800 uppercase tracking-wide">
+        🎯 Objectif Prioritaire
+      </span>
+      <span>Présentation de la brique <strong>Intelligence Artificielle (Gemini 2.0 Free)</strong> au professeur dans <strong>5 jours (Mercredi 11 Novembre 2026)</strong> !</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-white/95">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-jira-blue flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+          <i class="fa-brands fa-jira text-2xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold text-slate-900 tracking-tight leading-tight">Jira Made Simple</h1>
+            <span class="text-[10px] font-semibold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full border border-blue-200">EMSI Campus 2026</span>
+          </div>
+          <p class="text-xs text-slate-500">Guide pratique & visuel pour l'équipe de développement • Scrum Master: <strong>Moad Moussaoui</strong></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://moussaoui9881.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog" target="_blank"
+           class="inline-flex items-center gap-2 bg-[#0052CC] hover:bg-[#0747A6] text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow">
+          <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+          <span>Ouvrir Jira Board</span>
+        </a>
+        <a href="https://github.com/projetemsiedu1/eduemsi-academic-platform" target="_blank"
+           class="hidden sm:inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-3.5 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm">
+          <i class="fa-brands fa-github text-sm"></i>
+          <span>GitHub Org</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+    <!-- Intro Banner -->
+    <div class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 max-w-3xl space-y-4">
+        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-blue-200">
+          <i class="fa-solid fa-lightbulb text-amber-300"></i> Pour toute l'équipe : Pas de panique !
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Comment travailler sur Jira sans se compliquer la vie ?</h2>
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+          Jira n'est pas là pour vous surveiller, c'est simplement notre <strong>tableau blanc virtuel</strong>. Il permet à chacun de savoir exactement quoi faire, à quel ticket il est rattaché, et montre au professeur l'avancement professionnel en méthodologie Scrum.
+        </p>
+        <div class="pt-2 flex flex-wrap gap-4 text-xs font-medium text-slate-300">
+          <div class="flex items-center gap-1.5"><i class="fa-solid fa-check-circle text-emerald-400"></i> Durée d'apprentissage : 3 minutes</div>
+          <div class="flex items-center gap-1.5"><i class="fa-solid fa-check-circle text-emerald-400"></i> Seulement 3 clics par jour</div>
+          <div class="flex items-center gap-1.5"><i class="fa-solid fa-check-circle text-emerald-400"></i> Synchronisé avec notre GitHub</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The 3 Golden Rules (3 minutes read) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-black">1</span>
+          Les 3 Règles d'Or au Quotidien (Ce que tu dois faire)
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Rule 1 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-user-tag"></i>
+          </div>
+          <span class="text-[10px] uppercase font-bold tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Règle n°1</span>
+          <h4 class="text-base font-bold text-slate-900 mt-2">Trouve tes tickets</h4>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Dès que tu te connectes sur Jira, clique sur le filtre <strong>"Only my issues"</strong> (Seulement mes tickets) ou tape ton prénom dans la barre de recherche. Tu verras uniquement ce qui t'es assigné.
+          </p>
+        </div>
+
+        <!-- Rule 2 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+          <span class="text-[10px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Règle n°2</span>
+          <h4 class="text-base font-bold text-slate-900 mt-2">Glisse vers "IN PROGRESS"</h4>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Quand tu commences à travailler (coder ou designer), glisse le ticket de la colonne <strong>TO DO</strong> vers <strong>IN PROGRESS</strong>. Cela évite que deux personnes fassent la même chose !
+          </p>
+        </div>
+
+        <!-- Rule 3 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Règle n°3</span>
+          <h4 class="text-base font-bold text-slate-900 mt-2">Glisse vers "DONE"</h4>
+          <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+            Quand ton code est poussé sur GitHub et testé, déplace le ticket vers <strong>DONE</strong>. Mentionne le numéro du ticket dans ton commit (ex: <code>SCRUM-18</code>) pour un historique propre.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Lifecycle of a Ticket -->
+    <section class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-black">2</span>
+            Cycle de vie d'un ticket sur le Tableau Scrum
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">Glissez-déposez simplement votre carte d'une colonne à l'autre selon votre avancement réel.</p>
+        </div>
+        <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 self-start">
+          <i class="fa-solid fa-sync fa-spin text-[10px]"></i> Mise à jour en temps réel
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Col 1: TO DO -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> À FAIRE (TO DO)
+              </span>
+              <span class="text-[10px] bg-slate-200 text-slate-700 font-bold px-1.5 py-0.5 rounded">Étape 1</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mb-3">Les tâches prévues pour le Sprint en cours. Vous ne travaillez pas encore dessus.</p>
+            <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-xs space-y-2">
+              <div class="flex justify-between items-center text-[10px] text-slate-400">
+                <span class="font-bold text-blue-600 bg-blue-50 px-1 rounded">SCRUM-18</span>
+                <span>Story</span>
+              </div>
+              <p class="text-xs font-semibold text-slate-800">Matching Jurys PFE avec Gemini 2.0</p>
+              <div class="flex items-center justify-between text-[11px] pt-1">
+                <span class="text-slate-500"><i class="fa-solid fa-clock text-xs"></i> 8 pts</span>
+                <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px] font-bold">NB</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 text-center font-medium italic">👈 Statut initial</div>
+        </div>
+
+        <!-- Col 2: IN PROGRESS -->
+        <div class="bg-blue-50/50 rounded-xl p-4 border border-blue-200 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-blue-700 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> EN COURS (IN PROGRESS)
+              </span>
+              <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded">Étape 2</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mb-3">Dès que vous ouvrez VS Code, IntelliJ ou Figma pour commencer la tâche.</p>
+            <div class="bg-white p-3 rounded-lg border-2 border-blue-400 shadow-sm space-y-2">
+              <div class="flex justify-between items-center text-[10px] text-slate-400">
+                <span class="font-bold text-blue-600 bg-blue-50 px-1 rounded">SCRUM-32</span>
+                <span class="text-amber-600 font-semibold">En action</span>
+              </div>
+              <p class="text-xs font-semibold text-slate-800">Interface Angular Démo IA</p>
+              <div class="flex items-center justify-between text-[11px] pt-1">
+                <span class="text-slate-500"><i class="fa-solid fa-clock text-xs"></i> 5 pts</span>
+                <span class="w-5 h-5 rounded-full bg-pink-100 text-pink-700 flex items-center justify-center text-[10px] font-bold">IM</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-blue-600 text-center font-medium">⚡ Règle : 1 seule tâche en cours par personne</div>
+        </div>
+
+        <!-- Col 3: IN REVIEW -->
+        <div class="bg-amber-50/50 rounded-xl p-4 border border-amber-200 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> REVIEW / TEST (OPT.)
+              </span>
+              <span class="text-[10px] bg-amber-100 text-amber-700 font-bold px-1.5 py-0.5 rounded">Étape 3</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mb-3">Code poussé en Pull Request ou en cours de test par Ilyass (QA).</p>
+            <div class="bg-white p-3 rounded-lg border border-amber-300 shadow-xs space-y-2">
+              <div class="flex justify-between items-center text-[10px] text-slate-400">
+                <span class="font-bold text-blue-600 bg-blue-50 px-1 rounded">SCRUM-7</span>
+                <span class="text-indigo-600 font-semibold">PR #4</span>
+              </div>
+              <p class="text-xs font-semibold text-slate-800">Conteneurisation Docker Compose</p>
+              <div class="flex items-center justify-between text-[11px] pt-1">
+                <span class="text-slate-500"><i class="fa-solid fa-clock text-xs"></i> 3 pts</span>
+                <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold">BA</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-amber-600 text-center font-medium">🔍 Validation par les pairs</div>
+        </div>
+
+        <!-- Col 4: DONE -->
+        <div class="bg-emerald-50/50 rounded-xl p-4 border border-emerald-200 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> TERMINÉ (DONE)
+              </span>
+              <span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-1.5 py-0.5 rounded">Étape 4</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mb-3">Le code fonctionne, passe les tests et est fusionné sur la branche principale.</p>
+            <div class="bg-white p-3 rounded-lg border border-emerald-300 shadow-xs space-y-2">
+              <div class="flex justify-between items-center text-[10px] text-emerald-600">
+                <span class="font-bold bg-emerald-50 px-1 rounded">SCRUM-5</span>
+                <span><i class="fa-solid fa-check"></i> Validé</span>
+              </div>
+              <p class="text-xs font-semibold text-slate-800 line-through text-slate-400">Monorepo Git & Architecture</p>
+              <div class="flex items-center justify-between text-[11px] pt-1">
+                <span class="text-slate-400"><i class="fa-solid fa-check-double text-xs"></i> 2 pts</span>
+                <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold">MM</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-[11px] text-emerald-600 text-center font-medium font-semibold">🎉 Objectif atteint !</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Role Matrix: Who does what right now -->
+    <section class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-black">3</span>
+          Plan d'Action par Membre : Démo Mercredi 11 Novembre (Sprint 1)
+        </h3>
+        <span class="text-xs text-slate-500">Cliquez sur votre prénom pour voir vos tâches exactes</span>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-2">
+        <button onclick="showTab('noussair')" id="btn-noussair" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-blue-600 text-white shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-laptop-code"></i> Noussair (Tech Lead)
+        </button>
+        <button onclick="showTab('ikram')" id="btn-ikram" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-palette"></i> Ikram (UX/UI)
+        </button>
+        <button onclick="showTab('brahim')" id="btn-brahim" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-server"></i> Brahim (DevOps)
+        </button>
+        <button onclick="showTab('ilyass')" id="btn-ilyass" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-vial-circle-check"></i> Ilyass (QA / Test)
+        </button>
+        <button onclick="showTab('amine')" id="btn-amine" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-check"></i> Amine (Product Owner)
+        </button>
+        <button onclick="showTab('moad')" id="btn-moad" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-user-tie"></i> Moad (Scrum Master)
+        </button>
+      </div>
+
+      <!-- Tab Contents -->
+      <div id="tab-content" class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        
+        <!-- Noussair Tab -->
+        <div id="content-noussair" class="role-pane space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">NB</span>
+                Noussair Benassou – Rôle : Technical Lead
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5">Responsable de l'architecture Spring Boot 3 Java 21, du Solveur OR-Tools et de la brique IA Gemini Dual-Mode.</p>
+            </div>
+            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">21 Story Points</span>
+          </div>
+          <div class="space-y-3">
+            <h5 class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Tes tickets prioritaires pour le 11/11 (Sprint 1) :</h5>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-blue-600">SCRUM-18</span>
+                  <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded">8 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Matching Jurys PFE avec Google Gemini 2.0 Flash</h6>
+                <p class="text-[11px] text-slate-600">Brancher le contrôleur <code>/api/ai/pfe/match-jury</code> avec l'API Free Google Gemini et prompt structuré JSON.</p>
+              </div>
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-blue-600">SCRUM-19</span>
+                  <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded">8 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Analyse Prédictive RH des CV</h6>
+                <p class="text-[11px] text-slate-600">Extraction et scoring des compétences des profils enseignants pour détecter les déficits de compétences par filière.</p>
+              </div>
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-blue-600">SCRUM-20</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded">5 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Client Dual-Mode & Fallback Heuristique Local</h6>
+                <p class="text-[11px] text-slate-600">Si coupure Internet lors de la présentation devant le prof, bascule automatique et transparente vers l'algorithme local !</p>
+              </div>
+            </div>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-xl text-xs text-blue-900">
+              💡 <strong>Action Jira :</strong> Glisse <code>SCRUM-18</code> en <strong>IN PROGRESS</strong> quand tu touches au code Java dans <code>backend-spring/</code>.
+            </div>
+          </div>
+        </div>
+
+        <!-- Ikram Tab -->
+        <div id="content-ikram" class="role-pane hidden space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-pink-100 text-pink-700 flex items-center justify-center font-bold text-xs">IM</span>
+                Ikram Mellakh – Rôle : UX/UI Designer
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5">Responsable du Design System Tailwind, des maquettes Figma et de l'interface Angular 18 Standalone.</p>
+            </div>
+            <span class="text-xs font-bold text-pink-700 bg-pink-50 px-3 py-1 rounded-full border border-pink-200">18 Story Points</span>
+          </div>
+          <div class="space-y-3">
+            <h5 class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Tes tickets prioritaires pour le 11/11 (Sprint 1) :</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-pink-600">SCRUM-32</span>
+                  <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded">5 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Interface Interactive Angular de Démonstration IA</h6>
+                <p class="text-[11px] text-slate-600">Créer l'écran propre dans <code>frontend-angular/</code> où le prof pourra tester en direct : choix d'un sujet PFE, bouton "Lancer l'affectation IA", affichage des jurys avec badges de conformité.</p>
+              </div>
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-pink-600">SCRUM-28</span>
+                  <span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded">Epic</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Design System & Chartes Graphique EMSI</h6>
+                <p class="text-[11px] text-slate-600">Fournir les captures des maquettes ou composants Tailwind réutilisables (carte enseignant, badge de statut, modal confirmation).</p>
+              </div>
+            </div>
+            <div class="bg-pink-50 border-l-4 border-pink-500 p-3 rounded-r-xl text-xs text-pink-900">
+              💡 <strong>Action Jira :</strong> Ouvre le ticket <code>SCRUM-32</code>, glisse-le vers <strong>IN PROGRESS</strong>, et ajoute le lien de tes maquettes ou de ton composant Angular en commentaire.
+            </div>
+          </div>
+        </div>
+
+        <!-- Brahim Tab -->
+        <div id="content-brahim" class="role-pane hidden space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">BA</span>
+                Brahim Abod – Rôle : DevOps
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5">Responsable du déploiement Docker Compose, de la base PostgreSQL 16 et du pipeline CI/CD GitHub Actions.</p>
+            </div>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">11 Story Points</span>
+          </div>
+          <div class="space-y-3">
+            <h5 class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Tes tickets prioritaires pour le 11/11 :</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-emerald-600">SCRUM-7</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded">3 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Conteneurisation Docker Compose & Santé Système</h6>
+                <p class="text-[11px] text-slate-600">Garantir que <code>docker compose up --build</code> démarre PostgreSQL, Spring Boot et Angular sans aucune erreur sur n'importe quel PC.</p>
+              </div>
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-emerald-600">SCRUM-6</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded">3 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Pipeline CI/CD GitHub Actions</h6>
+                <p class="text-[11px] text-slate-600">Vérifier que chaque Push sur <code>main</code> exécute le build Maven et les tests automatiques avec succès.</p>
+              </div>
+            </div>
+            <div class="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded-r-xl text-xs text-emerald-900">
+              💡 <strong>Action Jira :</strong> Dès que le Docker Compose tourne localement sans accroc, glisse <code>SCRUM-7</code> vers <strong>DONE</strong> !
+            </div>
+          </div>
+        </div>
+
+        <!-- Ilyass Tab -->
+        <div id="content-ilyass" class="role-pane hidden space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs">IA</span>
+                Ilyass Ait Ouahman – Rôle : Test & Quality
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5">Responsable de l'assurance qualité, de la conformité TDD, des jeux de données réels et du protocole de crash-test.</p>
+            </div>
+            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">14 Story Points</span>
+          </div>
+          <div class="space-y-3">
+            <h5 class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Tes tickets prioritaires pour le 11/11 (Sprint 1) :</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-purple-600">SCRUM-33</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded">3 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Jeu d'Essai Réel & Protocole Démo Coupure Réseau IA</h6>
+                <p class="text-[11px] text-slate-600">Préparer 3 cas de sujets PFE concrets (IA, Cloud, Cybersécurité) avec la liste des profils enseignants pour la démo au prof, et tester la coupure wifi pour prouver que le fallback local fonctionne.</p>
+              </div>
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-purple-600">SCRUM-8</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded">3 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Validation Tests Unitaires TDD</h6>
+                <p class="text-[11px] text-slate-600">Vérifier avec Noussair que les tests JUnit passent au vert sur les méthodes de matching de jurys.</p>
+              </div>
+            </div>
+            <div class="bg-purple-50 border-l-4 border-purple-500 p-3 rounded-r-xl text-xs text-purple-900">
+              💡 <strong>Action Jira :</strong> Ouvre <code>SCRUM-33</code>, écris dans la description ou en commentaire la liste des 3 sujets de test préparés.
+            </div>
+          </div>
+        </div>
+
+        <!-- Amine Tab -->
+        <div id="content-amine" class="role-pane hidden space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs">AB</span>
+                Amine Bella – Rôle : Product Owner
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5">Garant de la valeur métier, des règles de gestion déontologiques, et de la validation des critères d'acceptation.</p>
+            </div>
+            <span class="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">18 Story Points</span>
+          </div>
+          <div class="space-y-3">
+            <h5 class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Tes tickets prioritaires pour le 11/11 :</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-amber-600">SCRUM-16</span>
+                  <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-1.5 py-0.5 rounded">5 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Spécification Déontologique des Jurys PFE</h6>
+                <p class="text-[11px] text-slate-600">Formaliser les règles strictes d'acceptation : Pas de lien d'encadrement direct, au moins un docteur/professeur habilité dans le jury, équilibre des filières.</p>
+              </div>
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-amber-600">SCRUM-14 & 15</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded">13 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Émargement Manuel & Règle Seuil 20%</h6>
+                <p class="text-[11px] text-slate-600">Clarifier la règle de radiation des examens dès dépassement de 20% des absences cumulées non justifiées.</p>
+              </div>
+            </div>
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl text-xs text-amber-900">
+              💡 <strong>Action Jira :</strong> Valider les critères d'acceptation (Acceptance Criteria) sur les tickets de Noussair et Ikram en y ajoutant un commentaire d'approbation.
+            </div>
+          </div>
+        </div>
+
+        <!-- Moad Tab -->
+        <div id="content-moad" class="role-pane hidden space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">MM</span>
+                Moad Moussaoui – Rôle : Scrum Master
+              </h4>
+              <p class="text-xs text-slate-500 mt-0.5">Facilitateur de l'équipe, garant de la cadence Scrum, levée des obstacles et chef d'orchestre de la répétition.</p>
+            </div>
+            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">9 Story Points</span>
+          </div>
+          <div class="space-y-3">
+            <h5 class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Tes tickets prioritaires pour le 11/11 :</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-blue-600">SCRUM-34</span>
+                  <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded">2 pts</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Répétition Générale & Déroulé Chronologique Soutenance</h6>
+                <p class="text-[11px] text-slate-600">Organiser une répétition à blanc le mardi 10/11 pour caler qui prend la parole, qui projette l'écran et tester le discours face au prof.</p>
+              </div>
+              <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-blue-600">SCRUM-5</span>
+                  <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">Terminé</span>
+                </div>
+                <h6 class="text-xs font-bold text-slate-900">Monorepo & Organisation GitHub</h6>
+                <p class="text-[11px] text-slate-600">Tous les membres invités et synchronisés sur le repo <code>projetemsiedu1/eduemsi-academic-platform</code>.</p>
+              </div>
+            </div>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-xl text-xs text-blue-900">
+              💡 <strong>Action Jira :</strong> Faire le point quotidien de 5 minutes ("Daily Scrum") pour vérifier qu'aucun membre n'est bloqué.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Git & Jira Connection (The smart developer trick) -->
+    <section class="bg-slate-900 rounded-2xl p-6 sm:p-8 text-white space-y-6 shadow-lg">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 class="text-xl font-bold flex items-center gap-2">
+            <i class="fa-brands fa-git-alt text-amber-500 text-2xl"></i>
+            Comment connecter vos commits Git directement à Jira ?
+          </h3>
+          <p class="text-xs text-slate-400 mt-1">L'astuce magique qui impressionne le professeur en soutenance !</p>
+        </div>
+        <span class="text-xs font-semibold bg-white/10 text-slate-200 px-3 py-1 rounded-full border border-white/20 self-start">
+          100% Automatique
+        </span>
+      </div>
+
+      <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+        À chaque fois que vous créez une branche ou faites un commit Git, <strong>écrivez simplement la clé du ticket Jira</strong> (par exemple <code>SCRUM-18</code>). Jira détecte automatiquement votre travail et l'affiche sur la fiche du ticket !
+      </p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Branch Example -->
+        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="font-bold text-blue-400"><i class="fa-solid fa-code-branch"></i> Nom de branche recommandé :</span>
+            <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded">Terminal</span>
+          </div>
+          <pre class="bg-black/50 p-3 rounded-lg text-emerald-400 text-xs overflow-x-auto"><code>git checkout -b feature/SCRUM-18-matching-gemini</code></pre>
+          <p class="text-[11px] text-slate-400">👉 En incluant <code>SCRUM-18</code>, la branche est liée à Jira.</p>
+        </div>
+
+        <!-- Commit Example -->
+        <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400">
+            <span class="font-bold text-amber-400"><i class="fa-solid fa-code-commit"></i> Message de Commit recommandé :</span>
+            <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded">Conventionnel</span>
+          </div>
+          <pre class="bg-black/50 p-3 rounded-lg text-amber-300 text-xs overflow-x-auto"><code>git commit -m "feat(ai): integration prompt gemini 2.0 refs #SCRUM-18"</code></pre>
+          <p class="text-[11px] text-slate-400">👉 Le commit apparaît instantanément dans l'onglet "Development" du ticket Jira.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+      <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-circle-question text-blue-600"></i>
+        Questions Fréquentes (FAQ pour l'équipe)
+      </h3>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <details class="group border border-slate-200 rounded-xl p-4 transition-all open:bg-slate-50">
+          <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+            <span>Est-ce que je dois créer de nouveaux tickets moi-même ?</span>
+            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+          </summary>
+          <p class="mt-3 text-slate-600 leading-relaxed">
+            <strong>Non, sauf si nécessaire.</strong> Tout le Backlog officiel (34 tickets et 7 Epics) a déjà été créé et calibré par le Scrum Master (Moad) et le PO (Amine). Votre priorité est de prendre les tickets existants qui vous sont assignés et de les faire avancer. Si vous avez besoin d'un sous-ticket (Subtask), vous pouvez en ajouter un directement à l'intérieur de votre Story.
+          </p>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 transition-all open:bg-slate-50">
+          <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+            <span>Que faire si je suis bloqué ou si j'ai un bug ?</span>
+            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+          </summary>
+          <p class="mt-3 text-slate-600 leading-relaxed">
+            Ouvrez votre ticket sur Jira, descendez à la section <strong>"Comments" (Commentaires)</strong>, et écrivez votre problème en mentionnant <code>@Moad Moussaoui</code> ou <code>@Noussair Benassou</code>. Envoyez également un message rapide sur le groupe WhatsApp pour qu'on débloque la situation ensemble dans la demi-journée.
+          </p>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 transition-all open:bg-slate-50">
+          <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+            <span>C'est quoi les chiffres bizarres (2, 3, 5, 8 pts) sur les tickets ?</span>
+            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+          </summary>
+          <p class="mt-3 text-slate-600 leading-relaxed">
+            Ce sont les <strong>Story Points (Points d'effort Scrum)</strong>. Ce n'est pas un nombre d'heures strict, mais une mesure de la complexité de la tâche (suite de Fibonacci : 1, 2, 3, 5, 8). Un ticket à 2 pts est très rapide ; un ticket à 8 pts demande du travail d'architecture et de codage sérieux.
+          </p>
+        </details>
+
+        <details class="group border border-slate-200 rounded-xl p-4 transition-all open:bg-slate-50">
+          <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+            <span>Comment le professeur va-t-il évaluer notre Jira ?</span>
+            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+          </summary>
+          <p class="mt-3 text-slate-600 leading-relaxed">
+            Le professeur va ouvrir notre board et vérifier 3 critères :
+            <br>1. <strong>La vélocité et le Burndown Chart</strong> : Est-ce que les tickets bougent réellement de TO DO vers DONE ?
+            <br>2. <strong>La répartition équitable</strong> : Est-ce que chaque membre d'équipe a des tickets à son nom et y contribue ?
+            <br>3. <strong>La traçabilité</strong> : Est-ce que les User Stories correspondent bien aux fonctionnalités présentées à l'écran ?
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Quick Links Footer Banner -->
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-6 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
+      <div class="space-y-1 text-center sm:text-left">
+        <h4 class="font-bold text-base sm:text-lg">Prêts pour la démo de mercredi ?</h4>
+        <p class="text-xs text-blue-100">Connectez-vous dès maintenant à votre espace Jira et glissez votre premier ticket en cours !</p>
+      </div>
+      <a href="https://moussaoui9881.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog" target="_blank"
+         class="bg-white text-blue-700 hover:bg-blue-50 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow hover:shadow-lg whitespace-nowrap">
+        Accéder au Backlog Jira <i class="fa-solid fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>Plateforme Académique EMSI Edu • Projet d'Ingénierie Informatique 2026</p>
+      <p class="mt-1 text-[11px] text-slate-400">Scrum Master: Moad Moussaoui | Tech Lead: Noussair Benassou | PO: Amine Bella | DevOps: Brahim Abod | QA: Ilyass Ait Ouahman | UI/UX: Ikram Mellakh</p>
+    </div>
+  </footer>
+
+  <script>
+    function showTab(role) {
+      // Hide all panes
+      document.querySelectorAll('.role-pane').forEach(el => el.classList.add('hidden'));
+      // Reset all buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+      });
+      // Show selected pane
+      const pane = document.getElementById('content-' + role);
+      if (pane) pane.classList.remove('hidden');
+      // Highlight selected button
+      const btn = document.getElementById('btn-' + role);
+      if (btn) {
+        btn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+        btn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+      }
+    }
+  </script>
+</body>
+</html>
