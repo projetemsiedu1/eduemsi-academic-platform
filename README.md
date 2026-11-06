@@ -67,7 +67,7 @@ eduemsi-academic-platform/
 
 ```bash
 # 1. Cloner le projet
-git clone https://github.com/moadms/eduemsi-academic-platform.git
+git clone https://github.com/projetemsiedu1/eduemsi-academic-platform.git
 cd eduemsi-academic-platform
 
 # 2. Lancer la stack complète en tâche de fond
@@ -104,5 +104,5 @@ docker compose up -d --build
 
 ## 🔗 Liens Utiles
 * 📋 **Jira Backlog :** [https://moussaoui9881.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog](https://moussaoui9881.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
-* 🐙 **Dépôt GitHub :** [https://github.com/moadms/eduemsi-academic-platform](https://github.com/moadms/eduemsi-academic-platform)
+* 🐙 **Dépôt GitHub Officiel :** [https://github.com/projetemsiedu1/eduemsi-academic-platform](https://github.com/projetemsiedu1/eduemsi-academic-platform)
 * 📐 **Documentation UML :** [`docs/uml/README.md`](docs/uml/README.md)
