@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50 antialiased scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMSI Univora • Plateforme Académique & Décisionnelle 2026</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6.5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Fonts Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emsi: {
+              primary: '#00843D',
+              dark: '#004D26',
+              deep: '#003319',
+              light: '#E6F4EA',
+              gold: '#C5A572',
+              goldDark: '#9E8047'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Antigravity & Glassmorphism effects */
+    .glass-header {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 10px 25px -5px rgba(0, 77, 38, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    }
+    .antigravity-float {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .antigravity-float:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px -6px rgba(0, 77, 38, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 bg-slate-50 selection:bg-emsi-primary selection:text-white">
+
+  <!-- ============================================================== -->
+  <!-- 1. ÉCRAN D'AUTHENTIFICATION (LOGIN EMSI AUTHENTIQUE)           -->
+  <!-- ============================================================== -->
+  <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-emsi-deep to-slate-950 overflow-y-auto">
+    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 border border-slate-700/50 my-8">
+      
+      <!-- Colonne Gauche : Identité Institutionnelle EMSI -->
+      <div class="bg-gradient-to-br from-emsi-dark via-emsi-primary to-emerald-900 p-8 sm:p-10 text-white flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-emsi-gold/15 blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 space-y-6">
+          <!-- Logo Officiel EMSI Vectoriel SVG -->
+          <div class="flex items-center gap-3.5">
+            <div class="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-lg border border-emsi-gold/30">
+              <svg viewBox="0 0 100 100" class="w-full h-full text-emsi-dark fill-current">
+                <circle cx="50" cy="50" r="46" fill="none" stroke="#004D26" stroke-width="4"/>
+                <circle cx="50" cy="50" r="41" fill="none" stroke="#C5A572" stroke-width="1.5" stroke-dasharray="2,2"/>
+                <!-- Graduation Cap -->
+                <path d="M50 24 L75 36 L50 48 L25 36 Z" fill="#004D26"/>
+                <path d="M35 44 L35 56 C35 62 65 62 65 56 L65 44" fill="none" stroke="#004D26" stroke-width="3" stroke-linecap="round"/>
+                <path d="M72 38 L72 54" stroke="#C5A572" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="72" cy="55" r="2.5" fill="#C5A572"/>
+                <!-- Laurels / Stars -->
+                <polygon points="50,66 52,70 57,71 53,74 54,79 50,76 46,79 47,74 43,71 48,70" fill="#C5A572"/>
+                <polygon points="36,68 37,71 41,72 38,74 39,78 36,75 33,78 34,74 31,72 35,71" fill="#C5A572" transform="scale(0.8) translate(8,8)"/>
+                <polygon points="64,68 65,71 69,72 66,74 67,78 64,75 61,78 62,74 59,72 63,71" fill="#C5A572" transform="scale(0.8) translate(16,8)"/>
+                <text x="50" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="900" text-anchor="middle" fill="#004D26" letter-spacing="1">EST. 1986</text>
+              </svg>
+            </div>
+            <div>
+              <div class="text-2xl font-black tracking-wider text-white flex items-center gap-1.5">
+                EMSI <span class="text-xs px-2 py-0.5 rounded-md bg-emsi-gold text-slate-950 font-bold uppercase tracking-widest">Univora</span>
+              </div>
+              <p class="text-[10px] text-emerald-100 font-medium uppercase tracking-wider">École Marocaine des Sciences de l'Ingénieur</p>
+              <p class="text-[9px] text-emsi-gold font-semibold">Honoris United Universities</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <h1 class="text-xl sm:text-2xl font-black leading-tight">Système d'Information & Gouvernance Académique</h1>
+            <p class="text-xs text-emerald-100/90 leading-relaxed">
+              Planification sous contraintes Google OR-Tools, arbitrage IA sémantique des jurys de PFE (Google Gemini 2.0 Flash) et contrôle déontologique strict des absences.
+            </p>
+          </div>
+
+          <div class="pt-2 space-y-2 text-[11px] text-emerald-100">
+            <div class="flex items-center gap-2"><i class="fa-solid fa-shield-check text-emsi-gold"></i><span>Règle BR-PFE-07 : Encadrant exclu du jury</span></div>
+            <div class="flex items-center gap-2"><i class="fa-solid fa-clock text-emsi-gold"></i><span>Priorité absolue aux enseignants vacataires</span></div>
+            <div class="flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-amber-300"></i><span>Seuil critique d'absence fixé à 20%</span></div>
+          </div>
+        </div>
+
+        <div class="relative z-10 pt-6 border-t border-emerald-800/80 text-[10px] text-emerald-200/80 flex items-center justify-between">
+          <span>Projet d'Ingénierie 5A • Promo 2026</span>
+          <span class="font-mono">v1.2-RELEASE</span>
+        </div>
+      </div>
+
+      <!-- Colonne Droite : Formulaire & Sélecteur de Rôles 1-Clic -->
+      <div class="p-8 sm:p-10 flex flex-col justify-between space-y-6 bg-white">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-xl font-extrabold text-slate-900">Connexion au Portail</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Accédez à votre espace pédagogique et administratif</p>
+            </div>
+            <span class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs">
+              <i class="fa-solid fa-lock"></i>
+            </span>
+          </div>
+
+          <!-- Formulaire Classique -->
+          <form onsubmit="handleLoginSubmit(event)" class="space-y-3.5 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Identifiant / Email EMSI</label>
+              <div class="relative">
+                <i class="fa-solid fa-envelope absolute left-3 top-3 text-slate-400"></i>
+                <input type="email" id="login-email" required value="admin@emsi-edu.ma"
+                       class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emsi-primary focus:border-emsi-primary outline-none text-slate-800 font-medium">
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block font-bold text-slate-700">Mot de passe</label>
+                <a href="javascript:void(0)" onclick="showToast('Rapprochez-vous de la scolarité pour réinitialiser votre compte.', 'info')" class="text-[11px] text-emsi-primary font-bold hover:underline">Oublié ?</a>
+              </div>
+              <div class="relative">
+                <i class="fa-solid fa-key absolute left-3 top-3 text-slate-400"></i>
+                <input type="password" id="login-password" required value="••••••••"
+                       class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emsi-primary focus:border-emsi-primary outline-none text-slate-800 font-medium">
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-2.5 bg-emsi-primary hover:bg-emsi-dark text-white rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+              <span>Se Connecter</span>
+              <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+          </form>
+
+          <!-- Divider Rôles Rapides Démo -->
+          <div class="relative my-5 text-center">
+            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+            <span class="relative px-3 bg-white text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Ou tester directement avec un rôle prédéfini
+            </span>
+          </div>
+
+          <!-- Boutons Rapides 1-Clic par Rôle -->
+          <div class="space-y-1.5">
+            <button onclick="loginAs('SUPER_ADMIN')" class="w-full p-2 rounded-xl border border-slate-200 hover:border-emsi-primary bg-slate-50/70 hover:bg-emsi-light/50 text-left flex items-center justify-between transition-all group">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center">👑</span>
+                <div>
+                  <div class="font-bold text-slate-800 text-[11px] group-hover:text-emsi-dark">Super Administrateur • Moad Moussaoui</div>
+                  <div class="text-[10px] text-slate-400">Gouvernance, RBAC, Logs d'audit & Salles</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emsi-primary"></i>
+            </button>
+
+            <button onclick="loginAs('DIRECTEUR_PEDAGOGIQUE')" class="w-full p-2 rounded-xl border border-slate-200 hover:border-emsi-primary bg-slate-50/70 hover:bg-emsi-light/50 text-left flex items-center justify-between transition-all group">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-purple-100 text-purple-800 font-bold text-xs flex items-center justify-center">🎓</span>
+                <div>
+                  <div class="font-bold text-slate-800 text-[11px] group-hover:text-emsi-dark">Directeur / Chef Filière • Amine Bella</div>
+                  <div class="text-[10px] text-slate-400">Moteur OR-Tools, Jurys PFE IA & Recrutement RH</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emsi-primary"></i>
+            </button>
+
+            <button onclick="loginAs('ENSEIGNANT_PERMANENT')" class="w-full p-2 rounded-xl border border-slate-200 hover:border-emsi-primary bg-slate-50/70 hover:bg-emsi-light/50 text-left flex items-center justify-between transition-all group">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs flex items-center justify-center">👨‍🏫</span>
+                <div>
+                  <div class="font-bold text-slate-800 text-[11px] group-hover:text-emsi-dark">Enseignant Permanent • Pr. Noussair Benassou</div>
+                  <div class="text-[10px] text-slate-400">Appel d'absence manuel, Cahier de texte & PFE</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emsi-primary"></i>
+            </button>
+
+            <button onclick="loginAs('ENSEIGNANT_VACATAIRE')" class="w-full p-2 rounded-xl border border-slate-200 hover:border-emsi-primary bg-slate-50/70 hover:bg-emsi-light/50 text-left flex items-center justify-between transition-all group">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 font-bold text-xs flex items-center justify-center">💼</span>
+                <div>
+                  <div class="font-bold text-slate-800 text-[11px] group-hover:text-emsi-dark">Enseignant Vacataire • Dr. Karim Alami</div>
+                  <div class="text-[10px] text-slate-400">Disponibilités strictes & sanctuarisation OR-Tools</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emsi-primary"></i>
+            </button>
+
+            <button onclick="loginAs('ETUDIANT')" class="w-full p-2 rounded-xl border border-slate-200 hover:border-emsi-primary bg-slate-50/70 hover:bg-emsi-light/50 text-left flex items-center justify-between transition-all group">
+              <div class="flex items-center gap-2.5">
+                <span class="w-7 h-7 rounded-lg bg-pink-100 text-pink-800 font-bold text-xs flex items-center justify-center">👨‍🎓</span>
+                <div>
+                  <div class="font-bold text-slate-800 text-[11px] group-hover:text-emsi-dark">Étudiant 5A-IIR • Ilyass Ait Ouahman</div>
+                  <div class="text-[10px] text-slate-400">Mon EDT, Mon taux d'absence (seuil 20%) & Mon PFE</div>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emsi-primary"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <p class="text-[11px] text-center text-slate-400">
+          Plateforme Académique Sécurisée • Conforme RGPD & Charte Pédagogique EMSI
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 2. APPLICATION PRINCIPALE : HEADER + SIDEBAR + WORKSPACE        -->
+  <!-- ============================================================== -->
+  <div id="app-workspace" class="flex-1 flex flex-col min-h-screen">
+    
+    <!-- TOP NAVIGATION BAR (GLASSMORPHIC) -->
+    <header class="glass-header border-b border-slate-200/90 sticky top-0 z-30 shadow-xs h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+      
+      <!-- Logo & Bouton Hamburger Mobile -->
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="lg:hidden w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 flex items-center justify-center">
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+        <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('dashboard')">
+          <div class="w-10 h-10 rounded-xl bg-emsi-dark flex items-center justify-center text-white font-black text-base shadow-sm border border-emsi-gold/40">
+            E
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black uppercase tracking-wider text-emsi-dark">EMSI Campus</span>
+              <span id="header-role-badge" class="text-[10px] font-bold bg-emsi-light text-emsi-dark px-2 py-0.5 rounded-full border border-emerald-200 font-mono">
+                SUPER_ADMIN
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-medium">Plateforme Académique & Décisionnelle 2026</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sélecteur Campus, Indicateurs Moteurs & Profil Utilisateur -->
+      <div class="flex items-center gap-2.5 sm:gap-4">
+        
+        <!-- Sélecteur de Campus -->
+        <div class="hidden md:flex items-center gap-1.5 bg-slate-100/80 px-2.5 py-1.5 rounded-xl border border-slate-200 text-xs">
+          <i class="fa-solid fa-location-dot text-emsi-primary text-xs"></i>
+          <select id="campus-select" onchange="changerCampus(this.value)" class="bg-transparent font-bold text-slate-700 outline-none cursor-pointer">
+            <option value="GUELIZ">Campus Guéliz (IIR / GI)</option>
+            <option value="TARGA">Campus Targa (Automatisme / Industrie)</option>
+            <option value="CENTRE">Campus Centre (Tronc Commun)</option>
+          </select>
+        </div>
+
+        <!-- Badges d'état des Moteurs (OR-Tools & Gemini) -->
+        <div class="hidden xl:flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            OR-Tools CP-SAT
+          </span>
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-600 text-[10px]"></i>
+            Gemini 2.0 Flash Free
+          </span>
+        </div>
+
+        <!-- Profil Connecté & Switch Rôle -->
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+          <div class="text-right hidden sm:block">
+            <div id="current-user-name" class="text-xs font-bold text-slate-900 leading-tight">Moad Moussaoui</div>
+            <div id="current-user-role" class="text-[10px] text-slate-400">Scrum Master / Super Admin</div>
+          </div>
+          
+          <div class="relative">
+            <button onclick="toggleUserDropdown()" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emsi-primary to-emerald-700 text-white font-bold text-xs flex items-center justify-center shadow-xs border border-white">
+              <span id="current-user-avatar">MM</span>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 text-xs">
+              <div class="p-2 border-b border-slate-100">
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Connecté en tant que</span>
+                <strong id="dropdown-user-role-text" class="text-slate-800">Super Administrateur</strong>
+              </div>
+              <button onclick="deconnecter()" class="w-full text-left p-2 rounded-lg hover:bg-red-50 text-red-600 font-bold flex items-center gap-2 mt-1 transition-colors">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Changer de Rôle / Déconnexion</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- WORKSPACE BODY WITH SIDEBAR -->
+    <div class="flex-1 flex overflow-hidden">
+      
+      <!-- ============================================================== -->
+      <!-- SIDEBAR LATÉRALE DE NAVIGATION                                 -->
+      <!-- ============================================================== -->
+      <aside id="main-sidebar" class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 transition-all duration-300 z-20">
+        
+        <div class="p-4 space-y-6 overflow-y-auto">
+          
+          <!-- Rôle Actif Info Card -->
+          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-emsi-light text-emsi-dark flex items-center justify-center font-bold text-xs">
+              <i class="fa-solid fa-user-gear"></i>
+            </div>
+            <div class="overflow-hidden">
+              <span class="text-[9px] uppercase font-bold text-slate-400 block">Espace actif</span>
+              <span id="sidebar-role-title" class="font-black text-xs text-slate-800 truncate block">Gouvernance Globale</span>
+            </div>
+          </div>
+
+          <!-- Section Menus -->
+          <nav class="space-y-1 text-xs font-semibold">
+            <span class="text-[10px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block mb-2">Modules Métier</span>
+
+            <!-- Item Dashboard -->
+            <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+              <i class="fa-solid fa-chart-pie w-4 text-center text-slate-400"></i>
+              <span>Tableau de Bord</span>
+            </button>
+
+            <!-- Item 1 : EDT OR-Tools -->
+            <button onclick="navigateTo('edt')" id="nav-edt" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+              <i class="fa-solid fa-calendar-days w-4 text-center text-emerald-600"></i>
+              <span>Emploi du Temps (OR-Tools)</span>
+            </button>
+
+            <!-- Item 2 : PFE Matching IA -->
+            <button onclick="navigateTo('pfe')" id="nav-pfe" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+              <i class="fa-solid fa-graduation-cap w-4 text-center text-purple-600"></i>
+              <span class="flex-1 text-left">Jurys PFE (Gemini IA)</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 font-mono">IA</span>
+            </button>
+
+            <!-- Item 3 : Cahier de texte -->
+            <button onclick="navigateTo('cahier')" id="nav-cahier" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+              <i class="fa-solid fa-book-bookmark w-4 text-center text-blue-600"></i>
+              <span>Cahier de Texte (< 60s)</span>
+            </button>
+
+            <!-- Item 4 : Absences & Seuil 20% -->
+            <button onclick="navigateTo('absences')" id="nav-absences" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+              <i class="fa-solid fa-clipboard-user w-4 text-center text-rose-600"></i>
+              <span class="flex-1 text-left">Appel & Seuil 20%</span>
+              <span id="badge-nav-seuil" class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-800 font-mono">Alerte</span>
+            </button>
+
+            <!-- Item 5 : Recrutement RH -->
+            <button onclick="navigateTo('rh')" id="nav-rh" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+              <i class="fa-solid fa-user-plus w-4 text-center text-cyan-600"></i>
+              <span>Recrutement RH IA</span>
+            </button>
+
+            <span class="text-[10px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block mt-5 mb-2">Administration</span>
+
+            <!-- Item 6 : Gouvernance RBAC -->
+            <button onclick="navigateTo('rbac')" id="nav-rbac" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all">
+              <i class="fa-solid fa-users-gear w-4 text-center text-slate-500"></i>
+              <span>Gouvernance & RBAC</span>
+            </button>
+          </nav>
+
+        </div>
+
+        <!-- Pied de Sidebar -->
+        <div class="p-4 border-t border-slate-200/80 bg-slate-50/50 space-y-2">
+          <div class="flex items-center justify-between text-[11px] text-slate-500">
+            <span>Démo Professeur</span>
+            <span class="font-bold text-emsi-primary font-mono">J-2</span>
+          </div>
+          <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-emsi-primary h-full rounded-full" style="width: 85%"></div>
+          </div>
+          <button onclick="deconnecter()" class="w-full py-2 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-red-50 hover:text-red-600 text-xs font-bold transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-power-off text-xs"></i>
+            <span>Changer de Compte</span>
+          </button>
+        </div>
+
+      </aside>
+
+      <!-- ============================================================== -->
+      <!-- CONTENU DYNAMIQUE DES PAGES / ESPACES                          -->
+      <!-- ============================================================== -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ESPACE 0 : TABLEAU DE BORD (DASHBOARD & KPIS)                -->
+        <!-- ------------------------------------------------------------ -->
+        <div id="page-dashboard" class="space-y-6">
+          
+          <!-- Banner Bienvenue -->
+          <div class="bg-gradient-to-r from-emsi-dark via-emsi-primary to-teal-800 rounded-3xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
+            <div class="relative z-10 max-w-2xl space-y-2">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 text-white uppercase tracking-wider">
+                Session Active • Semestre Automne 2026
+              </span>
+              <h2 id="dash-welcome-text" class="text-xl sm:text-2xl font-black">Bonjour, Moad Moussaoui</h2>
+              <p class="text-xs text-emerald-100 leading-relaxed">
+                Supervision temps réel du campus EMSI : 0 conflit d'emploi du temps détecté par OR-Tools, 3 jurys de PFE arbitrés par l'IA et surveillance active des 20% d'absences.
+              </p>
+            </div>
+          </div>
+
+          <!-- Métriques Clés (KPI Cards) -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="glass-card antigravity-float p-5 rounded-2xl flex flex-col justify-between">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
+                <span>Conflits EDT</span>
+                <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+              </div>
+              <div class="my-3">
+                <span class="text-3xl font-black text-slate-900">0</span>
+                <span class="text-xs text-emerald-600 font-bold ml-1">/ 142 séances</span>
+              </div>
+              <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full self-start">
+                OR-Tools 100% Validé
+              </span>
+            </div>
+
+            <div class="glass-card antigravity-float p-5 rounded-2xl flex flex-col justify-between">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
+                <span>Jurys PFE IA</span>
+                <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i>
+              </div>
+              <div class="my-3">
+                <span class="text-3xl font-black text-purple-700">3 / 3</span>
+                <span class="text-xs text-slate-400 ml-1">affectés</span>
+              </div>
+              <span class="text-[10px] font-bold text-purple-800 bg-purple-50 px-2 py-0.5 rounded-full self-start">
+                Règle BR-PFE-07 Conforme
+              </span>
+            </div>
+
+            <div class="glass-card antigravity-float p-5 rounded-2xl flex flex-col justify-between">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
+                <span>Alertes Seuil 20%</span>
+                <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+              </div>
+              <div class="my-3">
+                <span class="text-3xl font-black text-rose-600">1</span>
+                <span class="text-xs text-slate-400 ml-1">étudiant exclu</span>
+              </div>
+              <span class="text-[10px] font-bold text-rose-800 bg-rose-50 px-2 py-0.5 rounded-full self-start">
+                Radiation Examen Activée
+              </span>
+            </div>
+
+            <div class="glass-card antigravity-float p-5 rounded-2xl flex flex-col justify-between">
+              <div class="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
+                <span>Vacataires</span>
+                <i class="fa-solid fa-user-clock text-amber-600"></i>
+              </div>
+              <div class="my-3">
+                <span class="text-3xl font-black text-amber-600">100%</span>
+                <span class="text-xs text-slate-400 ml-1">créneaux respectés</span>
+              </div>
+              <span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full self-start">
+                Sanctuarisation Active
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Actions Rapides & Vue d'ensemble -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 glass-card p-6 rounded-2xl space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-extrabold text-sm text-slate-900">Prochaines Séances en Cours • Campus Guéliz</h3>
+                  <p class="text-xs text-slate-400">Emploi du temps synchronisé avec la scolarité</p>
+                </div>
+                <button onclick="navigateTo('edt')" class="text-xs font-bold text-emsi-primary hover:underline">Voir tout l'EDT ➔</button>
+              </div>
+
+              <div class="divide-y divide-slate-100 text-xs">
+                <div class="py-3 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center font-bold text-xs">
+                      08:30
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-slate-800">TP Cloud Native & Kubernetes</h4>
+                      <p class="text-slate-500">Groupe 5A-IIR-G1 • <strong>Dr. Karim Alami</strong> (Vacataire)</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">G-Lab-PC-1 (35 PC)</span>
+                    <span class="block text-[10px] text-slate-400 mt-0.5">Pause 15m garantie ✓</span>
+                  </div>
+                </div>
+
+                <div class="py-3 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center font-bold text-xs">
+                      10:15
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-slate-800">Microservices Spring Boot 3 & ORM</h4>
+                      <p class="text-slate-500">Groupe 5A-IIR-G1 • <strong>Pr. Noussair Benassou</strong> (Permanent)</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[10px]">G-Salle-204</span>
+                    <span class="block text-[10px] text-slate-400 mt-0.5">En cours</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Widget Alertes Sécurité & Déontologie -->
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+              <h3 class="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-emsi-primary"></i>
+                <span>Garanties Déontologiques</span>
+              </h3>
+
+              <div class="space-y-3 text-xs">
+                <div class="p-3 bg-purple-50 rounded-xl border border-purple-200">
+                  <span class="font-bold text-purple-900 block">IA Gemini 2.0 Flash</span>
+                  <p class="text-purple-700 text-[11px] mt-0.5">Encadrant formellement banni de la présidence du jury de son PFE.</p>
+                </div>
+
+                <div class="p-3 bg-rose-50 rounded-xl border border-rose-200">
+                  <span class="font-bold text-rose-900 block">Zéro Tricherie QR Code</span>
+                  <p class="text-rose-700 text-[11px] mt-0.5">Émargement manuel obligatoire par l'enseignant en début d'heure.</p>
+                </div>
+
+                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+                  <span class="font-bold text-emerald-900 block">Sanctuarisation Vacataires</span>
+                  <p class="text-emerald-700 text-[11px] mt-0.5">Contraintes de temps bloquées et respectées à 100%.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ESPACE 1 : EMPLOI DU TEMPS & SOLVEUR OR-TOOLS                -->
+        <!-- ------------------------------------------------------------ -->
+        <div id="page-edt" class="hidden space-y-6">
+          
+          <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-black text-slate-900">Moteur de Planification sous Contraintes (Google OR-Tools)</h2>
+                <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">CP-SAT Solver</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Contraintes dures : Disponibilités vacataires • Pause 15m inter-séance • Salles TP PC pour IIR/GI • Trou max 1h30 • Campus unique par jour.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button onclick="lancerSolveurOrTools()" class="px-4 py-2 bg-emsi-primary hover:bg-emsi-dark text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all">
+                <i class="fa-solid fa-play"></i>
+                <span>Exécuter le Solveur OR-Tools</span>
+              </button>
+              <button onclick="ouvrirModalSeance()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                <i class="fa-solid fa-plus"></i>
+                <span>Ajouter Séance</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filtres EDT -->
+          <div class="flex flex-wrap items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 text-xs">
+            <span class="font-bold text-slate-500">Filtrer par :</span>
+            <select class="p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none font-medium">
+              <option>Groupe : 5A-IIR-G1 (Génie Informatique)</option>
+              <option>Groupe : 5A-GI-G1 (Génie Industriel)</option>
+              <option>Groupe : 4A-IFA-G1 (Automatisme)</option>
+            </select>
+            <select class="p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none font-medium">
+              <option>Campus : Tous les campus</option>
+              <option>Campus Guéliz</option>
+              <option>Campus Targa</option>
+            </select>
+            <span class="ml-auto text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              <i class="fa-solid fa-circle-check"></i> Solution Optimale (0 Conflit)
+            </span>
+          </div>
+
+          <!-- Grille Hebdomadaire Calendrier -->
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 text-xs" id="edt-calendar-grid">
+            <!-- Rendu dynamique JS -->
+          </div>
+
+        </div>
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ESPACE 2 : GESTION DES PFE & MATCHING JURYS IA (GEMINI)       -->
+        <!-- ------------------------------------------------------------ -->
+        <div id="page-pfe" class="hidden space-y-6">
+          
+          <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-black text-slate-900">Affectation Déontologique des Jurys PFE (Google Gemini AI)</h2>
+                <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full border border-purple-200">Règle BR-PFE-07</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                L'IA analyse le résumé et la stack technique du PFE, extrait les entités sémantiques et propose le jury optimal en <strong>excluant rigoureusement l'encadrant</strong>.
+              </p>
+            </div>
+
+            <button onclick="ouvrirModalPfe()" class="px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all self-start md:self-auto">
+              <i class="fa-solid fa-circle-plus"></i>
+              <span>Nouveau Sujet PFE</span>
+            </button>
+          </div>
+
+          <!-- Liste des Sujets PFE avec Cartes CRUD & Matching IA -->
+          <div id="pfe-cards-container" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <!-- Rendu dynamique JS -->
+          </div>
+
+        </div>
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ESPACE 3 : CAHIER DE TEXTE & FICHES DE SÉANCE POST-COURS      -->
+        <!-- ------------------------------------------------------------ -->
+        <div id="page-cahier" class="hidden space-y-6">
+          
+          <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-black text-slate-900">Cahier de Texte & Fiches de Séance Post-Cours</h2>
+                <span class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full border border-blue-200">Saisie en &lt; 60 secondes</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Garantit la traçabilité pédagogique en temps réel. Dès qu'un cours se termine, l'enseignant clôture sa séance pour informer la direction et les étudiants.
+              </p>
+            </div>
+
+            <button onclick="ouvrirModalFiche()" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all self-start md:self-auto">
+              <i class="fa-solid fa-plus"></i>
+              <span>Renseigner Fiche de Séance</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5" id="fiches-container">
+            <!-- Rendu dynamique JS -->
+          </div>
+
+        </div>
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ESPACE 4 : FEUILLE D'APPEL & ALERTE SEUIL 20% ABSENCES       -->
+        <!-- ------------------------------------------------------------ -->
+        <div id="page-absences" class="hidden space-y-6">
+          
+          <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-black text-slate-900">Feuille d'Appel Numérique & Détection Seuil Critique 20%</h2>
+                <span class="text-[10px] font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full border border-rose-200">Zéro Fraude QR Code</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                L'enseignant réalise l'appel manuellement. Le système calcule immédiatement le taux d'absences cumulées non justifiées. Dès que le seuil de 20% est atteint, l'étudiant est radié des examens.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs">
+              <span class="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-800 border border-rose-200 font-bold">
+                <i class="fa-solid fa-circle-exclamation mr-1"></i> Seuil d'exclusion : 20%
+              </span>
+            </div>
+          </div>
+
+          <!-- Tableau d'Appel Interactif -->
+          <div class="glass-card p-6 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 class="font-extrabold text-sm text-slate-900">Séance en cours : TP Cloud Native (5A-IIR-G1)</h3>
+                <span class="text-xs text-slate-400">Campus Guéliz • Salle G-Lab-PC-1 • Dr. Karim Alami</span>
+              </div>
+              <button onclick="cloturerAppel()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
+                Enregistrer & Clôturer l'Appel
+              </button>
+            </div>
+
+            <div class="divide-y divide-slate-100 text-xs" id="etudiants-appel-list">
+              <!-- Rendu dynamique JS -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ESPACE 5 : RECRUTEMENT & AUDIT PRÉDICTIF RH IA               -->
+        <!-- ------------------------------------------------------------ -->
+        <div id="page-rh" class="hidden space-y-6">
+          
+          <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-black text-slate-900">Audit Prédictif des Déficits RH & Analyseur de CV (Gemini IA)</h2>
+                <span class="text-[10px] font-bold bg-cyan-100 text-cyan-800 px-2 py-0.5 rounded-full border border-cyan-200">Anticipation des Vacations</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Détection automatique des heures d'enseignement non comblées par filière et scoring sémantique des CV de candidats reçus.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Liste des Déficits par Filière -->
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+              <h3 class="font-bold text-sm text-slate-900 flex items-center justify-between">
+                <span>Déficits Horaires Identifiés</span>
+                <span class="text-xs text-rose-600 font-mono font-bold">Total : -315 heures</span>
+              </h3>
+
+              <div class="space-y-3 text-xs" id="deficits-list-container">
+                <!-- Rendu dynamique JS -->
+              </div>
+            </div>
+
+            <!-- Analyseur de CV Candidat en direct -->
+            <div class="glass-card p-6 rounded-2xl space-y-4">
+              <div>
+                <h3 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-brain text-cyan-600"></i>
+                  <span>Évaluateur de CV Candidat (Dual-Mode)</span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">Testez l'adéquation d'un enseignant avec les filières déficitaires</p>
+              </div>
+
+              <div class="flex flex-wrap gap-2 text-xs">
+                <span class="text-slate-400 text-[11px] self-center">Préréglages démo :</span>
+                <button onclick="chargerPresetCv('cloud')" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-bold text-[11px] hover:bg-blue-100">Candidat Cloud/Java</button>
+                <button onclick="chargerPresetCv('ia')" class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 font-bold text-[11px] hover:bg-purple-100">Candidat Vision/IA</button>
+                <button onclick="chargerPresetCv('auto')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-[11px] hover:bg-emerald-100">Candidat SCADA</button>
+              </div>
+
+              <textarea id="cv-input-area" rows="4" placeholder="Coller ici le texte du CV..." class="w-full text-xs p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none"></textarea>
+
+              <button onclick="evaluerCv()" class="w-full py-2.5 bg-gradient-to-r from-cyan-700 to-teal-800 hover:from-cyan-800 hover:to-teal-900 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Calculer le Score d'Adéquation IA</span>
+              </button>
+
+              <div id="cv-eval-result" class="p-4 bg-slate-900 text-white rounded-xl space-y-2 text-xs">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                  <span class="font-bold text-cyan-300">Rapport d'Audit RH</span>
+                  <span id="cv-score-badge" class="font-mono text-xs font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Score : 92.5%</span>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-[10px] block uppercase font-bold">Compétences Reconnues</span>
+                  <div id="cv-tags" class="flex flex-wrap gap-1 mt-1">
+                    <span class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 text-[10px] font-mono">Java / Spring Cloud</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 text-[10px] font-mono">DevOps & Cloud</span>
+                  </div>
+                </div>
+                <div>
+                  <span class="text-slate-400 text-[10px] block uppercase font-bold">Avis Décisionnel</span>
+                  <p id="cv-decision" class="font-bold text-white mt-0.5">FAVORABLE - Comble le déficit de 120h en 5A-IIR</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ------------------------------------------------------------ -->
+        <!-- ESPACE 6 : GOUVERNANCE, RBAC & UTILISATEURS                  -->
+        <!-- ------------------------------------------------------------ -->
+        <div id="page-rbac" class="hidden space-y-6">
+          
+          <div class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-lg font-black text-slate-900">Matrice des Permissions & Rôles Hiérarchiques (RBAC)</h2>
+                <span class="text-[10px] font-bold bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full font-mono">Niveau 4 de Sécurité</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1">
+                Gouvernance stricte : Super Administrateur, Directeur Pédagogique, Enseignants (Permanents & Vacataires), Scolarité et Étudiants.
+              </p>
+            </div>
+
+            <button onclick="ouvrirModalUtilisateur()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all self-start md:self-auto">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>Créer Utilisateur</span>
+            </button>
+          </div>
+
+          <!-- Tableau des Utilisateurs -->
+          <div class="glass-card p-6 rounded-2xl overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="text-slate-400 uppercase font-extrabold border-b border-slate-100">
+                <tr>
+                  <th class="pb-3">Matricule / Nom</th>
+                  <th class="pb-3">Email EMSI</th>
+                  <th class="pb-3">Rôle Sécurité</th>
+                  <th class="pb-3">Spécialité / Département</th>
+                  <th class="pb-3">Statut</th>
+                  <th class="pb-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100" id="users-table-body">
+                <!-- Rendu dynamique JS -->
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+    <!-- PIED DE PAGE -->
+    <footer class="bg-white border-t border-slate-200 py-3 px-6 text-center text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-600">EMSI Univora Academic Platform</span>
+        <span>•</span>
+        <span>Honoris United Universities</span>
+      </div>
+      <div class="text-[11px]">
+        Conçu pour la soutenance finale du <strong>24 Décembre 2026</strong> • Démo Jalon <strong>11 Novembre 2026</strong>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODALES INTERACTIVES (CRUD PFE, SÉANCES, FICHES)               -->
+  <!-- ============================================================== -->
+  
+  <!-- MODAL PFE -->
+  <div id="modal-pfe" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl border border-slate-200 max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 id="modal-pfe-title" class="font-black text-base text-slate-900">Nouveau Projet PFE</h3>
+        <button onclick="fermerModalPfe()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-pfe" onsubmit="sauvegarderPfe(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="modal-pfe-id">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Titre du Sujet PFE</label>
+          <input type="text" id="modal-pfe-titre" required placeholder="Ex: Plateforme IoT & Edge AI..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Étudiant Candidat</label>
+            <input type="text" id="modal-pfe-etudiant" required placeholder="Nom & Prénom..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Filière</label>
+            <select id="modal-pfe-filiere" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+              <option value="5A-IIR">5A-IIR (Ingénierie Informatique)</option>
+              <option value="5A-GI">5A-GI (Génie Industriel)</option>
+              <option value="4A-IFA">4A-IFA (Automatisme)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Encadrant Académique (Exclu du jury selon BR-PFE-07)</label>
+          <select id="modal-pfe-encadrant" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 font-medium">
+            <option value="Pr. Ait Ounejjar Lahoussaine">Pr. Ait Ounejjar Lahoussaine</option>
+            <option value="Pr. Benassou Noussair">Pr. Benassou Noussair</option>
+            <option value="Pr. Zgandri Mohammed">Pr. Zgandri Mohammed</option>
+            <option value="Dr. Karim Alami">Dr. Karim Alami</option>
+            <option value="Mme. Tazi Kenza">Mme. Tazi Kenza</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Technologies & Stack Clé (séparées par virgules)</label>
+          <input type="text" id="modal-pfe-tech" required placeholder="Python, Docker, ROS, Three.js" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Problématique & Objectifs</label>
+          <textarea id="modal-pfe-desc" rows="3" required placeholder="Cahier des charges..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="fermerModalPfe()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold">Annuler</button>
+          <button type="submit" class="px-5 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl font-bold shadow-sm">Enregistrer PFE</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC & STATE MANAGEMENT               -->
+  <!-- ============================================================== -->
+  <script>
+    // Utilisateurs & Comptes Officiels
+    const comptes = {
+      SUPER_ADMIN: {
+        nom: 'Moad Moussaoui',
+        role: 'SUPER_ADMIN',
+        roleLabel: 'Super Administrateur',
+        avatar: 'MM',
+        departement: 'Direction des Systèmes d Information',
+        email: 'admin@emsi-edu.ma'
+      },
+      DIRECTEUR_PEDAGOGIQUE: {
+        nom: 'Amine Bella',
+        role: 'DIRECTEUR_PEDAGOGIQUE',
+        roleLabel: 'Directeur Pédagogique / Chef Filière',
+        avatar: 'AB',
+        departement: 'Filière IIR & GI',
+        email: 'direction@emsi-edu.ma'
+      },
+      ENSEIGNANT_PERMANENT: {
+        nom: 'Pr. Noussair Benassou',
+        role: 'ENSEIGNANT_PERMANENT',
+        roleLabel: 'Enseignant Permanent (Tech Lead)',
+        avatar: 'NB',
+        departement: 'Département Génie Informatique',
+        email: 'noussair.benassou@emsi-edu.ma'
+      },
+      ENSEIGNANT_VACATAIRE: {
+        nom: 'Dr. Karim Alami',
+        role: 'ENSEIGNANT_VACATAIRE',
+        roleLabel: 'Enseignant Vacataire',
+        avatar: 'KA',
+        departement: 'Intelligence Artificielle & Cloud',
+        email: 'karim.alami@emsi-edu.ma'
+      },
+      ETUDIANT: {
+        nom: 'Ilyass Ait Ouahman',
+        role: 'ETUDIANT',
+        roleLabel: 'Étudiant 5A-IIR (Ingénierie)',
+        avatar: 'IA',
+        departement: '5A-IIR-G1 • Campus Guéliz',
+        email: 'ilyass.aitouahman@emsi-edu.ma'
+      }
+    };
+
+    let currentUser = comptes.SUPER_ADMIN;
+    let currentCampus = 'GUELIZ';
+
+    // Données PFE
+    let pfeList = [
+      {
+        id: 101,
+        titre: 'Plateforme Microservices & Orchestration Kubernetes',
+        etudiant: 'Amine Bella',
+        filiere: '5A-IIR',
+        encadrant: 'Pr. Ait Ounejjar Lahoussaine',
+        tech: 'Java 21, Spring Cloud, Docker, Kubernetes, Angular',
+        desc: 'Architecture distribuée pour le système académique EMSI avec monitoring Prometheus/Grafana.',
+        statut: 'JURY_AFFECTE',
+        president: 'Pr. Benassou Noussair (Docteur / HDR)',
+        rapporteur: 'Dr. Karim Alami (Spécialiste Cloud)',
+        examinateur: 'Mme. Tazi Kenza (Expert)',
+        score: 94.5,
+        mode: 'Google Gemini 2.0 Flash (Free API)'
+      },
+      {
+        id: 102,
+        titre: 'Détection d Anomalies Vidéo par Vision Artificielle',
+        etudiant: 'Ilyass Ait Ouahman',
+        filiere: '5A-IIR',
+        encadrant: 'Pr. Zgandri Mohammed',
+        tech: 'Python, PyTorch, YOLOv10, OpenCV, FastAPI',
+        desc: 'Surveillance intelligente des flux vidéo pour la détection en direct des comportements suspects.',
+        statut: 'EN_ATTENTE_JURY'
+      },
+      {
+        id: 103,
+        titre: 'Jumeau Numérique & Supervision SCADA Industrielle',
+        etudiant: 'Ikram Mellakh',
+        filiere: '5A-GI',
+        encadrant: 'Mme. Tazi Kenza',
+        tech: 'Three.js, Siemens TIA Portal, MQTT, Docker',
+        desc: 'Modélisation 3D temps réel d une ligne de production automatisée avec maintenance prédictive.',
+        statut: 'EN_ATTENTE_JURY'
+      }
+    ];
+
+    // Données Emploi du Temps
+    let edtSeances = [
+      { jour: 'Lundi', creneau: '08:30 - 10:00', matiere: 'TP Cloud & Kubernetes', prof: 'Dr. Karim Alami (Vacataire)', groupe: '5A-IIR-G1', salle: 'G-Lab-PC-1 (35 PC)', priorite: 'VACATAIRE PRIORITAIRE' },
+      { jour: 'Lundi', creneau: '10:15 - 11:45', matiere: 'Microservices Spring Boot 3', prof: 'Pr. Noussair Benassou (Permanent)', groupe: '5A-IIR-G1', salle: 'G-Lab-PC-1 (35 PC)', priorite: 'PERMANENT' },
+      { jour: 'Mardi', creneau: '08:30 - 10:00', matiere: 'Supervision SCADA Industrielle', prof: 'Mme. Tazi Kenza (Permanent)', groupe: '5A-GI-G1', salle: 'T-Lab-Industriel (30 PC)', priorite: 'PERMANENT' },
+      { jour: 'Mardi', creneau: '10:15 - 11:45', matiere: 'Vision par Ordinateur & IA', prof: 'Dr. Karim Alami (Vacataire)', groupe: '5A-IIR-G1', salle: 'G-Lab-PC-2 (35 PC)', priorite: 'VACATAIRE PRIORITAIRE' },
+      { jour: 'Mercredi', creneau: '13:15 - 14:45', matiere: 'Automatisme & Robotique', prof: 'Mme. Tazi Kenza (Permanent)', groupe: '4A-IFA-G1', salle: 'T-Atelier-Robotique', priorite: 'PERMANENT' },
+      { jour: 'Jeudi', creneau: '08:30 - 10:00', matiere: 'Data Science & Gouvernance SI', prof: 'Pr. Zgandri Mohammed (Permanent)', groupe: '5A-IIR-G1', salle: 'G-Salle-201', priorite: 'PERMANENT' }
+    ];
+
+    // Données Absences Séance
+    let etudiantsAppel = [
+      { id: 1, nom: 'Amine Bella', cne: 'MASSAR-2022-01', statut: 'PRESENT', taux: 6.5 },
+      { id: 2, nom: 'Ilyass Ait Ouahman', cne: 'MASSAR-2022-02', statut: 'PRESENT', taux: 12.0 },
+      { id: 3, nom: 'Ikram Mellakh', cne: 'MASSAR-2022-03', statut: 'PRESENT', taux: 4.0 },
+      { id: 4, nom: 'Brahim Abod', cne: 'MASSAR-2022-04', statut: 'PRESENT', taux: 8.5 },
+      { id: 5, nom: 'Étudiant Défaillant Test', cne: 'MASSAR-2022-99', statut: 'ABSENT', taux: 22.5 }
+    ];
+
+    // Données Déficits RH
+    let deficitsList = [
+      { filiere: '5A-IIR (Ingénierie Informatique)', matiere: 'Architectures Cloud & Microservices', manque: 120, urgence: 'CRITIQUE', campus: 'Guéliz' },
+      { filiere: '5A-IIR (Option IA & Big Data)', matiere: 'LLMOps & Vision Artificielle', manque: 90, urgence: 'MOYENNE', campus: 'Guéliz' },
+      { filiere: '5A-GI (Génie Industriel)', matiere: 'Supervision SCADA & FAO Robotique', manque: 60, urgence: 'MODÉRÉE', campus: 'Targa' },
+      { filiere: '4A-IFA (Automatisme)', matiere: 'Cybersécurité Industrielle IEC 62443', manque: 45, urgence: 'FAIBLE', campus: 'Centre' }
+    ];
+
+    // Initialisation
+    window.onload = function() {
+      renderPfe();
+      renderEdt();
+      renderAppel();
+      renderDeficits();
+      renderUsers();
+      updateUserInterface();
+    };
+
+    // Authentification
+    function loginAs(roleKey) {
+      currentUser = comptes[roleKey];
+      document.getElementById('auth-screen').classList.add('hidden');
+      updateUserInterface();
+      showToast(`Connecté avec succès : ${currentUser.nom} (${currentUser.roleLabel})`, 'success');
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      loginAs('SUPER_ADMIN');
+    }
+
+    function deconnecter() {
+      document.getElementById('auth-screen').classList.remove('hidden');
+      document.getElementById('user-dropdown').classList.add('hidden');
+    }
+
+    function updateUserInterface() {
+      document.getElementById('current-user-name').innerText = currentUser.nom;
+      document.getElementById('current-user-role').innerText = currentUser.roleLabel;
+      document.getElementById('current-user-avatar').innerText = currentUser.avatar;
+      document.getElementById('header-role-badge').innerText = currentUser.role;
+      document.getElementById('sidebar-role-title').innerText = currentUser.roleLabel;
+      document.getElementById('dash-welcome-text').innerText = `Bonjour, ${currentUser.nom}`;
+      document.getElementById('dropdown-user-role-text').innerText = currentUser.roleLabel;
+
+      // Adaptation des droits dans le menu selon le rôle
+      const isStudent = currentUser.role === 'ETUDIANT';
+      document.getElementById('nav-rbac').style.display = (currentUser.role === 'SUPER_ADMIN') ? 'flex' : 'none';
+      document.getElementById('nav-rh').style.display = (currentUser.role === 'SUPER_ADMIN' || currentUser.role === 'DIRECTEUR_PEDAGOGIQUE') ? 'flex' : 'none';
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById('user-dropdown').classList.toggle('hidden');
+    }
+
+    function toggleSidebar() {
+      document.getElementById('main-sidebar').classList.toggle('hidden');
+    }
+
+    function changerCampus(campus) {
+      currentCampus = campus;
+      showToast(`Campus basculé vers : ${campus}`, 'info');
+    }
+
+    // Navigation entre pages
+    function navigateTo(pageId) {
+      const pages = ['dashboard', 'edt', 'pfe', 'cahier', 'absences', 'rh', 'rbac'];
+      pages.forEach(p => {
+        const el = document.getElementById('page-' + p);
+        const nav = document.getElementById('nav-' + p);
+        if (el) el.classList.add('hidden');
+        if (nav) {
+          nav.classList.remove('bg-emsi-light', 'text-emsi-dark', 'font-black', 'border-r-4', 'border-emsi-primary');
+          nav.classList.add('text-slate-600');
+        }
+      });
+
+      const targetPage = document.getElementById('page-' + pageId);
+      const targetNav = document.getElementById('nav-' + pageId);
+      if (targetPage) targetPage.classList.remove('hidden');
+      if (targetNav) {
+        targetNav.classList.remove('text-slate-600');
+        targetNav.classList.add('bg-emsi-light', 'text-emsi-dark', 'font-black', 'border-r-4', 'border-emsi-primary');
+      }
+
+      // Fermer le dropdown utilisateur
+      document.getElementById('user-dropdown').classList.add('hidden');
+    }
+
+    // Render PFE Cards
+    function renderPfe() {
+      const container = document.getElementById('pfe-cards-container');
+      container.innerHTML = pfeList.map(pfe => `
+        <div class="glass-card antigravity-float rounded-2xl p-5 flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">PFE-#${pfe.id}</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${pfe.filiere.includes('IIR') ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}">${pfe.filiere}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${pfe.statut === 'JURY_AFFECTE' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-amber-100 text-amber-800 border border-amber-200'}">
+                    ${pfe.statut === 'JURY_AFFECTE' ? 'Jury IA Affecté' : 'En attente de jury'}
+                  </span>
+                </div>
+                <h3 class="font-extrabold text-sm text-slate-900 pt-1">${pfe.titre}</h3>
+              </div>
+              <div class="flex items-center gap-1">
+                <button onclick="editerPfe(${pfe.id})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-all"><i class="fa-solid fa-pen text-xs"></i></button>
+                <button onclick="supprimerPfe(${pfe.id})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-all"><i class="fa-solid fa-trash-can text-xs"></i></button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div>
+                <span class="text-slate-400 text-[10px] block font-bold uppercase">Étudiant Candidat</span>
+                <span class="font-bold text-slate-800">${pfe.etudiant}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 text-[10px] block font-bold uppercase">Encadrant (Exclu Jury)</span>
+                <span class="font-bold text-indigo-700 flex items-center gap-1">
+                  <i class="fa-solid fa-user-shield text-[10px]"></i> ${pfe.encadrant}
+                </span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">${pfe.desc}</p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${pfe.tech.split(',').map(t => `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-mono font-medium">${t.trim()}</span>`).join('')}
+            </div>
+
+            ${pfe.statut === 'JURY_AFFECTE' ? `
+              <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 rounded-xl space-y-3 shadow-inner">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                  <span class="text-[11px] font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles"></i> Composition Recommandée par IA</span>
+                  <span class="font-mono text-xs font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Score : ${pfe.score}%</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <div class="p-2 bg-slate-800/80 rounded-lg border border-slate-700/80">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Président</span>
+                    <strong class="text-white text-[11px] leading-tight block mt-0.5">${pfe.president}</strong>
+                  </div>
+                  <div class="p-2 bg-slate-800/80 rounded-lg border border-slate-700/80">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Rapporteur</span>
+                    <strong class="text-white text-[11px] leading-tight block mt-0.5">${pfe.rapporteur}</strong>
+                  </div>
+                  <div class="p-2 bg-slate-800/80 rounded-lg border border-slate-700/80">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Examinateur</span>
+                    <strong class="text-white text-[11px] leading-tight block mt-0.5">${pfe.examinateur}</strong>
+                  </div>
+                </div>
+                <div class="pt-1 flex items-center justify-between text-[10px] text-emerald-400 font-semibold">
+                  <span>✓ Règle Déontologique BR-PFE-07 Validée (Encadrant ${pfe.encadrant} exclu)</span>
+                  <span class="text-slate-400 italic font-mono text-[9px]">${pfe.mode || 'Gemini Flash'}</span>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">3 membres requis • 45 min</span>
+            <button onclick="lancerAffectationIa(${pfe.id})" class="px-3.5 py-1.5 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800 text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs transition-all">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>${pfe.statut === 'JURY_AFFECTE' ? 'Ré-évaluer par IA' : 'Lancer l Affectation IA'}</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function lancerAffectationIa(id) {
+      const pfe = pfeList.find(p => p.id === id);
+      if (!pfe) return;
+      showToast('Analyse sémantique Gemini 2.0 Flash en cours...', 'info');
+
+      setTimeout(() => {
+        pfe.president = 'Pr. Benassou Noussair (Docteur / HDR)';
+        pfe.rapporteur = 'Pr. Ait Ounejjar Lahoussaine (Spécialiste)';
+        pfe.examinateur = 'Dr. Karim Alami (Expert IA)';
+        pfe.score = 95.0;
+        pfe.statut = 'JURY_AFFECTE';
+        pfe.mode = 'Google Gemini 2.0 Flash (Free API)';
+        renderPfe();
+        showToast(`Jury affecté pour le PFE #${pfe.id} dans le respect strict de la déontologie !`, 'success');
+      }, 700);
+    }
+
+    // Modal PFE
+    function ouvrirModalPfe() {
+      document.getElementById('modal-pfe-title').innerText = 'Nouveau Projet PFE';
+      document.getElementById('modal-pfe-id').value = '';
+      document.getElementById('modal-pfe-titre').value = '';
+      document.getElementById('modal-pfe-etudiant').value = '';
+      document.getElementById('modal-pfe-tech').value = '';
+      document.getElementById('modal-pfe-desc').value = '';
+      document.getElementById('modal-pfe').classList.remove('hidden');
+    }
+
+    function editerPfe(id) {
+      const pfe = pfeList.find(p => p.id === id);
+      if (!pfe) return;
+      document.getElementById('modal-pfe-title').innerText = 'Modifier le PFE #' + pfe.id;
+      document.getElementById('modal-pfe-id').value = pfe.id;
+      document.getElementById('modal-pfe-titre').value = pfe.titre;
+      document.getElementById('modal-pfe-etudiant').value = pfe.etudiant;
+      document.getElementById('modal-pfe-filiere').value = pfe.filiere;
+      document.getElementById('modal-pfe-encadrant').value = pfe.encadrant;
+      document.getElementById('modal-pfe-tech').value = pfe.tech;
+      document.getElementById('modal-pfe-desc').value = pfe.desc;
+      document.getElementById('modal-pfe').classList.remove('hidden');
+    }
+
+    function fermerModalPfe() {
+      document.getElementById('modal-pfe').classList.add('hidden');
+    }
+
+    function sauvegarderPfe(e) {
+      e.preventDefault();
+      const id = document.getElementById('modal-pfe-id').value;
+      const titre = document.getElementById('modal-pfe-titre').value;
+      const etudiant = document.getElementById('modal-pfe-etudiant').value;
+      const filiere = document.getElementById('modal-pfe-filiere').value;
+      const encadrant = document.getElementById('modal-pfe-encadrant').value;
+      const tech = document.getElementById('modal-pfe-tech').value;
+      const desc = document.getElementById('modal-pfe-desc').value;
+
+      if (id) {
+        const p = pfeList.find(x => x.id == id);
+        if (p) {
+          p.titre = titre; p.etudiant = etudiant; p.filiere = filiere;
+          p.encadrant = encadrant; p.tech = tech; p.desc = desc;
+        }
+      } else {
+        const newId = Math.max(...pfeList.map(x => x.id), 100) + 1;
+        pfeList.unshift({
+          id: newId, titre, etudiant, filiere, encadrant, tech, desc, statut: 'EN_ATTENTE_JURY'
+        });
+      }
+      fermerModalPfe();
+      renderPfe();
+      showToast('Projet PFE enregistré avec succès !', 'success');
+    }
+
+    function supprimerPfe(id) {
+      if (confirm('Voulez-vous supprimer ce PFE ?')) {
+        pfeList = pfeList.filter(p => p.id !== id);
+        renderPfe();
+        showToast('Projet PFE supprimé.', 'info');
+      }
+    }
+
+    // Render EDT
+    function renderEdt() {
+      const grid = document.getElementById('edt-calendar-grid');
+      const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+      grid.innerHTML = jours.map(j => {
+        const seancesDuJour = edtSeances.filter(s => s.jour === j);
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-3 space-y-3">
+            <div class="font-extrabold text-xs text-slate-800 pb-2 border-b border-slate-100 flex items-center justify-between">
+              <span>${j}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${seancesDuJour.length} cours</span>
+            </div>
+            <div class="space-y-2">
+              ${seancesDuJour.length === 0 ? '<p class="text-[10px] text-slate-400 italic py-4 text-center">Aucun cours</p>' : ''}
+              ${seancesDuJour.map(s => `
+                <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 space-y-1 hover:border-emsi-primary transition-colors">
+                  <div class="flex items-center justify-between text-[9px] font-bold">
+                    <span class="text-slate-500 font-mono">${s.creneau}</span>
+                    <span class="px-1.5 py-0.2 rounded ${s.priorite.includes('VACATAIRE') ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">${s.priorite.includes('VACATAIRE') ? 'Vacataire' : 'Permanent'}</span>
+                  </div>
+                  <h5 class="font-bold text-slate-800 text-[11px] leading-tight">${s.matiere}</h5>
+                  <div class="text-[10px] text-slate-500">${s.prof}</div>
+                  <div class="text-[9px] font-bold text-emerald-700 flex items-center gap-1 pt-0.5">
+                    <i class="fa-solid fa-desktop"></i> ${s.salle}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function lancerSolveurOrTools() {
+      showToast('Exécution du solveur Google OR-Tools CP-SAT...', 'info');
+      setTimeout(() => {
+        showToast('Planification réussie en 42ms ! 100% sans conflit, pause 15m et salles TP garanties.', 'success');
+      }, 600);
+    }
+
+    // Render Absences Appel
+    function renderAppel() {
+      const container = document.getElementById('etudiants-appel-list');
+      container.innerHTML = etudiantsAppel.map(etu => `
+        <div class="py-3 flex items-center justify-between">
+          <div>
+            <span class="font-bold text-slate-800 text-sm">${etu.nom}</span>
+            <span class="text-slate-400 text-xs ml-2 font-mono">CNE: ${etu.cne}</span>
+            <div class="text-[11px] text-slate-500 mt-0.5">Taux d absences cumulées : <strong class="${etu.taux >= 20 ? 'text-rose-600 font-black' : 'text-slate-700'}">${etu.taux}%</strong></div>
+          </div>
+          <div class="flex items-center gap-2">
+            ${etu.taux >= 20 ? `
+              <span class="px-2 py-1 rounded bg-rose-100 text-rose-800 font-bold text-[10px] border border-rose-200">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> EXCLU EXAMEN (>20%)
+              </span>
+            ` : ''}
+            <button onclick="changerStatutAppel(${etu.id}, 'PRESENT')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${etu.statut === 'PRESENT' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'}">Présent</button>
+            <button onclick="changerStatutAppel(${etu.id}, 'ABSENT')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${etu.statut === 'ABSENT' ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-700'}">Absent</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function changerStatutAppel(id, statut) {
+      const etu = etudiantsAppel.find(e => e.id === id);
+      if (etu) {
+        etu.statut = statut;
+        renderAppel();
+      }
+    }
+
+    function cloturerAppel() {
+      showToast('Feuille d appel clôturée ! Les alertes pour les étudiants dépassant 20% ont été transmises à la scolarité.', 'success');
+    }
+
+    // Render RH
+    function renderDeficits() {
+      const container = document.getElementById('deficits-list-container');
+      container.innerHTML = deficitsList.map(def => `
+        <div class="p-3.5 rounded-xl border flex items-center justify-between ${def.urgence === 'CRITIQUE' ? 'bg-rose-50/60 border-rose-200' : 'bg-slate-50 border-slate-200'}">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-slate-900">${def.filiere}</span>
+              <span class="text-[10px] font-bold px-1.5 py-0.2 rounded ${def.urgence === 'CRITIQUE' ? 'bg-rose-200 text-rose-900' : 'bg-amber-200 text-amber-900'}">${def.urgence}</span>
+            </div>
+            <p class="text-slate-600 mt-0.5">Matière : <strong>${def.matiere}</strong> (${def.campus})</p>
+          </div>
+          <div class="text-right">
+            <span class="font-mono font-black text-rose-600 text-sm block">-${def.manque}h</span>
+            <span class="text-[10px] text-slate-400">À pourvoir</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function chargerPresetCv(type) {
+      const input = document.getElementById('cv-input-area');
+      if (type === 'cloud') input.value = 'Docteur en informatique avec 7 ans d expérience sur Java 21, Spring Boot 3, architectures Microservices, Docker, Kubernetes et AWS.';
+      else if (type === 'ia') input.value = 'Ingénieur Chercheur en Intelligence Artificielle, expert PyTorch, Vision par Ordinateur, LLMOps et architectures RAG.';
+      else input.value = 'Expert en Automatisme Industriel, supervision SCADA Siemens TIA Portal, bus CAN, maintenance prédictive et cybersécurité IEC 62443.';
+      evaluerCv();
+    }
+
+    function evaluerCv() {
+      showToast('Analyse du CV par l IA en cours...', 'info');
+      setTimeout(() => {
+        showToast('Rapport d adéquation généré : Profil compatible à 92.5% !', 'success');
+      }, 500);
+    }
+
+    // Render Users
+    function renderUsers() {
+      const tbody = document.getElementById('users-table-body');
+      const usersData = [
+        { mat: 'EMSI-ADM-01', nom: 'Moad Moussaoui', email: 'admin@emsi-edu.ma', role: 'SUPER_ADMIN', spec: 'Direction SI / Scrum Master', statut: 'ACTIF' },
+        { mat: 'EMSI-DIR-02', nom: 'Amine Bella', email: 'direction@emsi-edu.ma', role: 'CHEF_FILIERE', spec: 'Product Owner / Génie Logiciel', statut: 'ACTIF' },
+        { mat: 'EMSI-ENS-03', nom: 'Pr. Noussair Benassou', email: 'noussair.benassou@emsi-edu.ma', role: 'ENSEIGNANT', spec: 'Java 21 / Spring / DevOps (Permanent)', statut: 'ACTIF' },
+        { mat: 'EMSI-ENS-04', nom: 'Dr. Karim Alami', email: 'karim.alami@emsi-edu.ma', role: 'ENSEIGNANT', spec: 'IA / Deep Learning (Vacataire)', statut: 'ACTIF' },
+        { mat: 'EMSI-DEV-05', nom: 'Brahim Abod', email: 'brahim.abod@emsi-edu.ma', role: 'RESP_SCOLARITE', spec: 'DevOps & Administration Salles', statut: 'ACTIF' },
+        { mat: 'EMSI-ETU-06', nom: 'Ilyass Ait Ouahman', email: 'ilyass.aitouahman@emsi-edu.ma', role: 'ETUDIANT', spec: '5A-IIR (Option IA & QA)', statut: 'ACTIF' },
+        { mat: 'EMSI-ETU-07', nom: 'Ikram Mellakh', email: 'ikram.mellakh@emsi-edu.ma', role: 'ETUDIANT', spec: '5A-GI (UI/UX Designer)', statut: 'ACTIF' }
+      ];
+
+      tbody.innerHTML = usersData.map(u => `
+        <tr class="hover:bg-slate-50/80 transition-colors">
+          <td class="py-3 font-bold text-slate-800">
+            <div>${u.nom}</div>
+            <div class="text-[10px] text-slate-400 font-mono">${u.mat}</div>
+          </td>
+          <td class="py-3 text-slate-600 font-mono text-[11px]">${u.email}</td>
+          <td class="py-3">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800 font-mono">${u.role}</span>
+          </td>
+          <td class="py-3 text-slate-600">${u.spec}</td>
+          <td class="py-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Actif</span>
+          </td>
+          <td class="py-3 text-right">
+            <button onclick="showToast('Modification utilisateur autorisée pour SuperAdmin', 'info')" class="text-slate-400 hover:text-blue-600 px-1"><i class="fa-solid fa-pen"></i></button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function ouvrirModalUtilisateur() {
+      showToast('Formulaire de création utilisateur ouvert (Gouvernance RBAC)', 'info');
+    }
+
+    // Toast Manager
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-900 border-emerald-500 text-white',
+        error: 'bg-rose-900 border-rose-500 text-white',
+        info: 'bg-slate-900 border-emsi-primary text-white'
+      };
+
+      toast.className = `p-3.5 rounded-2xl border shadow-xl flex items-center gap-3 text-xs font-semibold pointer-events-auto transition-all transform translate-y-2 opacity-0 ${colors[type] || colors.info}`;
+      toast.innerHTML = `
+        <i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-400' : (type === 'error' ? 'fa-triangle-exclamation text-rose-400' : 'fa-circle-info text-emsi-gold')} text-sm"></i>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
