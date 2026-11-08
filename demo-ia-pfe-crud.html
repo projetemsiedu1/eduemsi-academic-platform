@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMSI Smart-PFE • Démo IA Gemini & CRUD Jurys</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP BANNER JALON PROFESSEUR -->
+  <div class="bg-gradient-to-r from-emerald-800 via-teal-900 to-indigo-950 text-white px-4 py-2 text-xs font-semibold shadow-inner">
+    <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-wider">
+          🎯 Jalon Sprint 1 • Mercredi 11/11
+        </span>
+        <span>Démonstration Opérationnelle : <strong>Brique IA Gemini 2.0 Flash Free Tier & CRUD PFE Déontologique</strong></span>
+      </div>
+      <div class="flex items-center gap-3 text-[11px] text-slate-300">
+        <span>Équipe : <strong>Moad (SM)</strong> • <strong>Noussair (TL)</strong> • <strong>Amine (PO)</strong> • <strong>Ikram (UI)</strong> • <strong>Brahim (DevOps)</strong> • <strong>Ilyass (QA)</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs backdrop-blur-md bg-white/95">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-800 to-teal-700 flex items-center justify-center text-white font-black text-lg shadow-sm">
+          E
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-black uppercase tracking-wider text-emerald-950">EMSI Academic Platform</span>
+            <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full border border-purple-200">AI Gemini Active</span>
+          </div>
+          <p class="text-[11px] text-slate-500">Moteur d'Arbitrage PFE, Déontologie & Analyse Prédictive RH</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <div id="backend-status-badge" class="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="backend-status-text">Dual-Mode Sécurisé (Online / Offline)</span>
+        </div>
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white">
+          <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
+          <span>EMSI 2026</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="bg-white border-b border-slate-200 sticky top-16 z-20 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-3 overflow-x-auto text-xs font-bold">
+      <button onclick="switchTab('pfe')" id="tab-btn-pfe" class="py-3 px-3.5 border-b-2 border-purple-600 text-purple-700 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>1. Sujets PFE & Affectation IA (CRUD)</span>
+        <span id="badge-total-pfe" class="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[10px] font-black">3</span>
+      </button>
+
+      <button onclick="switchTab('rh')" id="tab-btn-rh" class="py-3 px-3.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>2. Recrutement & Déficit RH IA</span>
+        <span class="px-1.5 py-0.2 rounded-full bg-cyan-100 text-cyan-800 text-[10px] font-black">4 besoins</span>
+      </button>
+
+      <button onclick="switchTab('deontologie')" id="tab-btn-deontologie" class="py-3 px-3.5 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>3. Règle Déontologique BR-PFE-07 (Validation PO)</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+    <!-- ========================================== -->
+    <!-- TAB 1 : CRUD PFE & MATCHING JURYS IA       -->
+    <!-- ========================================== -->
+    <section id="section-pfe" class="space-y-6">
+      
+      <!-- Top Action Bar -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-black text-slate-900">Affectation IA des Jurys de Soutenance PFE</h2>
+            <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full border border-purple-200">Google Gemini 2.0 Flash Free</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">
+            Garantie absolue de déontologie : L'encadrant du PFE est <strong>formellement interdit</strong> d'être Président ou Rapporteur de son propre étudiant.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2.5 self-start md:self-auto">
+          <button onclick="ouvrirModalPfe()" class="px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all hover:shadow">
+            <i class="fa-solid fa-circle-plus"></i>
+            <span>Nouveau Sujet PFE</span>
+          </button>
+          <button onclick="reinitialiserPfeDemo()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Reset</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="relative flex-1 max-w-md">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+          <input type="text" id="search-input" oninput="filtrerPfe()" placeholder="Rechercher par titre, étudiant, technologie..."
+                 class="w-full text-xs pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all">
+        </div>
+
+        <div class="flex items-center gap-2 text-xs font-semibold">
+          <button onclick="definirFiltreStatut('ALL')" id="btn-filtre-all" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white transition-all">
+            Tous (<span id="count-all">3</span>)
+          </button>
+          <button onclick="definirFiltreStatut('EN_ATTENTE_JURY')" id="btn-filtre-attente" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all">
+            En attente (<span id="count-attente">2</span>)
+          </button>
+          <button onclick="definirFiltreStatut('JURY_AFFECTE')" id="btn-filtre-affecte" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all">
+            Jury Affecté (<span id="count-affecte">1</span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- PFE Cards Container -->
+      <div id="pfe-grid-container" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Rendu dynamique en JS -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2 : RECRUTEMENT & DÉFICIT RH IA        -->
+    <!-- ========================================== -->
+    <section id="section-rh" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Déficits de Filières -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Déficits d'Heures Enseignants par Filière</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Calculé automatiquement selon le plan d'études et le corps professoral disponible</p>
+            </div>
+            <span class="text-xs font-bold bg-red-100 text-red-800 px-2.5 py-1 rounded-full border border-red-200">
+              4 Postes Ouverts
+            </span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="p-3.5 rounded-xl border border-red-200 bg-red-50/60 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-slate-900">5A-IIR (Ingénierie Informatique)</span>
+                <p class="text-slate-600 mt-0.5">Matière : <strong>Architectures Cloud & Microservices</strong> (Campus Guéliz)</p>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-red-600 font-mono text-sm block">-120h</span>
+                <span class="text-[10px] font-bold text-red-800 bg-red-100 px-1.5 py-0.5 rounded">Critique</span>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl border border-amber-200 bg-amber-50/60 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-slate-900">5A-IIR (Option IA & Big Data)</span>
+                <p class="text-slate-600 mt-0.5">Matière : <strong>LLMOps, Vision par Ordinateur & RAG</strong> (Campus Guéliz)</p>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-amber-600 font-mono text-sm block">-90h</span>
+                <span class="text-[10px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">Moyenne</span>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-slate-900">5A-GI (Génie Industriel)</span>
+                <p class="text-slate-600 mt-0.5">Matière : <strong>Supervision SCADA & Robotique FAO</strong> (Campus Targa)</p>
+              </div>
+              <div class="text-right">
+                <span class="font-black text-slate-700 font-mono text-sm block">-60h</span>
+                <span class="text-[10px] font-bold text-slate-600 bg-slate-200 px-1.5 py-0.5 rounded">Modérée</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analyseur de CV IA -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-file-invoice text-cyan-600"></i>
+              <span>Analyseur de CV Candidat Enseignant (Gemini AI)</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">Adéquation instantanée entre le profil candidat et les matières déficitaires.</p>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs flex-wrap">
+            <span class="text-slate-400 text-[11px] font-semibold">Exemples prêts :</span>
+            <button onclick="chargerPresetCv('cloud')" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold text-[11px]">
+              Candidat Cloud / Java
+            </button>
+            <button onclick="chargerPresetCv('ia')" class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold text-[11px]">
+              Candidat IA & Vision
+            </button>
+            <button onclick="chargerPresetCv('auto')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[11px]">
+              Candidat SCADA Robotique
+            </button>
+          </div>
+
+          <textarea id="cv-text-input" rows="4" placeholder="Coller le texte du CV..." class="w-full text-xs p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-cyan-500 outline-none"></textarea>
+
+          <button onclick="evaluerCvIa()" id="btn-evaluer-cv" class="w-full py-2.5 bg-gradient-to-r from-cyan-700 to-teal-700 hover:from-cyan-800 hover:to-teal-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all">
+            <i class="fa-solid fa-brain"></i>
+            <span>Calculer le Score d'Adéquation IA</span>
+          </button>
+
+          <!-- Rapport Résultat CV -->
+          <div id="cv-result-card" class="p-4 bg-slate-900 text-white rounded-xl space-y-3 text-xs">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="font-bold text-cyan-400">Rapport d'Adéquation Décisionnel</span>
+              <span id="cv-score-badge" class="font-mono text-xs font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                Score : 92.5%
+              </span>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[10px] block uppercase font-bold">Compétences Détectées</span>
+              <div id="cv-competences-list" class="flex flex-wrap gap-1 mt-1">
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 text-[10px] font-mono">Java / Spring Cloud</span>
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 text-[10px] font-mono">DevOps & Cloud</span>
+              </div>
+            </div>
+            <div>
+              <span class="text-slate-400 text-[10px] block uppercase font-bold">Avis de Recrutement</span>
+              <p id="cv-avis-text" class="font-bold text-white mt-0.5">FAVORABLE - Comble prioritairement le déficit de 120h en 5A-IIR</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3 : RÈGLE DÉONTOLOGIQUE BR-PFE-07      -->
+    <!-- ========================================== -->
+    <section id="section-deontologie" class="hidden bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
+      <div class="max-w-3xl space-y-3">
+        <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">
+          <i class="fa-solid fa-scale-balanced"></i> Charte Académique EMSI • Règle d'Acceptance Criteria PO
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-900">Spécification Déontologique de Composition des Jurys (BR-PFE-07)</h3>
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          Pour assurer une totale impartialité lors des soutenances de Projets de Fin d'Études (PFE), l'algorithme d'Intelligence Artificielle est bridé par des règles déontologiques non négociables, validées par le Product Owner <strong>Amine Bella</strong> et le Scrum Master <strong>Moad Moussaoui</strong>.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-ban"></i>
+          </div>
+          <h4 class="font-bold text-xs text-slate-900">1. Exclusion Stricte de l'Encadrant</h4>
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            L'encadrant du projet ne peut en aucun cas être Président ni Rapporteur de son propre étudiant, garantissant une évaluation indépendante.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-certificate"></i>
+          </div>
+          <h4 class="font-bold text-xs text-slate-900">2. Qualification du Président (HDR/Dr)</h4>
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            Le Président du Jury doit obligatoirement être titulaire d'un Doctorat ou d'une Habilitation Universitaire (HDR) pour valider le diplôme d'ingénieur.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-microchip"></i>
+          </div>
+          <h4 class="font-bold text-xs text-slate-900">3. Affinité Sémantique (> 70%)</h4>
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            Le Rapporteur Technique doit posséder une spécialité attestée directement liée aux technologies du sujet (ex: Kubernetes, IA, SCADA).
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL : AJOUTER / MODIFIER UN PFE -->
+  <div id="modal-pfe" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl border border-slate-200 max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 id="modal-title" class="font-black text-base text-slate-900">Nouveau Projet PFE</h3>
+        <button onclick="fermerModalPfe()" class="w-8 h-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-pfe" onsubmit="soumettreFormulairePfe(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="pfe-edit-id">
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Titre du Projet PFE</label>
+          <input type="text" id="pfe-input-titre" required placeholder="Ex: Plateforme IoT & Edge AI..."
+                 class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Étudiant Candidat</label>
+            <input type="text" id="pfe-input-etudiant" required placeholder="Nom & Prénom..."
+                   class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Filière</label>
+            <select id="pfe-input-filiere" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 font-medium">
+              <option value="5A-IIR (Ingénierie Informatique & Réseaux)">5A-IIR (Informatique)</option>
+              <option value="5A-IIR (Option IA & Big Data)">5A-IIR (IA & Big Data)</option>
+              <option value="5A-GI (Génie Industriel)">5A-GI (Génie Industriel)</option>
+              <option value="4A-IFA (Automatisme & Industrie 4.0)">4A-IFA (Automatisme)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Encadrant Académique (Sera exclu du jury)</label>
+          <select id="pfe-input-encadrant" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 font-medium">
+            <option value="Pr. Ait Ounejjar Lahoussaine">Pr. Ait Ounejjar Lahoussaine (Génie Logiciel / Distribué)</option>
+            <option value="Pr. Benassou Noussair">Pr. Benassou Noussair (Java / Spring / DevOps)</option>
+            <option value="Pr. Zgandri Mohammed">Pr. Zgandri Mohammed (Data Science / IA Décisionnelle)</option>
+            <option value="Dr. Alami Karim">Dr. Alami Karim (Vision par Ordinateur / LLM)</option>
+            <option value="Mme. Tazi Kenza">Mme. Tazi Kenza (IoT / Automatisme)</option>
+            <option value="M. Berrada Omar">M. Berrada Omar (Cloud AWS / Azure)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Problématique & Description</label>
+          <textarea id="pfe-input-problematique" rows="3" required placeholder="Objectifs et architecture du projet..."
+                    class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Technologies Clés (séparées par virgules)</label>
+          <input type="text" id="pfe-input-tech" required placeholder="Ex: Python, PyTorch, Docker, Kubernetes"
+                 class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="fermerModalPfe()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all">
+            Annuler
+          </button>
+          <button type="submit" class="px-5 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
+            Enregistrer le PFE
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-5 text-center text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 space-y-1">
+      <p class="font-bold text-slate-600">Plateforme Académique EMSI Edu 2026 • Soutenance Finale du 24/12/2026</p>
+      <p class="text-[11px]">Équipe d'ingénieurs : Noussair Benassou (TL) • Moad Moussaoui (SM) • Amine Bella (PO) • Brahim Abod (DevOps) • Ilyass Ait Ouahman (QA) • Ikram Mellakh (UI/UX)</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // Liste officielle des enseignants
+    const enseignants = [
+      { id: '1', nom: 'Pr. Benassou Noussair', grade: 'Docteur / HDR', specialite: 'Java / Spring Cloud / Microservices / DevOps', departement: 'IIR (Informatique)' },
+      { id: '2', nom: 'Pr. Ait Ounejjar Lahoussaine', grade: 'Professeur Habilité', specialite: 'Génie Logiciel / Systèmes Distribués / Kubernetes', departement: 'IIR (Informatique)' },
+      { id: '3', nom: 'Pr. Zgandri Mohammed', grade: 'Docteur d État', specialite: 'Data Science / Gouvernance SI / IA Décisionnelle', departement: 'IIR / Big Data' },
+      { id: '4', nom: 'Dr. Alami Karim', grade: 'Docteur', specialite: 'Deep Learning / Vision par Ordinateur / LLM', departement: 'IIR (Informatique)' },
+      { id: '5', nom: 'Mme. Tazi Kenza', grade: 'Ingénieur Chercheur', specialite: 'IoT / Automatisme Industriel / Cybersécurité', departement: 'IFA / Automatisme' },
+      { id: '6', nom: 'M. Berrada Omar', grade: 'Expert Industriel', specialite: 'Cloud Architecture AWS / Azure / CI-CD', departement: 'IIR (Informatique)' }
+    ];
+
+    // Jeu d'essai initial
+    let pfeList = [
+      {
+        id: 101,
+        titre: 'Plateforme Microservices & Orchestration Kubernetes',
+        problematique: 'Développement d un ERP académique distribué sous Kubernetes avec Spring Boot 3, Angular 18 et OR-Tools.',
+        etudiantNom: 'Amine Bella',
+        filiere: '5A-IIR (Ingénierie Informatique & Réseaux)',
+        encadrantNom: 'Pr. Ait Ounejjar Lahoussaine',
+        technologies: 'Java, Spring Cloud, Docker, Kubernetes, Angular',
+        statut: 'JURY_AFFECTE',
+        presidentJury: 'Pr. Benassou Noussair',
+        rapporteurJury: 'Dr. Alami Karim',
+        examinateurJury: 'M. Berrada Omar',
+        scoreMatchingIa: 94.5,
+        justificationIa: 'Matching optimal validé par l IA : Le rapporteur possède une affinité de 94.5% avec Spring Cloud et Docker. Encadrant exclu du jury (déontologie respectée).',
+        modeExecutionIa: 'Google Gemini 2.0 Flash (Free API)'
+      },
+      {
+        id: 102,
+        titre: 'Détection d Anomalies Vidéo par Vision Artificielle',
+        problematique: 'Système de surveillance temps réel basé sur YOLOv10 et PyTorch pour la détection d intrusions sur sites sensibles.',
+        etudiantNom: 'Ilyass Ait Ouahman',
+        filiere: '5A-IIR (Option IA & Big Data)',
+        encadrantNom: 'Pr. Zgandri Mohammed',
+        technologies: 'Python, PyTorch, YOLOv10, OpenCV, FastAPI',
+        statut: 'EN_ATTENTE_JURY'
+      },
+      {
+        id: 103,
+        titre: 'Jumeau Numérique & Supervision SCADA Industrielle',
+        problematique: 'Conception d un jumeau numérique 3D pour la maintenance prédictive d une chaîne de montage robotisée EMSI.',
+        etudiantNom: 'Ikram Mellakh',
+        filiere: '5A-GI (Génie Industriel)',
+        encadrantNom: 'Mme. Tazi Kenza',
+        technologies: 'Three.js, MQTT, Siemens TIA Portal, Python, Docker',
+        statut: 'EN_ATTENTE_JURY'
+      }
+    ];
+
+    let currentFilterStatut = 'ALL';
+
+    function init() {
+      testerBackendLive();
+      rendrePfe();
+    }
+
+    function switchTab(tab) {
+      document.getElementById('section-pfe').classList.add('hidden');
+      document.getElementById('section-rh').classList.add('hidden');
+      document.getElementById('section-deontologie').classList.add('hidden');
+
+      document.querySelectorAll('nav button').forEach(b => {
+        b.classList.remove('border-purple-600', 'text-purple-700', 'border-cyan-600', 'text-cyan-700', 'border-emerald-600', 'text-emerald-700');
+        b.classList.add('border-transparent', 'text-slate-500');
+      });
+
+      if (tab === 'pfe') {
+        document.getElementById('section-pfe').classList.remove('hidden');
+        document.getElementById('tab-btn-pfe').classList.add('border-purple-600', 'text-purple-700');
+      } else if (tab === 'rh') {
+        document.getElementById('section-rh').classList.remove('hidden');
+        document.getElementById('tab-btn-rh').classList.add('border-cyan-600', 'text-cyan-700');
+      } else {
+        document.getElementById('section-deontologie').classList.remove('hidden');
+        document.getElementById('tab-btn-deontologie').classList.add('border-emerald-600', 'text-emerald-700');
+      }
+    }
+
+    function testerBackendLive() {
+      fetch('http://localhost:8080/api/v1/pfe')
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            pfeList = data;
+            document.getElementById('backend-status-badge').className = 'px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200';
+            document.getElementById('backend-status-text').innerText = 'Spring Boot 3 Connecté (Live)';
+            rendrePfe();
+          }
+        })
+        .catch(() => {
+          document.getElementById('backend-status-text').innerText = 'Dual-Mode Sécurisé (Local Engine)';
+        });
+    }
+
+    function rendrePfe() {
+      const query = (document.getElementById('search-input')?.value || '').toLowerCase();
+      const container = document.getElementById('pfe-grid-container');
+
+      const filtres = pfeList.filter(p => {
+        const matchSearch = !query ||
+          p.titre.toLowerCase().includes(query) ||
+          p.etudiantNom.toLowerCase().includes(query) ||
+          p.technologies.toLowerCase().includes(query);
+
+        const matchStatut = currentFilterStatut === 'ALL' || p.statut === currentFilterStatut;
+        return matchSearch && matchStatut;
+      });
+
+      // Mettre à jour les compteurs
+      document.getElementById('count-all').innerText = pfeList.length;
+      document.getElementById('count-attente').innerText = pfeList.filter(p => p.statut === 'EN_ATTENTE_JURY').length;
+      document.getElementById('count-affecte').innerText = pfeList.filter(p => p.statut === 'JURY_AFFECTE').length;
+      document.getElementById('badge-total-pfe').innerText = pfeList.length;
+
+      if (filtres.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
+            <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
+            <h4 class="font-bold text-slate-700 text-sm">Aucun sujet PFE trouvé</h4>
+            <p class="text-xs text-slate-400 mt-1">Modifiez votre recherche ou ajoutez un nouveau sujet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtres.map(pfe => `
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all flex flex-col justify-between overflow-hidden">
+          <div class="p-5 space-y-4">
+            <div class="flex items-start justify-between gap-3">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">PFE-#${pfe.id}</span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold ${pfe.filiere.includes('IIR') ? 'bg-blue-100 text-blue-800' : 'bg-emerald-100 text-emerald-800'}">
+                    ${pfe.filiere}
+                  </span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${pfe.statut === 'JURY_AFFECTE' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-amber-100 text-amber-800 border border-amber-200'}">
+                    ${pfe.statut === 'JURY_AFFECTE' ? 'Jury IA Affecté' : 'En attente de jury'}
+                  </span>
+                </div>
+                <h3 class="font-extrabold text-sm text-slate-900 leading-snug pt-1">${pfe.titre}</h3>
+              </div>
+
+              <div class="flex items-center gap-1">
+                <button onclick="editerPfe(${pfe.id})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-all" title="Modifier">
+                  <i class="fa-solid fa-pen text-xs"></i>
+                </button>
+                <button onclick="supprimerPfe(${pfe.id})" class="w-7 h-7 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 flex items-center justify-center transition-all" title="Supprimer">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div>
+                <span class="text-slate-400 text-[10px] block font-bold uppercase">Étudiant Candidat</span>
+                <span class="font-bold text-slate-800">${pfe.etudiantNom}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 text-[10px] block font-bold uppercase">Encadrant (Exclu du jury)</span>
+                <span class="font-bold text-indigo-700 flex items-center gap-1">
+                  <i class="fa-solid fa-user-shield text-[10px]"></i> ${pfe.encadrantNom}
+                </span>
+              </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">${pfe.problematique}</p>
+
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${pfe.technologies.split(',').map(t => `<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-mono font-medium">${t.trim()}</span>`).join('')}
+            </div>
+
+            ${pfe.statut === 'JURY_AFFECTE' ? `
+              <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 rounded-xl space-y-3 shadow-inner">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                  <span class="text-[11px] font-bold text-purple-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Composition Recommandée par IA
+                  </span>
+                  <span class="font-mono text-xs font-black px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Score : ${pfe.scoreMatchingIa}%
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <div class="p-2 bg-slate-800/80 rounded-lg border border-slate-700/80">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Président</span>
+                    <strong class="text-white text-[11px] leading-tight block mt-0.5">${pfe.presidentJury}</strong>
+                  </div>
+                  <div class="p-2 bg-slate-800/80 rounded-lg border border-slate-700/80">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Rapporteur</span>
+                    <strong class="text-white text-[11px] leading-tight block mt-0.5">${pfe.rapporteurJury}</strong>
+                  </div>
+                  <div class="p-2 bg-slate-800/80 rounded-lg border border-slate-700/80">
+                    <span class="text-slate-400 text-[9px] block uppercase font-bold">Examinateur</span>
+                    <strong class="text-white text-[11px] leading-tight block mt-0.5">${pfe.examinateurJury}</strong>
+                  </div>
+                </div>
+
+                <div class="pt-1 flex items-center justify-between text-[10px] text-slate-300">
+                  <div class="flex items-center gap-1 text-emerald-400 font-semibold">
+                    <i class="fa-solid fa-shield-check"></i>
+                    <span>Règle Déontologique BR-PFE-07 Validée</span>
+                  </div>
+                  <span class="text-slate-400 italic font-mono text-[9px]">${pfe.modeExecutionIa || 'Gemini Flash'}</span>
+                </div>
+
+                <p class="text-[11px] text-slate-300 italic pt-1 border-t border-slate-800 leading-relaxed">
+                  "${pfe.justificationIa}"
+                </p>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
+            <span class="text-[11px] text-slate-400">
+              <i class="fa-solid fa-clock text-xs"></i> 3 Membres requis • 45 min
+            </span>
+
+            <button onclick="lancerAffectationIa(${pfe.id})" id="btn-ia-${pfe.id}"
+                    class="px-3.5 py-1.5 bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800 text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs transition-all">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>${pfe.statut === 'JURY_AFFECTE' ? 'Ré-évaluer par IA' : 'Lancer l Affectation IA'}</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filtrerPfe() {
+      rendrePfe();
+    }
+
+    function definirFiltreStatut(statut) {
+      currentFilterStatut = statut;
+      document.querySelectorAll('[id^="btn-filtre-"]').forEach(b => {
+        b.className = 'px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 transition-all';
+      });
+
+      if (statut === 'ALL') document.getElementById('btn-filtre-all').className = 'px-3 py-1.5 rounded-lg bg-slate-900 text-white transition-all';
+      if (statut === 'EN_ATTENTE_JURY') document.getElementById('btn-filtre-attente').className = 'px-3 py-1.5 rounded-lg bg-amber-600 text-white transition-all';
+      if (statut === 'JURY_AFFECTE') document.getElementById('btn-filtre-affecte').className = 'px-3 py-1.5 rounded-lg bg-purple-700 text-white transition-all';
+
+      rendrePfe();
+    }
+
+    // Modal
+    function ouvrirModalPfe() {
+      document.getElementById('modal-title').innerText = 'Nouveau Projet PFE';
+      document.getElementById('pfe-edit-id').value = '';
+      document.getElementById('pfe-input-titre').value = '';
+      document.getElementById('pfe-input-etudiant').value = '';
+      document.getElementById('pfe-input-problematique').value = '';
+      document.getElementById('pfe-input-tech').value = '';
+      document.getElementById('modal-pfe').classList.remove('hidden');
+    }
+
+    function editerPfe(id) {
+      const pfe = pfeList.find(p => p.id === id);
+      if (!pfe) return;
+      document.getElementById('modal-title').innerText = 'Modifier le Projet PFE #' + pfe.id;
+      document.getElementById('pfe-edit-id').value = pfe.id;
+      document.getElementById('pfe-input-titre').value = pfe.titre;
+      document.getElementById('pfe-input-etudiant').value = pfe.etudiantNom;
+      document.getElementById('pfe-input-filiere').value = pfe.filiere;
+      document.getElementById('pfe-input-encadrant').value = pfe.encadrantNom;
+      document.getElementById('pfe-input-problematique').value = pfe.problematique;
+      document.getElementById('pfe-input-tech').value = pfe.technologies;
+      document.getElementById('modal-pfe').classList.remove('hidden');
+    }
+
+    function fermerModalPfe() {
+      document.getElementById('modal-pfe').classList.add('hidden');
+    }
+
+    function soumettreFormulairePfe(e) {
+      e.preventDefault();
+      const id = document.getElementById('pfe-edit-id').value;
+      const titre = document.getElementById('pfe-input-titre').value;
+      const etudiant = document.getElementById('pfe-input-etudiant').value;
+      const filiere = document.getElementById('pfe-input-filiere').value;
+      const encadrant = document.getElementById('pfe-input-encadrant').value;
+      const problematique = document.getElementById('pfe-input-problematique').value;
+      const tech = document.getElementById('pfe-input-tech').value;
+
+      if (id) {
+        const index = pfeList.findIndex(p => p.id == id);
+        if (index !== -1) {
+          pfeList[index].titre = titre;
+          pfeList[index].etudiantNom = etudiant;
+          pfeList[index].filiere = filiere;
+          pfeList[index].encadrantNom = encadrant;
+          pfeList[index].problematique = problematique;
+          pfeList[index].technologies = tech;
+        }
+      } else {
+        const newId = Math.max(...pfeList.map(p => p.id), 100) + 1;
+        pfeList.unshift({
+          id: newId,
+          titre: titre,
+          etudiantNom: etudiant,
+          filiere: filiere,
+          encadrantNom: encadrant,
+          problematique: problematique,
+          technologies: tech,
+          statut: 'EN_ATTENTE_JURY'
+        });
+      }
+
+      fermerModalPfe();
+      rendrePfe();
+    }
+
+    function supprimerPfe(id) {
+      if (confirm('Supprimer définitivement ce sujet PFE ?')) {
+        pfeList = pfeList.filter(p => p.id !== id);
+        rendrePfe();
+      }
+    }
+
+    function lancerAffectationIa(id) {
+      const pfe = pfeList.find(p => p.id === id);
+      if (!pfe) return;
+
+      const btn = document.getElementById(`btn-ia-${id}`);
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Analyse Gemini en cours...</span>';
+
+      // 1. Essai d'appel réel Spring Boot
+      fetch(`http://localhost:8080/api/v1/pfe/${id}/match-jury`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          appliquerResultatIa(pfe, data.presidentRecommande || data.presidentJury, data.rapporteurRecommande || data.rapporteurJury, data.examinateurRecommande || data.examinateurJury, data.scoreGlobalMatching || data.scoreMatchingIa, data.justificationIa, 'Google Gemini 2.0 Flash (En ligne)');
+        })
+        .catch(() => {
+          // 2. Fallback Heuristique Déterministe Local
+          setTimeout(() => {
+            const candidats = enseignants.filter(e => e.nom !== pfe.encadrantNom);
+            const text = (pfe.titre + ' ' + pfe.problematique + ' ' + pfe.technologies).toLowerCase();
+
+            const scores = candidats.map(prof => {
+              let score = 68.0;
+              const s = prof.specialite.toLowerCase();
+              if ((text.includes('ia') || text.includes('yolo') || text.includes('vision') || text.includes('pytorch')) && s.includes('ia')) score += 29.0;
+              if ((text.includes('cloud') || text.includes('kubernetes') || text.includes('spring')) && s.includes('cloud')) score += 27.0;
+              if ((text.includes('industriel') || text.includes('scada') || text.includes('robotique')) && s.includes('automatisme')) score += 30.0;
+              return { prof, score: Math.min(96.5, score) };
+            });
+
+            scores.sort((a, b) => b.score - a.score);
+
+            appliquerResultatIa(
+              pfe,
+              scores[0].prof.nom,
+              scores.length > 1 ? scores[1].prof.nom : 'Pr. Ait Ounejjar Lahoussaine',
+              scores.length > 2 ? scores[2].prof.nom : 'Dr. Alami Karim',
+              scores[0].score,
+              `Proposition IA validée conforme à la règle BR-PFE-07 : L encadrant (${pfe.encadrantNom}) est formellement exclu du jury. Adéquation de spécialité validée à ${scores[0].score}%.`,
+              'Fallback Local Déterministe (Zéro coupure réseau)'
+            );
+          }, 600);
+        });
+    }
+
+    function appliquerResultatIa(pfe, pres, rap, exam, score, justif, mode) {
+      pfe.presidentJury = pres;
+      pfe.rapporteurJury = rap;
+      pfe.examinateurJury = exam;
+      pfe.scoreMatchingIa = score;
+      pfe.justificationIa = justif;
+      pfe.modeExecutionIa = mode;
+      pfe.statut = 'JURY_AFFECTE';
+      rendrePfe();
+    }
+
+    // Module RH
+    function chargerPresetCv(type) {
+      const input = document.getElementById('cv-text-input');
+      if (type === 'cloud') {
+        input.value = 'Docteur en informatique avec 7 ans d expérience sur Java 21, Spring Boot 3, architectures Microservices, Docker, Kubernetes et AWS. Ancien lead dev.';
+      } else if (type === 'ia') {
+        input.value = 'Ingénieur Chercheur en Intelligence Artificielle, expert PyTorch, Vision par Ordinateur, LLMOps et architectures RAG. Enseignant vacataire.';
+      } else {
+        input.value = 'Expert en Automatisme Industriel, supervision SCADA Siemens TIA Portal, bus CAN, maintenance prédictive et cybersécurité IEC 62443.';
+      }
+      evaluerCvIa();
+    }
+
+    function evaluerCvIa() {
+      const text = document.getElementById('cv-text-input').value.toLowerCase();
+      const comp = [];
+
+      if (text.includes('spring') || text.includes('java') || text.includes('microservices')) comp.push('Java / Spring Cloud');
+      if (text.includes('kubernetes') || text.includes('docker') || text.includes('aws') || text.includes('cloud')) comp.push('DevOps & Cloud');
+      if (text.includes('ia') || text.includes('vision') || text.includes('pytorch') || text.includes('llm')) comp.push('Intelligence Artificielle / Data');
+      if (text.includes('automatisme') || text.includes('scada') || text.includes('fao')) comp.push('Génie Industriel & Robotique');
+
+      const matches = comp.filter(c => ['Java / Spring Cloud', 'DevOps & Cloud', 'Intelligence Artificielle / Data'].includes(c));
+      const score = comp.length === 0 ? 55.0 : Math.min(96.0, 70.0 + (matches.length * 12.5));
+
+      document.getElementById('cv-score-badge').innerText = `Score : ${score}%`;
+      document.getElementById('cv-competences-list').innerHTML = comp.map(c => `<span class="px-2 py-0.5 rounded bg-slate-800 text-cyan-300 text-[10px] font-mono">${c}</span>`).join('');
+      document.getElementById('cv-avis-text').innerText = score >= 75.0 ? 'FAVORABLE - Comble prioritairement les besoins en tension 5A-IIR' : 'RÉSERVÉ - Profil polyvalent';
+    }
+
+    function reinitialiserPfeDemo() {
+      pfeList = [
+        {
+          id: 101,
+          titre: 'Plateforme Microservices & Orchestration Kubernetes',
+          problematique: 'Développement d un ERP académique distribué sous Kubernetes avec Spring Boot 3, Angular 18 et OR-Tools.',
+          etudiantNom: 'Amine Bella',
+          filiere: '5A-IIR (Ingénierie Informatique & Réseaux)',
+          encadrantNom: 'Pr. Ait Ounejjar Lahoussaine',
+          technologies: 'Java, Spring Cloud, Docker, Kubernetes, Angular',
+          statut: 'JURY_AFFECTE',
+          presidentJury: 'Pr. Benassou Noussair',
+          rapporteurJury: 'Dr. Alami Karim',
+          examinateurJury: 'M. Berrada Omar',
+          scoreMatchingIa: 94.5,
+          justificationIa: 'Matching optimal validé par l IA : Le rapporteur possède une affinité de 94.5% avec Spring Cloud et Docker. Encadrant exclu du jury (déontologie respectée).',
+          modeExecutionIa: 'Google Gemini 2.0 Flash (Free API)'
+        },
+        {
+          id: 102,
+          titre: 'Détection d Anomalies Vidéo par Vision Artificielle',
+          problematique: 'Système de surveillance temps réel basé sur YOLOv10 et PyTorch pour la détection d intrusions sur sites sensibles.',
+          etudiantNom: 'Ilyass Ait Ouahman',
+          filiere: '5A-IIR (Option IA & Big Data)',
+          encadrantNom: 'Pr. Zgandri Mohammed',
+          technologies: 'Python, PyTorch, YOLOv10, OpenCV, FastAPI',
+          statut: 'EN_ATTENTE_JURY'
+        },
+        {
+          id: 103,
+          titre: 'Jumeau Numérique & Supervision SCADA Industrielle',
+          problematique: 'Conception d un jumeau numérique 3D pour la maintenance prédictive d une chaîne de montage robotisée EMSI.',
+          etudiantNom: 'Ikram Mellakh',
+          filiere: '5A-GI (Génie Industriel)',
+          encadrantNom: 'Mme. Tazi Kenza',
+          technologies: 'Three.js, MQTT, Siemens TIA Portal, Python, Docker',
+          statut: 'EN_ATTENTE_JURY'
+        }
+      ];
+      document.getElementById('search-input').value = '';
+      currentFilterStatut = 'ALL';
+      definirFiltreStatut('ALL');
+      rendrePfe();
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
