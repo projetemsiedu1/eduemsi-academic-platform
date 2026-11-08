@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emploi du Temps Officiel • EMSI 2026-2027 (Format Impression A4)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f1f5f9;
+      color: #000000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Print Action Bar (hidden on print) */
+    .no-print-bar {
+      width: 100%;
+      max-width: 1100px;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn-print {
+      background: #00843D;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-print:hover { background: #006830; transform: translateY(-1px); }
+
+    .btn-back {
+      background: rgba(255,255,255,0.1);
+      color: #e2e8f0;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.2); }
+
+    /* The Authentic A4 Landscape Document */
+    .printable-sheet {
+      width: 297mm;
+      min-height: 210mm;
+      background: #ffffff;
+      padding: 10mm 12mm;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border: 1px solid #cbd5e1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Header styling matching the real physical photo */
+    .header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon-svg {
+      width: 44px;
+      height: 44px;
+    }
+
+    .logo-text-block {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-size: 10px;
+      font-weight: 900;
+      color: #006837;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+
+    .logo-sub {
+      font-size: 7.5px;
+      font-weight: 700;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    .main-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #000000;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 2px;
+    }
+
+    /* Sub-header details (Semestre, Classe, Option) */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 6px;
+      font-size: 11.5px;
+    }
+
+    .meta-semestre {
+      font-weight: 900;
+      color: #000000;
+    }
+
+    .meta-classe {
+      font-weight: 700;
+      text-align: center;
+      color: #000000;
+    }
+
+    .meta-annee {
+      font-weight: 700;
+      color: #000000;
+      text-align: right;
+    }
+
+    .meta-option {
+      text-align: center;
+      font-weight: 700;
+      font-size: 11.5px;
+      margin-bottom: 10px;
+      color: #000000;
+    }
+
+    /* TABLE EXACTE CONFORME À LA PHOTO OFFICIELLE EMSI */
+    .table-edt {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1.5px solid #000000;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .table-edt th, .table-edt td {
+      border: 1px solid #000000;
+      text-align: center;
+      vertical-align: middle;
+      padding: 6px 4px;
+    }
+
+    /* Header Cells */
+    .th-diag {
+      width: 13%;
+      background: #ffffff;
+      font-weight: 800;
+      font-size: 11px;
+      position: relative;
+      padding: 4px;
+    }
+
+    .th-seance {
+      width: 14.5%;
+      background: #ffffff;
+      padding: 4px 2px;
+    }
+
+    .th-seance-title {
+      font-weight: 800;
+      font-size: 11px;
+      display: block;
+    }
+
+    .th-seance-time {
+      font-weight: 700;
+      font-size: 10.5px;
+      display: block;
+      margin-top: 1px;
+    }
+
+    /* Days Column */
+    .td-day {
+      font-weight: 800;
+      font-size: 11.5px;
+      text-align: center;
+      background: #ffffff;
+      width: 13%;
+    }
+
+    /* Course Cells */
+    .td-slot {
+      height: 62px;
+      background: #ffffff;
+      padding: 4px 6px;
+      line-height: 1.25;
+    }
+
+    .course-name {
+      font-weight: 800;
+      font-size: 10.5px;
+      color: #000000;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .room-name {
+      font-weight: 700;
+      font-size: 10px;
+      color: #0056b3; /* Bleu officiel comme sur la photo */
+      display: block;
+    }
+
+    .time-override {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #dc2626; /* Rouge officiel de l'horaire décalé du vendredi */
+      display: block;
+    }
+
+    /* Footer & Legend */
+    .footer-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      position: relative;
+      padding-top: 4px;
+    }
+
+    .legend-box {
+      font-size: 10px;
+      font-weight: 700;
+      color: #000000;
+      line-height: 1.4;
+      margin-left: 35%;
+    }
+
+    /* Authentic EMSI Stamp (Tampon officiel Scolarité) */
+    .official-stamp {
+      width: 110px;
+      height: 110px;
+      border: 2px dashed #0056b3;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #0056b3;
+      text-align: center;
+      font-size: 8px;
+      font-weight: 800;
+      line-height: 1.15;
+      text-transform: uppercase;
+      transform: rotate(-12deg);
+      opacity: 0.85;
+      padding: 6px;
+      user-select: none;
+      position: relative;
+      background: radial-gradient(circle, rgba(0,86,179,0.04) 0%, rgba(255,255,255,0) 70%);
+    }
+
+    .stamp-inner-circle {
+      width: 90px;
+      height: 90px;
+      border: 1px solid #0056b3;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .stamp-stars {
+      color: #0056b3;
+      font-size: 7px;
+      letter-spacing: 2px;
+      margin: 2px 0;
+    }
+
+    /* PRINT RULES FOR DIRECT PRINTING */
+    @media print {
+      body {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .no-print-bar {
+        display: none !important;
+      }
+      .printable-sheet {
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        min-height: auto !important;
+        padding: 0 !important;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 8mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRE D'ACTIONS UTILISATEUR (MASQUÉE À L'IMPRESSION) -->
+  <div class="no-print-bar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="maquette_interactive_emsi_campus.html" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Retour à la Maquette
+      </a>
+      <span style="font-size: 13px; font-weight: 700;">
+        Gabarit d'Impression Officiel EMSI • Format A4 Paysage Standardisé
+      </span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button onclick="window.print()" class="btn-print">
+        <i class="fa-solid fa-print"></i> Imprimer Directement (ou Exporter PDF)
+      </button>
+    </div>
+  </div>
+
+  <!-- FEUILLE IMPRIMABLE CONFORME AU MODÈLE RÉEL DE L'EMSI -->
+  <div class="printable-sheet">
+    
+    <div>
+      <!-- EN-TÊTE OFFICIEL -->
+      <div class="header-row">
+        <!-- Logo Officiel EMSI Vectoriel Conforme -->
+        <div class="logo-container">
+          <svg viewBox="0 0 120 100" class="logo-icon-svg">
+            <!-- 3 silhouettes vertes comme sur l'affiche -->
+            <path d="M28 35 C28 30 33 26 38 26 C43 26 48 30 48 35 C48 40 43 44 38 44 C33 44 28 40 28 35 Z" fill="#006837"/>
+            <path d="M24 66 L24 50 C24 45 28 42 34 42 L42 42 C48 42 52 45 52 50 L52 66 Z" fill="#006837"/>
+            <path d="M50 32 C50 27 55 23 60 23 C65 23 70 27 70 32 C70 37 65 41 60 41 C55 41 50 37 50 32 Z" fill="#00843D"/>
+            <path d="M46 66 L46 47 C46 43 50 39 56 39 L64 39 C70 39 74 43 74 47 L74 66 Z" fill="#00843D"/>
+            <path d="M72 35 C72 30 77 26 82 26 C87 26 92 30 92 35 C92 40 87 44 82 44 C77 44 72 40 72 35 Z" fill="#006837"/>
+            <path d="M68 66 L68 50 C68 45 72 42 78 42 L86 42 C92 42 96 45 96 50 L96 66 Z" fill="#006837"/>
+            <!-- Boîte EMSI -->
+            <rect x="20" y="70" width="80" height="24" rx="4" fill="#006837"/>
+            <text x="60" y="88" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle" letter-spacing="2">EMSI</text>
+          </svg>
+          <div class="logo-text-block">
+            <span class="logo-title">ECOLE MAROCAINE DES</span>
+            <span class="logo-title">SCIENCES DE L'INGENIEUR</span>
+            <span class="logo-sub">Membre de <strong>HONORIS UNITED UNIVERSITIES</strong></span>
+          </div>
+        </div>
+
+        <!-- Titre Central -->
+        <h1 class="main-title">EMPLOI DU TEMPS</h1>
+      </div>
+
+      <!-- Métadonnées de Filière -->
+      <div class="meta-grid">
+        <div class="meta-semestre">SEMESTRE : 1</div>
+        <div class="meta-classe">Classe : 5<sup>ème</sup> Année Ingénierie Informatique & Réseaux</div>
+        <div class="meta-annee">Année universitaire : 2026-2027</div>
+      </div>
+
+      <div class="meta-option">
+        Option : Développement Digital et Systèmes d'information (2DSI G3)
+      </div>
+
+      <!-- TABLEAU DE L'EMPLOI DU TEMPS REPRODUISANT FIDÈLEMENT LE DOCUMENT -->
+      <table class="table-edt">
+        <thead>
+          <tr>
+            <th class="th-diag">
+              <div style="display: flex; justify-content: space-between; padding: 0 4px; font-weight: 800; font-size: 11px;">
+                <span>JOURS</span>
+                <span>HEURE</span>
+              </div>
+            </th>
+            <th class="th-seance">
+              <span class="th-seance-title">Séance 1</span>
+              <span class="th-seance-time">8h30 à 10h00</span>
+            </th>
+            <th class="th-seance">
+              <span class="th-seance-title">Séance 2</span>
+              <span class="th-seance-time">10h15 à 11h45</span>
+            </th>
+            <th class="th-seance">
+              <span class="th-seance-title">Séance 3</span>
+              <span class="th-seance-time">12h00 à 13h30</span>
+            </th>
+            <th class="th-seance">
+              <span class="th-seance-title">Séance 4</span>
+              <span class="th-seance-time">13h45 à 15h15</span>
+            </th>
+            <th class="th-seance">
+              <span class="th-seance-title">Séance 5</span>
+              <span class="th-seance-time">15h30 à 17h00</span>
+            </th>
+            <th class="th-seance">
+              <span class="th-seance-title">Séance 6</span>
+              <span class="th-seance-time">17h15 à 18h45</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- LUNDI -->
+          <tr>
+            <td class="td-day">Lundi</td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+            <td class="td-slot">
+              <span class="course-name">Développement multiplateforme : Flutter</span>
+              <span class="room-name">Targa LR</span>
+            </td>
+            <td class="td-slot">
+              <span class="course-name">Compétences d'employabilité</span>
+              <span class="room-name">Targa Salle R</span>
+            </td>
+            <td class="td-slot">
+              <span class="course-name">Gouvernance des systèmes d'information</span>
+              <span class="room-name">Targa Salle S</span>
+            </td>
+            <td class="td-slot"></td>
+          </tr>
+
+          <!-- MARDI -->
+          <tr>
+            <td class="td-day">Mardi</td>
+            <td class="td-slot">
+              <span class="course-name">DEVOPS</span>
+              <span class="room-name">Targa LR</span>
+            </td>
+            <td class="td-slot">
+              <span class="course-name">Datamining</span>
+              <span class="room-name">Targa LR</span>
+            </td>
+            <td class="td-slot"></td>
+            <!-- Séance 4 & 5 fusionnées (2 créneaux d'affilée) -->
+            <td class="td-slot" colspan="2">
+              <span class="course-name">Fram Works JEE et architecture micro service</span>
+              <span class="room-name">Targa LI 8</span>
+            </td>
+            <td class="td-slot"></td>
+          </tr>
+
+          <!-- MERCREDI -->
+          <tr>
+            <td class="td-day">Mercredi</td>
+            <td class="td-slot"></td>
+            <td class="td-slot">
+              <span class="course-name">Business English</span>
+              <span class="room-name">Targa Salle H1</span>
+            </td>
+            <td class="td-slot"></td>
+            <td class="td-slot">
+              <span class="course-name">Projet Collaboratif-Devops</span>
+              <span class="room-name">Targa Salle I1</span>
+            </td>
+            <td class="td-slot">
+              <span class="course-name">Communication Professionnelle : PFE/Soutenance</span>
+              <span class="room-name">Targa Salle M</span>
+            </td>
+            <td class="td-slot"></td>
+          </tr>
+
+          <!-- JEUDI -->
+          <tr>
+            <td class="td-day">Jeudi</td>
+            <!-- Séance 1 & 2 fusionnées (Deep Learning 3h) -->
+            <td class="td-slot" colspan="2">
+              <span class="course-name">Deep Learning</span>
+              <span class="room-name">Targa LI 3</span>
+            </td>
+            <td class="td-slot"></td>
+            <td class="td-slot">
+              <span class="course-name">ERP</span>
+              <span class="room-name">Targa Salle F1</span>
+            </td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+          </tr>
+
+          <!-- VENDREDI -->
+          <tr>
+            <td class="td-day">Vendredi</td>
+            <!-- Séance 1 & 2 fusionnées (Ecosystème Big Data) -->
+            <td class="td-slot" colspan="2">
+              <span class="course-name">Ecosystème Big Data</span>
+              <span class="room-name">Centre LR</span>
+            </td>
+            <td class="td-slot"></td>
+            <td class="td-slot">
+              <span class="course-name">Optimisation des Bases de données</span>
+              <span class="time-override">15h00 à 16h30</span>
+              <span class="room-name">Centre LI 4</span>
+            </td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+          </tr>
+
+          <!-- SAMEDI -->
+          <tr>
+            <td class="td-day">Samedi</td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+            <td class="td-slot"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PIED DE PAGE AVEC LÉGENDE ET TAMPON SCOLARITÉ OFFICIEL -->
+    <div class="footer-row">
+      <div class="legend-box">
+        <div><strong>LI :</strong> Laboratoire Informatique</div>
+        <div><strong>LR:</strong> Laboratoire Réseaux</div>
+      </div>
+
+      <!-- Tampon Officiel Scolarité EMSI-Centre Marrakech -->
+      <div class="official-stamp">
+        <div class="stamp-inner-circle">
+          <span>EMSI-Centre</span>
+          <div class="stamp-stars">★ ★ ★</div>
+          <span style="font-size: 7px;">Marrakech</span>
+          <span style="font-size: 6.5px; font-weight: 700; margin-top: 1px;">05 24 42 22 22</span>
+          <span style="font-size: 6px; margin-top: 1px;">Scolarité Validée</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
