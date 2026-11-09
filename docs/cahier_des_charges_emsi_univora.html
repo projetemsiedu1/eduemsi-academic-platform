@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Cahier des Charges Fonctionnel & Technique • EMSI UNIVORA</title>
+  <title>Cahier des Charges de Projet • EMSI Campus ERP (Univora)</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
     :root {
       --emsi-green: #00843D;
@@ -15,6 +15,7 @@
       --slate-700: #334155;
       --slate-600: #475569;
       --slate-500: #64748B;
+      --slate-300: #CBD5E1;
       --slate-200: #E2E8F0;
       --slate-100: #F1F5F9;
       --slate-50: #F8FAFC;
@@ -30,17 +31,23 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: var(--slate-800);
       background-color: #FFFFFF;
-      line-height: 1.6;
-      font-size: 13.5px;
+      line-height: 1.65;
+      font-size: 13px;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Print & Page Layout */
     @page {
       size: A4 portrait;
-      margin: 18mm 16mm 20mm 16mm;
+      margin: 20mm 18mm 22mm 18mm;
       @bottom-right {
         content: counter(page);
+        font-size: 10px;
+        color: #64748B;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 600;
+      }
+      @bottom-left {
+        content: "EMSI Campus ERP — Cahier des Charges de Projet";
         font-size: 9px;
         color: #94A3B8;
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -50,7 +57,7 @@
     .page {
       width: 210mm;
       min-height: 297mm;
-      padding: 20mm 18mm;
+      padding: 22mm 20mm;
       margin: 0 auto;
       background: white;
       position: relative;
@@ -58,16 +65,12 @@
 
     @media screen {
       body {
-        background-color: #ECEFF4;
+        background-color: #E2E8F0;
         padding: 30px 10px;
       }
       .page {
         margin-bottom: 25px;
-        box-shadow: 0 4px 25px rgba(0,0,0,0.07);
-        border-radius: 4px;
-      }
-      .no-screen {
-        display: none !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       }
       .screen-bar {
         position: fixed;
@@ -86,16 +89,14 @@
         font-size: 13px;
         border: none;
         cursor: pointer;
-        box-shadow: 0 6px 20px rgba(0, 132, 61, 0.35);
+        box-shadow: 0 4px 15px rgba(0, 132, 61, 0.35);
         display: flex;
         align-items: center;
         gap: 8px;
         text-decoration: none;
-        transition: transform 0.2s, background 0.2s;
       }
       .btn-print:hover {
         background: var(--emsi-dark);
-        transform: translateY(-2px);
       }
     }
 
@@ -115,22 +116,52 @@
       .page:last-child {
         page-break-after: avoid;
       }
-      .no-print {
+      .screen-bar {
         display: none !important;
       }
     }
 
-    /* Typography & Hierarchy */
+    /* Typographie Sobre & Académique */
     h1, h2, h3, h4 {
       color: var(--slate-900);
-      font-weight: 800;
       letter-spacing: -0.02em;
     }
 
-    h1 { font-size: 26px; line-height: 1.25; }
-    h2 { font-size: 18px; line-height: 1.35; margin-bottom: 12px; border-bottom: 2px solid var(--slate-100); padding-bottom: 6px; }
-    h3 { font-size: 14px; line-height: 1.4; margin-top: 14px; margin-bottom: 6px; color: var(--emsi-dark); }
-    h4 { font-size: 12.5px; font-weight: 700; color: var(--slate-700); margin-top: 8px; margin-bottom: 4px; }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      color: var(--slate-900);
+    }
+
+    h2 {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-top: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1.5px solid var(--slate-200);
+      padding-bottom: 5px;
+      color: var(--emsi-dark);
+    }
+
+    h3 {
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      color: var(--slate-900);
+    }
+
+    h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--slate-700);
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
 
     p {
       margin-bottom: 10px;
@@ -143,232 +174,204 @@
       font-weight: 700;
     }
 
-    /* Structured Components */
-    .header-tag {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--emsi-green);
-      margin-bottom: 4px;
-      display: inline-block;
+    em {
+      font-style: italic;
     }
 
-    .meta-box {
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 8px;
-      padding: 12px 14px;
-      margin: 14px 0;
+    /* Listes & Éléments structurés */
+    ul, ol {
+      margin-left: 22px;
+      margin-bottom: 12px;
+      color: var(--slate-700);
     }
 
-    .meta-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      font-size: 12px;
+    li {
+      margin-bottom: 5px;
+      text-align: justify;
     }
 
-    .meta-item strong {
-      display: block;
-      color: var(--slate-900);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .badge-green { background: #E6F4EA; color: #006027; }
-    .badge-gold { background: #FAF3E8; color: #8A641E; }
-    .badge-slate { background: var(--slate-100); color: var(--slate-700); }
-
-    /* Tables */
+    /* Tableaux Textuels Sobres (Style LaTeX Booktabs) */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 12px 0 16px 0;
-      font-size: 11.5px;
+      margin: 14px 0 18px 0;
+      font-size: 11px;
+      line-height: 1.5;
     }
 
     th {
       background: var(--slate-100);
-      color: var(--slate-800);
+      color: var(--slate-900);
       font-weight: 700;
       text-transform: uppercase;
       font-size: 9.5px;
       letter-spacing: 0.05em;
-      padding: 7px 10px;
+      padding: 8px 10px;
       text-align: left;
-      border: 1px solid var(--slate-200);
+      border-top: 1.5px solid var(--slate-900);
+      border-bottom: 1px solid var(--slate-300);
     }
 
     td {
       padding: 7px 10px;
-      border: 1px solid var(--slate-200);
+      border-bottom: 1px solid var(--slate-200);
       color: var(--slate-700);
       vertical-align: top;
     }
 
-    tr:nth-child(even) td {
-      background: #FAFAFC;
+    tr:last-child td {
+      border-bottom: 1.5px solid var(--slate-900);
     }
 
     .table-total td {
       font-weight: 800;
       color: var(--slate-900);
-      background: #EDF2F7 !important;
-      border-top: 2px solid var(--slate-700);
+      background: var(--slate-50);
+      border-top: 1.5px solid var(--slate-800);
+      border-bottom: 2px solid var(--slate-900);
     }
 
-    /* Diagram Containers */
-    .img-box {
-      margin: 12px 0 16px 0;
-      text-align: center;
+    /* Blocs de Code & Équations */
+    .code-box {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 11px;
+      margin: 10px 0;
+      color: var(--slate-800);
+    }
+
+    .math-block {
+      font-family: 'JetBrains Mono', monospace;
+      background: #FAFAFC;
+      border-left: 3px solid var(--emsi-green);
+      padding: 8px 14px;
+      font-size: 11px;
+      margin: 10px 0;
+      color: var(--slate-900);
+    }
+
+    /* Cartes Textuelles & Métadonnées */
+    .info-card {
       background: var(--slate-50);
       border: 1px solid var(--slate-200);
       border-radius: 6px;
-      padding: 10px;
+      padding: 10px 14px;
+      margin: 12px 0;
     }
 
-    .img-box img {
-      max-width: 100%;
-      max-height: 230px;
-      object-fit: contain;
-      border-radius: 4px;
-      display: block;
-      margin: 0 auto;
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 9.5px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
     }
 
-    .img-caption {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: var(--slate-500);
-      margin-top: 6px;
-    }
+    .badge-strict { background: #FEE2E2; color: #991B1B; }
+    .badge-soft { background: #FEF3C7; color: #92400E; }
+    .badge-ok { background: #DCFCE7; color: #166534; }
 
-    /* Cover Page Styling */
-    .cover {
+    /* Page de Garde Sobre & Textuelle */
+    .cover-container {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       height: 100%;
-      border: 1px solid var(--slate-200);
-      padding: 35mm 22mm 25mm 22mm;
-      border-radius: 6px;
+      border: 1.5px solid var(--slate-300);
+      padding: 30mm 20mm 20mm 20mm;
+      background: #FFFFFF;
       position: relative;
-      background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFB 100%);
     }
 
-    .cover::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 8px;
-      background: linear-gradient(90deg, var(--emsi-green) 0%, var(--emsi-dark) 60%, var(--emsi-gold) 100%);
+    .cover-header {
+      text-align: center;
+      border-bottom: 1.5px solid var(--slate-200);
+      padding-bottom: 20px;
     }
 
-    .cover-logos {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .cover-school {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--slate-900);
+      text-transform: uppercase;
+      margin-bottom: 6px;
     }
 
-    .cover-logos img {
-      height: 60px;
-      object-fit: contain;
+    .cover-network {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--emsi-green);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .cover-filiere {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+
+    .cover-option {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--slate-500);
+      margin-top: 2px;
     }
 
     .cover-title-area {
-      margin: 40px 0;
+      text-align: center;
+      margin: 30px 0;
     }
 
-    .cover-super-title {
-      font-size: 11px;
+    .cover-doc-type {
+      font-size: 16px;
       font-weight: 800;
-      color: var(--emsi-green);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .cover-main-title {
-      font-size: 30px;
-      font-weight: 900;
       color: var(--slate-900);
-      line-height: 1.15;
-      letter-spacing: -0.03em;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .cover-project-name {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--emsi-dark);
+      line-height: 1.3;
       margin-bottom: 12px;
     }
 
-    .cover-subtitle {
-      font-size: 14.5px;
+    .cover-tagline {
+      font-size: 12px;
       color: var(--slate-600);
+      font-style: italic;
+      max-width: 85%;
+      margin: 0 auto;
       line-height: 1.5;
-      max-width: 90%;
     }
 
-    .cover-meta {
-      background: white;
-      border: 1px solid var(--slate-200);
-      border-radius: 8px;
-      padding: 20px;
+    .cover-roles-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      margin: 25px 0;
+      padding: 16px;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 4px;
+      font-size: 11.5px;
     }
 
     .cover-footer {
+      text-align: center;
       border-top: 1px solid var(--slate-200);
       padding-top: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 10.5px;
-      color: var(--slate-500);
-    }
-
-    /* List styling */
-    ul, ol {
-      margin-left: 20px;
-      margin-bottom: 10px;
-      color: var(--slate-700);
-    }
-    li {
-      margin-bottom: 4px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .card-kpi {
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: 6px;
-      padding: 10px 12px;
-    }
-
-    .card-kpi strong {
-      display: block;
-      font-size: 13px;
-      color: var(--slate-900);
-      margin-bottom: 2px;
-    }
-    .card-kpi span {
       font-size: 11px;
       color: var(--slate-600);
     }
@@ -377,10 +380,10 @@
 <body>
 
   <!-- Screen Actions Bar -->
-  <div class="screen-bar no-print">
+  <div class="screen-bar">
     <button onclick="window.print()" class="btn-print">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-      Exporter / Imprimer en PDF
+      Exporter en PDF / Imprimer
     </button>
   </div>
 
@@ -388,555 +391,684 @@
   <!-- PAGE 1 : PAGE DE GARDE OFFICIELLE INSTITUTIONNELLE                  -->
   <!-- =================================================================== -->
   <div class="page">
-    <div class="cover">
+    <div class="cover-container">
       
-      <!-- En-tête Logos -->
-      <div class="cover-logos">
-        <img src="assets/emsi_logo.png" alt="Logo EMSI" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_EMSI.png';">
-        <div style="text-align: right;">
-          <div style="font-weight: 800; font-size: 13px; color: var(--slate-900); letter-spacing: 0.05em;">ÉCOLE MAROCAINE DES SCIENCES DE L'INGÉNIEUR</div>
-          <div style="font-size: 10px; color: var(--emsi-green); font-weight: 700; text-transform: uppercase;">Membre de Honoris United Universities • Campus Marrakech</div>
-        </div>
+      <!-- En-tête Institutionnel -->
+      <div class="cover-header">
+        <div style="font-size: 10px; font-weight: 700; color: var(--slate-400); text-transform: uppercase; margin-bottom: 4px;">Royaume du Maroc</div>
+        <div class="cover-school">École Marocaine des Sciences de l'Ingénieur</div>
+        <div class="cover-network">Membre de Honoris United Universities • Campus de Marrakech</div>
+        <div class="cover-filiere">Filière : Ingénierie Informatique et Réseaux (IIR)</div>
+        <div class="cover-option">Option : Développement Digital & Systèmes d'Information (2DSI)</div>
+        <div style="font-size: 10.5px; color: var(--slate-400); margin-top: 4px; font-mono font-weight: 600;">Projet PFA 2025–2026 / Projet d'Ingénierie 2026–2027</div>
       </div>
 
-      <!-- Titre Central -->
+      <!-- Titre Central du Cahier des Charges -->
       <div class="cover-title-area">
-        <div class="cover-super-title">CAHIER DES CHARGES FONCTIONNEL & TECHNIQUE • V2.0</div>
-        <h1 class="cover-main-title">EMSI UNIVORA</h1>
-        <div class="cover-subtitle">
-          Plateforme Académique Intelligente de Gouvernance Universitaire, Planification Intelligente sous Contraintes (OR-Tools CP-SAT), Écosystème Mobile Flutter & Cycle des Projets de Fin d'Études (Gemini 2.0).
+        <div class="cover-doc-type">Cahier des Charges de Projet</div>
+        <div class="cover-project-name">
+          Système Intégré de Gestion Académique, Logistique et Planification Multi-Sites Assistée par IA (EMSI Campus ERP)
+        </div>
+        <div class="cover-tagline">
+          Résolution automatique des emplois du temps (Gueliz & Targa), adéquation stricte des laboratoires informatiques (LI) et réseaux (LR), saisie directe des notes sans Excel, écosystème mobile Flutter et matching intelligent des soutenances PFE.
         </div>
       </div>
 
-      <!-- Équipe Projet & Encadrement Pédagogique -->
-      <div class="cover-meta">
+      <!-- Équipe d'Ingénieurs & Direction Pédagogique -->
+      <div class="cover-roles-grid">
         <div>
-          <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--emsi-green); margin-bottom: 6px;">Équipe d'Ingénierie & Développement</div>
-          <div style="font-size: 13px; font-weight: 800; color: var(--slate-900);">Moad Moussaoui</div>
-          <div style="font-size: 11px; color: var(--slate-600); font-weight: 600;">Scrum Master, Lead Software Architect & Fullstack Engineer</div>
-          <div style="font-size: 10.5px; color: var(--slate-500); margin-top: 3px;">moussaoui9881@gmail.com • 5ème Année IIR (2DSI G3)</div>
-          
-          <div style="margin-top: 10px; font-size: 11px; color: var(--slate-600);">
-            <strong>Pôle Technique :</strong> Backend Spring Boot 3.3, Mobile Flutter, Web Acadex, Solveur IA CP-SAT.
+          <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--emsi-green); margin-bottom: 8px;">
+            Réalisé par l'équipe d'ingénieurs :
           </div>
+          <ul style="list-style-type: none; margin-left: 0; line-height: 1.6;">
+            <li>• <strong>Noussair Benassou</strong> (Technical Lead)</li>
+            <li>• <strong>Moad Moussaoui</strong> (Scrum Master & Architecture)</li>
+            <li>• <strong>Amine Bella</strong> (Product Owner)</li>
+            <li>• <strong>Brahim Abod</strong> (DevOps & Infrastructure)</li>
+            <li>• <strong>Ilyass Ait Ouahman</strong> (Test and Quality Assurance)</li>
+            <li>• <strong>Ikram Mellakh</strong> (UX/UI Designer)</li>
+          </ul>
         </div>
 
         <div>
-          <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--emsi-green); margin-bottom: 6px;">Encadrement Pédagogique (EMSI Marrakech)</div>
-          
-          <div style="margin-bottom: 8px;">
-            <div style="font-size: 12.5px; font-weight: 800; color: var(--slate-900);">Pr. Amine</div>
-            <div style="font-size: 11px; color: var(--slate-600); font-weight: 600;">Encadrant Pédagogique Référent</div>
-            <div style="font-size: 10.5px; color: var(--slate-500);">Spécialiste Architecture Logicielle, Systèmes Distribués & Cloud</div>
+          <div style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--emsi-green); margin-bottom: 8px;">
+            Sous la direction pédagogique de :
           </div>
-
+          <div style="margin-bottom: 10px;">
+            <strong>Pr. Amine Zegendery</strong><br>
+            <span style="font-size: 10.5px; color: var(--slate-600);">Encadrant Pédagogique Référent • Architecture Systèmes Distribués</span>
+          </div>
           <div>
-            <div style="font-size: 12.5px; font-weight: 800; color: var(--slate-900);">Mme Sbai</div>
-            <div style="font-size: 11px; color: var(--slate-600); font-weight: 600;">Encadrante Pédagogique Référente</div>
-            <div style="font-size: 10.5px; color: var(--slate-500);">Spécialiste Ingénierie Logicielle, Modélisation & Méthodes Agiles</div>
+            <strong>Pr. Hanae Sbai</strong><br>
+            <span style="font-size: 10.5px; color: var(--slate-600);">Encadrante Pédagogique Référente • Modélisation UML & Qualité Logicielle</span>
           </div>
         </div>
       </div>
 
-      <!-- Bas de page -->
+      <!-- Pied de Page -->
       <div class="cover-footer">
-        <div>Année Universitaire : <strong>2026-2027</strong> • Semestre 1 (Automne)</div>
-        <div>Campus d'Application : <strong>Targa & Centre (Guéliz)</strong></div>
-        <div>Classification : <strong>Document Confidentiel & Projet de Fin d'Études</strong></div>
+        <div>Année Universitaire : <strong>2026–2027</strong></div>
+        <div style="font-size: 10px; color: var(--slate-400); margin-top: 3px;">Document Contractuel de Spécification • Version Définitive Complète</div>
       </div>
 
     </div>
   </div>
 
   <!-- =================================================================== -->
-  <!-- PAGE 2 : CONTEXTE, PROBLÉMATIQUE & OBJECTIFS STRATÉGIQUES           -->
+  <!-- PAGE 2 : SIGNATURES OFFICIELLES & ENGAGEMENT CONTRACTUEL            -->
   <!-- =================================================================== -->
   <div class="page">
-    <span class="header-tag">1. Cadrage Stratégique</span>
-    <h2>Contexte & Problématique Métier</h2>
+    <h2>Page des Signatures Officielles</h2>
 
-    <p>
-      L'<strong>École Marocaine des Sciences de l'Ingénieur (EMSI)</strong> connaît une croissance soutenue de ses effectifs étudiants sur l'agglomération de Marrakech, répartis entre deux sites principaux : le <strong>Campus Targa</strong> et le <strong>Campus Centre (Guéliz)</strong>. Cette expansion engendre une complexité opérationnelle majeure dans la gestion quotidienne des ressources pédagogiques, la confection des emplois du temps et le suivi académique des filières d'ingénierie (IIR, GI, IFA, GC).
+    <p style="margin-top: 15px; margin-bottom: 25px;">
+      Le présent cahier des charges formalise l'engagement mutuel et contractuel entre l'équipe de réalisation et le corps professoral encadrant pour la conception, le développement, les tests et le déploiement opérationnel de la plateforme logicielle <strong>EMSI Campus ERP (Univora)</strong> au sein des campus de Marrakech (Targa & Gueliz).
     </p>
-
-    <h3>1.1 Diagnostic des Dysfonctionnements Observés</h3>
-    <p>
-      L'analyse approfondie des flux de travail actuels révèle six verrous opérationnels critiques qui justifient le développement de la plateforme <strong>EMSI UNIVORA</strong> :
-    </p>
-    <ul>
-      <li><strong>Dispersion et Transits Inter-Campus Pénalisants :</strong> L'absence d'affectation rigide par campus générait historiquement des incohérences où des groupes d'étudiants ou des professeurs devaient se déplacer d'un site à l'autre au cours d'une même journée, causant des retards chroniques et une empreinte carbone inutile.</li>
-      <li><strong>Pénurie et Conflits sur les Laboratoires Informatiques (LI & LR) :</strong> Les travaux pratiques nécessitent des environnements distincts : les <em>Laboratoires Informatiques (LI)</em> munis de PC haute performance pour les modules de développement (JEE, Deep Learning, Optimisation BD), et les <em>Laboratoires Réseaux (LR)</em> équipés de baies matérielles Cisco pour les modules de DevOps et Télécoms. Les collisions d'affectation manuelle sur tableurs Excel étaient fréquentes.</li>
-      <li><strong>Gestion Asymétrique des Enseignants (Vacataires vs Permanents) :</strong> Les professeurs vacataires exercent en entreprise et disposent de fenêtres horaires très strictes (ex: uniquement mardi et jeudi matin). À l'inverse, les professeurs permanents doivent satisfaire un quota statutaire de <strong>18 heures hebdomadaires</strong>. Le non-respect de ces contraintes entraînait des annulations de séances et des surcoûts d'heures supplémentaires.</li>
-      <li><strong>Détection Tardive du Seuil d'Absence des 20% :</strong> Le règlement des études de l'EMSI stipule qu'un étudiant dépassant 20% d'heures d'absence non justifiées (soit 18 heures sur un volume semestriel de 90h) est automatiquement radié de la session d'examen. L'émargement papier manuel actuel empêchait toute anticipation préventive.</li>
-      <li><strong>Opacité du Suivi des PFE & Arbitrage des Jurys :</strong> Les soutenances de 5ème année exigent un jury officiel de 4 membres (Encadrant, Rapporteur, Examinateur, Président HDR). La désignation manuelle souffrait d'un manque de transparence et d'absence de traçabilité des séances hebdomadaires de suivi de 30 minutes.</li>
-    </ul>
-
-    <h3>1.2 Objectifs Quantifiables du Projet (KPIs)</h3>
-    <div class="grid-2" style="margin-top: 10px;">
-      <div class="card-kpi">
-        <strong>Zéro Transit Inter-Campus (100% Fixe)</strong>
-        <span>Règle absolue : chaque groupe étudie dans un seul et unique campus d'affectation par semestre.</span>
-      </div>
-      <div class="card-kpi">
-        <strong>Sanctuarisation P1 des Vacataires</strong>
-        <span>Satisfaction à 100% des créneaux rigides déclarés par les enseignants vacataires.</span>
-      </div>
-      <div class="card-kpi">
-        <strong>Contrôle Temps Réel des Absences</strong>
-        <span>Génération d'alertes automatiques dès 10% d'absence et blocage automatisé à 20%.</span>
-      </div>
-      <div class="card-kpi">
-        <strong>Génération Optimisée en < 2 Minutes</strong>
-        <span>Le solveur CP-SAT calcule l'intégralité de la grille hebdomadaire en moins de 120 secondes avec 0 conflit.</span>
-      </div>
-    </div>
-
-    <div class="img-box" style="margin-top: 20px;">
-      <img src="assets/diagrams/uc01_global_system.png" alt="Cas d'utilisation globaux du système EMSI Univora">
-      <div class="img-caption">Figure 1.1 : Diagramme des Cas d'Utilisation Globaux du Système EMSI Univora (UML 2.5)</div>
-    </div>
-
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- PAGE 3 : ARCHITECTURE TECHNIQUE & COMPOSANTE MOBILE FLUTTER         -->
-  <!-- =================================================================== -->
-  <div class="page">
-    <span class="header-tag">2. Architecture & Technologies</span>
-    <h2>Architecture Système & Écosystème Mobile Flutter</h2>
-
-    <p>
-      Le système <strong>EMSI UNIVORA</strong> repose sur une architecture 5-tiers hautement disponible, sécurisée et modulaire. Elle garantit une séparation stricte des responsabilités entre la persistance des données, la logique métier transactionnelle, les moteurs d'intelligence artificielle et les clients de restitution multiplateformes.
-    </p>
-
-    <div class="img-box">
-      <img src="assets/diagram_2_system_architecture_5layers.png" alt="Architecture 5 couches du système">
-      <div class="img-caption">Figure 2.1 : Architecture Système 5-Tiers du Projet EMSI Univora</div>
-    </div>
-
-    <h3>2.1 Composante Mobile Flutter (iOS & Android)</h3>
-    <p>
-      Comme prescrit dans le cursus officiel de 5ème année (<em>"Développement multiplateforme : Flutter"</em> dispensé en laboratoire LR), l'application mobile native a été développée avec le framework <strong>Flutter 3.24+ (Dart 3.5)</strong> pour offrir une expérience réactive et hors-ligne :
-    </p>
-
-    <div class="meta-box">
-      <div class="meta-grid">
-        <div class="meta-item">
-          <strong>Gestion d'État & Architecture Mobile</strong>
-          <span>Architecture BLoC (Business Logic Component) avec injection de dépendances via GetIt.</span>
-        </div>
-        <div class="meta-item">
-          <strong>Persistance & Mode Hors-Ligne</strong>
-          <span>Base locale Hive / SQLite chiffrée pour consultation de l'EDT sans connexion Internet.</span>
-        </div>
-        <div class="meta-item">
-          <strong>Émargement Sécurisé par QR-Code Dynamique</strong>
-          <span>QR-code rotatif rafraîchi toutes les 15 secondes avec validation GPS (Geofencing Campus Targa / Centre).</span>
-        </div>
-        <div class="meta-item">
-          <strong>Notifications Push Immédiates</strong>
-          <span>Intégration Firebase Cloud Messaging (FCM) pour alerter des changements de salle ou retards.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="img-box">
-      <img src="assets/diagrams/dia10_mobile_offline_sync.png" alt="Architecture Mobile Flutter et Synchronisation Hors-ligne">
-      <div class="img-caption">Figure 2.2 : Architecture Mobile Flutter & Protocole de Synchronisation Sécurisée Hors-Ligne</div>
-    </div>
-
-    <h3>2.2 Matrice des Rôles & Sécurité RBAC (Spring Security 6)</h3>
-    <p>
-      L'accès est cloisonné par un système de contrôle d'accès basé sur les rôles (RBAC) conforme aux normes OWASP :
-    </p>
-    <ul>
-      <li><strong>Super Admin (Gouvernance) :</strong> Gestion des comptes, habilitations, audits de sécurité et paramétrage des campus.</li>
-      <li><strong>Chef de Filière :</strong> Définition des maquettes pédagogiques, modules, affectation des enseignants et validation CV.</li>
-      <li><strong>Responsable Planning :</strong> Importation des salles Excel/CSV, exécution du solveur CP-SAT et publication des EDT.</li>
-      <li><strong>Responsable PFE :</strong> Commission de validation des sujets, déclenchement de l'arbitrage IA des jurys à 4 membres.</li>
-      <li><strong>Enseignant (Permanent / Vacataire) :</strong> Émargement numérique, saisie des absences et visa du cahier de suivi 30 min.</li>
-      <li><strong>Étudiant :</strong> Consultation de l'EDT officiel, suivi de la jauge d'absence vs 20% et dépôt des livrables PFE.</li>
-    </ul>
-
-  </div>
-
-  <!-- =================================================================== -->
-  <!-- PAGE 4 : INTELLIGENCE ARTIFICIELLE & OPTIMISATION SOUS CONTRAINTES   -->
-  <!-- =================================================================== -->
-  <div class="page">
-    <span class="header-tag">3. Intelligence Artificielle</span>
-    <h2>Les 3 Briques d'Intelligence Artificielle d'EMSI Univora</h2>
-
-    <p>
-      La différenciation majeure du projet réside dans l'intégration native de trois agents intelligents complémentaires, résolvant des problématiques NP-difficiles et de traitement sémantique avancé.
-    </p>
-
-    <h3>3.1 Brique 1 : Moteur d'Optimisation Combinatoire CP-SAT (Google OR-Tools)</h3>
-    <p>
-      La génération de l'emploi du temps n'est pas une simple répartition heuristique, mais une résolution exacte de programmation par contraintes (Constraint Programming) :
-    </p>
-
-    <div class="img-box">
-      <img src="assets/diagrams/dia11_ortools_constraint_model.png" alt="Modèle Mathématique CP-SAT OR-Tools">
-      <div class="img-caption">Figure 3.1 : Modèle de Contraintes Mathématiques et Espace de Recherche CP-SAT</div>
-    </div>
 
     <table>
       <thead>
         <tr>
-          <th>Type Contrainte</th>
-          <th>Désignation Métier</th>
-          <th>Formulation Mathématique & Impact</th>
-          <th>Poids / Pénalité</th>
+          <th style="width: 50%;">Intervenant & Rôle dans le Projet</th>
+          <th style="width: 50%;">Signature et Émargement Officiel</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><span class="badge badge-green">Hard (Stricte)</span></td>
-          <td><strong>Unicité du Campus Fixe</strong></td>
-          <td>Pour un groupe <em>g</em>, toutes les séances sont affectées sur <em>Campus(g)</em>. Transit journalier = 0.</td>
-          <td>Infini (Non négociable)</td>
+          <td><strong>Moad Moussaoui</strong><br><span style="color: var(--slate-500); font-size: 10px;">Scrum Master & Architecture Logicielle</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
         </tr>
         <tr>
-          <td><span class="badge badge-green">Hard (Stricte)</span></td>
-          <td><strong>Priorité 1 Vacataires</strong></td>
-          <td>Les créneaux de Dr. Karim Alami sont verrouillés sur ses plages déclarées (Mardi/Jeudi matin).</td>
-          <td>Infini (Sanctuarisé)</td>
+          <td><strong>Amine Bella</strong><br><span style="color: var(--slate-500); font-size: 10px;">Product Owner</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
         </tr>
         <tr>
-          <td><span class="badge badge-green">Hard (Stricte)</span></td>
-          <td><strong>Adéquation Matérielle PC</strong></td>
-          <td>Matières Dev/IA &rarr; Salles LI (PC haute perf). Matières Réseaux &rarr; Salles LR (Cisco).</td>
-          <td>Infini (Prérequis TP)</td>
+          <td><strong>Noussair Benassou</strong><br><span style="color: var(--slate-500); font-size: 10px;">Technical Lead</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
         </tr>
         <tr>
-          <td><span class="badge badge-green">Hard (Stricte)</span></td>
-          <td><strong>Capacité Salle &ge; Effectif</strong></td>
-          <td><em>Capacité(Salle s) &ge; Effectif(Groupe g)</em> (ex: 38 places LI 8 pour 32 étudiants).</td>
-          <td>Infini (Sécurité/Confort)</td>
+          <td><strong>Ilyass Ait Ouahman</strong><br><span style="color: var(--slate-500); font-size: 10px;">Test and Quality Assurance</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
         </tr>
         <tr>
-          <td><span class="badge badge-gold">Soft (Souple)</span></td>
-          <td><strong>Quota Permanents (18h)</strong></td>
-          <td>Minimisation de l'écart au quota de 18 heures hebdomadaires des enseignants permanents.</td>
-          <td>Pénalité = 100 / heure d'écart</td>
+          <td><strong>Brahim Abod</strong><br><span style="color: var(--slate-500); font-size: 10px;">DevOps & Infrastructure</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
         </tr>
         <tr>
-          <td><span class="badge badge-gold">Soft (Souple)</span></td>
-          <td><strong>Minimisation des Trous</strong></td>
-          <td>Éviter les fenêtres creuses supérieures à 1h30 pour les étudiants et professeurs.</td>
-          <td>Pénalité = 50 / heure creuse</td>
+          <td><strong>Ikram Mellakh</strong><br><span style="color: var(--slate-500); font-size: 10px;">UX/UI Designer</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
+        </tr>
+        <tr>
+          <td><strong>Pr. Amine Zegendery</strong><br><span style="color: var(--slate-500); font-size: 10px;">Encadrant Pédagogique Référent</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
+        </tr>
+        <tr>
+          <td><strong>Pr. Hanae Sbai</strong><br><span style="color: var(--slate-500); font-size: 10px;">Encadrante Pédagogique Référente</span></td>
+          <td style="height: 38px; vertical-align: middle; color: var(--slate-400); font-family: 'JetBrains Mono', monospace;">Signature : . . . . . . . . . . . . . . . . . . . . . . . . .</td>
         </tr>
       </tbody>
     </table>
 
-    <h3>3.2 Brique 2 : Arbitrage & Jurys PFE à 4 Membres (Google Gemini 2.0 Flash)</h3>
-    <p>
-      Le module PFE met en œuvre la règle académique officielle exigeant 4 membres par soutenance :
-    </p>
-    <ol>
-      <li><strong>Encadrant EMSI :</strong> Valide le cahier d'encadrement hebdomadaire (séances de 30 minutes).</li>
-      <li><strong>Rapporteur Pédagogique :</strong> Évalue la conformité du rapport écrit et de l'architecture logicielle.</li>
-      <li><strong>Examinateur IA Recommandé :</strong> Google Gemini 2.0 Flash analyse les mots-clés du sujet (ex: <em>"Kubernetes, Spring Boot, Microservices"</em>) et effectue un matching sémantique vectoriel pour identifier l'expert le plus qualifié parmi le corps professoral.</li>
-      <li><strong>Président du Jury :</strong> Titulaire obligatoire d'un Doctorat ou d'une Habilitation à Diriger des Recherches (HDR).</li>
-    </ol>
-
-    <div class="img-box">
-      <img src="assets/diagrams/dia04_pfe_complete_lifecycle.png" alt="Cycle de vie complet du projet PFE en 8 étapes">
-      <div class="img-caption">Figure 3.2 : Cycle Complet PFE en 8 Étapes et Commission de Délibération</div>
+    <div style="margin-top: 35px; text-align: right; font-size: 11px; font-weight: 600; color: var(--slate-700);">
+      Fait à Marrakech, le 16 octobre 2026
     </div>
-
   </div>
 
   <!-- =================================================================== -->
-  <!-- PAGE 5 : ÉTUDE FINANCIÈRE & BUDGET PRÉVISIONNEL SIMULÉ              -->
+  <!-- PAGE 3 : LISTE DES ABRÉVIATIONS & TABLE DES MATIÈRES                -->
   <!-- =================================================================== -->
   <div class="page">
-    <span class="header-tag">4. Analyse Économique & Financière</span>
-    <h2>Budget Prévisionnel & Étude Financière Réaliste</h2>
+    <h2>Liste des Abréviations</h2>
 
-    <p>
-      Le déploiement industriel de la plateforme <strong>EMSI UNIVORA</strong> a fait l'objet d'une simulation financière exhaustive basée sur les coûts standards du marché marocain de l'ingénierie logicielle et des infrastructures informatiques d'enseignement supérieur.
-    </p>
-
-    <h3>4.1 Investissements Initiaux en Ingénierie & Développement (CapEx)</h3>
     <table>
       <thead>
         <tr>
-          <th>Poste d'Ingénierie</th>
-          <th>Profil & Compétences Clés</th>
-          <th>Jours / Homme</th>
-          <th>TJM Moyen (MAD)</th>
+          <th style="width: 25%;">Acronyme</th>
+          <th style="width: 75%;">Définition & Signification Complète</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ERP</strong></td><td>Enterprise Resource Planning (Progiciel de Gestion Intégré)</td></tr>
+        <tr><td><strong>EMSI</strong></td><td>École Marocaine des Sciences de l'Ingénieur</td></tr>
+        <tr><td><strong>D2SI</strong></td><td>Développement Digital et Systèmes d'Information (Option 5A-IIR)</td></tr>
+        <tr><td><strong>IIR</strong></td><td>Ingénierie Informatique et Réseaux</td></tr>
+        <tr><td><strong>EDT</strong></td><td>Emploi du Temps</td></tr>
+        <tr><td><strong>LI</strong></td><td>Laboratoire Informatique (Salle spécialisée équipée de PC pour programmation/IA/BD)</td></tr>
+        <tr><td><strong>LR</strong></td><td>Laboratoire Réseaux (Salle spécialisée équipée de baies Cisco et postes réseau)</td></tr>
+        <tr><td><strong>OR-Tools</strong></td><td>Google Operations Research Tools (Solveur Combinatoire CP-SAT)</td></tr>
+        <tr><td><strong>LLM</strong></td><td>Large Language Model (Modèle d'IA : Google Gemini 2.0 Flash / Ollama Llama 3.2)</td></tr>
+        <tr><td><strong>JWT</strong></td><td>JSON Web Token (Jeton d'authentification chiffré stateless)</td></tr>
+        <tr><td><strong>RBAC</strong></td><td>Role-Based Access Control (Contrôle d'accès basé sur les rôles)</td></tr>
+        <tr><td><strong>CNDP</strong></td><td>Commission Nationale de contrôle de la protection des Données à caractère Personnel (Loi 09-08)</td></tr>
+        <tr><td><strong>SLA</strong></td><td>Service Level Agreement (Contrat d'engagement de niveau de service)</td></tr>
+        <tr><td><strong>TDD</strong></td><td>Test-Driven Development (Développement piloté par les tests)</td></tr>
+        <tr><td><strong>PFE / PFA</strong></td><td>Projet de Fin d'Études (5ème année) / Projet de Fin d'Année</td></tr>
+        <tr><td><strong>FCM</strong></td><td>Firebase Cloud Messaging (Service de notifications push mobiles)</td></tr>
+        <tr><td><strong>BLoC</strong></td><td>Business Logic Component (Modèle d'architecture applicative Flutter)</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="margin-top: 25px;">Sommaire Exécutif du Document</h2>
+    <ol style="line-height: 1.8; font-size: 11.5px; font-weight: 600; color: var(--slate-800);">
+      <li><strong>1. Introduction & Cadrage Stratégique</strong> (Contexte, Problématique, Objectifs, Portée)</li>
+      <li><strong>2. Parties Prenantes & Matrice des Acteurs (RBAC)</strong> (7 rôles formels, principe de moindre privilège)</li>
+      <li><strong>3. Besoins Fonctionnels Détaillés</strong> (Matrice croisée, Solveur CP-SAT, Salles LI/LR, Priorité Vacataires, Flutter, Zéro Excel, PFE)</li>
+      <li><strong>4. Besoins Non Fonctionnels & Exigences SLA</strong> (Performance, Disponibilité, Sécurité, Accessibilité)</li>
+      <li><strong>5. Architecture Technique Système</strong> (Découpage 5 couches, PostgreSQL 16, Spring Boot 3.3, Flutter 3.x)</li>
+      <li><strong>6. Étude Économique & Budget Prévisionnel Simulé</strong> (CapEx Ingénierie, CapEx Matériel, OpEx, ROI)</li>
+      <li><strong>7. Planification du Projet (Agile Scrum + XP)</strong> (Sprints 0 à 5, Pénalités de retard)</li>
+      <li><strong>8. Tests, Assurance Qualité & Validation TDD</strong> (Seuil 80%, 6 livrables contractuels)</li>
+      <li><strong>9. Analyse des Risques & Mesures de Mitigation</strong> (Matrice de criticité)</li>
+      <li><strong>10. Contraintes Légales et Réglementaires (Loi 09-08 CNDP)</strong> (Souveraineté des données, traçabilité audit_logs)</li>
+      <li><strong>11. Conclusion Générale & Perspectives</strong></li>
+    </ol>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- PAGE 4 : CHAPITRE 1 - INTRODUCTION & CADRAGE STRATÉGIQUE            -->
+  <!-- =================================================================== -->
+  <div class="page">
+    <h2>1. Introduction & Cadrage du Projet</h2>
+
+    <h3>1.1 Contexte et Présentation Institutionnelle</h3>
+    <p>
+      Dans les institutions d'enseignement supérieur d'ingénierie telles que l'<strong>École Marocaine des Sciences de l'Ingénieur (EMSI)</strong>, la gestion intégrée des activités académiques, logistiques et administratives représente un défi organisationnel de premier ordre. L'augmentation soutenue des effectifs d'élèves-ingénieurs et l'expansion sur plusieurs campus géographiques entraînent une complexification critique des emplois du temps, une saturation des laboratoires informatiques spécialisés, ainsi que des difficultés de suivi de l'assiduité et des évaluations.
+    </p>
+    <p>
+      Les systèmes traditionnels de gestion reposent généralement sur des saisies manuelles ou sur des outils bureautiques dispersés (tableurs Excel, échanges d'emails non sécurisés), incapables d'assurer une supervision en temps réel et une exploitation rationnelle des infrastructures. Le projet <strong>EMSI Campus ERP (Univora)</strong> propose la conception et le déploiement d'une plateforme unifiée combinant applications Web réactives (Design System Acadex), applications mobiles natives Flutter, programmation par contraintes combinatoires et intelligence artificielle locale souveraine.
+    </p>
+
+    <h3>1.2 Problématique Métier Réelle</h3>
+    <p>
+      À l'EMSI Marrakech en particulier, la coexistence de deux campus géographiquement distincts — le <strong>Campus Targa</strong> et le <strong>Campus Centre (Gueliz)</strong> — génère des contraintes de déplacement majeures pour les étudiants et les enseignants. L'analyse détaillée a mis en exergue les problématiques fondamentales suivantes :
+    </p>
+    <ul>
+      <li><strong>Dispersion et Incohérence des Déplacements :</strong> Les groupes d'étudiants ne doivent sous aucun prétexte transiter entre deux campus au cours d'une même journée d'études. L'emploi du temps doit garantir une affectation 100% stable sur un campus fixe par groupe.</li>
+      <li><strong>Conflits sur les Salles Spécialisées (LI vs LR) :</strong> Les travaux pratiques nécessitent impérativement des équipements dédiés : les cours de développement (Frameworks JEE Microservices, Optimisation BD, Deep Learning) requièrent des <em>Laboratoires Informatiques (LI)</em> avec stations PC haute performance, tandis que les cours de DevOps, Big Data et Télécoms exigent des <em>Laboratoires Réseaux (LR)</em> munis de baies physiques Cisco (switchs et routeurs).</li>
+      <li><strong>Asymétrie des Statuts Enseignants (Vacataires vs Permanents) :</strong> Les professeurs vacataires (exerçant en entreprise) ont des disponibilités rigides et non négociables (ex: créneaux stricts mardi et jeudi matin pour Dr. Karim Alami). Leurs plages doivent être sanctuarisées en <strong>Priorité 1 absolue</strong> par le solveur, tandis que les enseignants permanents comblent la grille jusqu'à concurrence de leur quota statutaire de <strong>18 heures hebdomadaires</strong>.</li>
+      <li><strong>Détection Tardive du Seuil d'Absence des 20% :</strong> Le règlement des études de l'EMSI dispose qu'un étudiant cumulant plus de 20% d'heures d'absence non justifiées (soit 18 heures sur un module semestriel de 90h) est automatiquement radié de la session d'examen. L'absence de calcul automatisé empêchait toute alerte préventive.</li>
+      <li><strong>Saisie Dispersée des Notes & Risques d'Erreur :</strong> La manipulation de classeurs Excel isolés engendre des risques élevés de falsification, d'incohérence de calcul et une lourdeur extrême lors des délibérations semestrielles officielles.</li>
+      <li><strong>Opacité du Suivi PFE & Désignation des Jurys :</strong> Les soutenances de 5ème année nécessitent un jury officiel de 4 membres (Encadrant, Rapporteur, Examinateur, Président HDR). La désignation manuelle manquait d'optimisation d'expertise et de traçabilité des séances de tutorat de 30 minutes.</li>
+    </ul>
+
+    <h3>1.3 Objectifs Stratégiques et Mesurables du Projet</h3>
+    <ul>
+      <li><strong>Garantir une planification sans aucun conflit physique :</strong> 0 chevauchement de salle, 0 chevauchement d'enseignant et 100% de respect de la contrainte <em>1 groupe = 1 campus fixe</em>.</li>
+      <li><strong>Garantir un temps de réponse transactionnel inférieur à 2 secondes</strong> pour toute requête utilisateur sur le portail Web et sur l'application mobile native Flutter.</li>
+      <li><strong>Permettre la gestion simultanée d'au moins 1 000 connexions concurrentes</strong> sans dégradation notable des performances applicatives.</li>
+      <li><strong>Supprimer à 100 % l'usage des fichiers Excel</strong> pour la saisie des notes et automatiser l'application stricte des seuils éliminatoires (< 7.00/20.00 à l'examen final).</li>
+      <li><strong>Fournir un tableau de bord interactif de supervision (Acadex)</strong> permettant au corps professoral et à la direction de suivre en temps réel l'avancement des cours et des délibérations.</li>
+    </ul>
+
+    <h3>1.4 Portée et Délimitation du Périmètre Initial</h3>
+    <p>
+      Le projet englobe le portail Web administratif (Next.js 14 / React 18 avec Tailwind CSS), l'application mobile native multiplateforme (Flutter 3.x / Dart avec Riverpod/BLoC), l'API backend d'entreprise (Spring Boot 3.3 / Java 21 LTS), le solveur sous contraintes (Google OR-Tools CP-SAT) et le serveur d'intelligence artificielle locale souveraine (Google Gemini 2.0 / Ollama Llama 3.2).
+    </p>
+    <div class="info-card">
+      <strong>Exclusions formelles du périmètre initial (MVP) :</strong> Le paiement direct par carte bancaire en ligne (le règlement de scolarité reste géré par virement/chèque avec quitus financier dans le système) et la gestion de la flotte physique des bus de transport sont explicitement exclus de cette version.
+    </div>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- PAGE 5 : CHAPITRE 2 - PARTIES PRENANTES & ACTEURS DU SYSTÈME (RBAC) -->
+  <!-- =================================================================== -->
+  <div class="page">
+    <h2>2. Parties Prenantes & Acteurs du Système</h2>
+
+    <h3>2.1 Parties Prenantes</h3>
+    <p>
+      Les principales parties prenantes comprennent la Direction Générale et Pédagogique de l'EMSI, les responsables des filières d'ingénierie (D2SI, IIR, 2IA, Génie Industriel, Génie Civil, Systèmes Embarqués), le corps professoral (enseignants permanents et vacataires industriels), les élèves-ingénieurs ainsi que les services de scolarité et financiers des campus de Marrakech.
+    </p>
+
+    <h3>2.2 Matrice des Rôles et Principe du Moindre Privilège (RBAC)</h3>
+    <p>
+      Le contrôle d'accès au système repose sur une stricte séparation des responsabilités via un modèle de contrôle d'accès basé sur les rôles (RBAC) comprenant sept profils d'utilisateurs distincts :
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 28%;">Rôle Utilisateur</th>
+          <th style="width: 72%;">Périmètre d'Attribution, Habilitations & Droits d'Accès</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Super Administrateur</strong><br><span style="font-size: 10px; color: var(--slate-500);">Direction & Gouvernance</span></td>
+          <td>Supervision globale de l'ERP, création et révocation des comptes utilisateurs, attribution des rôles, paramétrage multi-tenant des campus (Targa & Gueliz) et audit de sécurité des logs système.</td>
+        </tr>
+        <tr>
+          <td><strong>Responsable de Filière</strong><br><span style="font-size: 10px; color: var(--slate-500);">Direction Pédagogique</span></td>
+          <td>Gestion des maquettes pédagogiques et modules, affectation des enseignants aux cours, validation des emplois du temps prévisionnels, consultation des CV RH et présidence des jurys de délibération semestrielle.</td>
+        </tr>
+        <tr>
+          <td><strong>Responsable de Planification</strong><br><span style="font-size: 10px; color: var(--slate-500);">Service Emploi du Temps</span></td>
+          <td>Saisie et importation (Excel/CSV) de l'inventaire des salles existantes, définition des équipements TP PC (LI) et réseaux (LR), configuration des contraintes de campus fixe, sanctuarisation P1 des vacataires et exécution du solveur OR-Tools.</td>
+        </tr>
+        <tr>
+          <td><strong>Responsable PFE & Jurys</strong><br><span style="font-size: 10px; color: var(--slate-500);">Commission de Fin d'Études</span></td>
+          <td>Validation des fiches de sujets PFE, supervision du cahier d'encadrement hebdomadaire (séances de 30 min), déclenchement de l'arbitrage IA pour la désignation du jury officiel à 4 membres et planification des soutenances sans chevauchement.</td>
+        </tr>
+        <tr>
+          <td><strong>Enseignant (Permanent / Vacataire)</strong><br><span style="font-size: 10px; color: var(--slate-500);">Corps Professoral</span></td>
+          <td>Consultation de son emploi du temps personnalisé, émargement tactile et appel d'assiduité, remplissage mobile du cahier de texte en fin de séance, saisie directe des notes d'examen et visa des séances d'encadrement PFE.</td>
+        </tr>
+        <tr>
+          <td><strong>Élève-Ingénieur (Étudiant)</strong><br><span style="font-size: 10px; color: var(--slate-500);">Cycle Ingénieur</span></td>
+          <td>Consultation en temps réel de l'EDT officiel de son groupe, scan du QR-code dynamique de présence, suivi personnel de sa jauge d'absence face au seuil éliminatoire des 20%, consultation de ses notes et dépôt des livrables PFE.</td>
+        </tr>
+        <tr>
+          <td><strong>Service Scolarité & Financier</strong><br><span style="font-size: 10px; color: var(--slate-500);">Services Administratifs</span></td>
+          <td>Gestion administrative des inscriptions, validation des pièces justificatives d'absence, délivrance des attestations officielles, suivi des encaissements de scolarité et activation éventuelle du verrou administratif.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- PAGE 6 : CHAPITRE 3 - BESOINS FONCTIONNELS (PARTIE 1)               -->
+  <!-- =================================================================== -->
+  <div class="page">
+    <h2>3. Besoins Fonctionnels Détaillés</h2>
+
+    <h3>3.1 Matrice Croisée Acteurs / Fonctionnalités</h3>
+    <p>
+      Le tableau 3.1 synthétise les interactions directes entre les différents profils d'acteurs et les grands modules fonctionnels composant le progiciel EMSI Campus ERP.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Fonctionnalités Clés du Système</th>
+          <th style="text-align: center;">Admin</th>
+          <th style="text-align: center;">Resp. Fil.</th>
+          <th style="text-align: center;">Planif.</th>
+          <th style="text-align: center;">Prof</th>
+          <th style="text-align: center;">Étudiant</th>
+          <th style="text-align: center;">Scolarité</th>
+          <th style="text-align: center;">Finance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Gestion des comptes, rôles & sécurité (BCrypt)</td><td style="text-align:center;">X</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>Configuration filières, groupes & effectifs</td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>Inventaire des salles & import Excel/CSV</td><td></td><td></td><td style="text-align:center;">X</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>Résolution automatique des EDT (OR-Tools)</td><td></td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td></td><td></td><td></td><td></td></tr>
+        <tr><td>Consultation de l'emploi du temps officiel</td><td></td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td></td><td></td></tr>
+        <tr><td>Émargement mobile & clôture cahier de texte</td><td></td><td></td><td></td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td></td><td></td></tr>
+        <tr><td>Calcul absences & alerte seuil 20% (18h max)</td><td></td><td style="text-align:center;">X</td><td></td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td></td></tr>
+        <tr><td>Saisie directe des notes (Zéro Excel & < 7/20)</td><td></td><td style="text-align:center;">X</td><td></td><td style="text-align:center;">X</td><td></td><td></td><td></td></tr>
+        <tr><td>Calcul des délibérations & PV officiel PDF</td><td></td><td style="text-align:center;">X</td><td></td><td></td><td></td><td style="text-align:center;">X</td><td></td></tr>
+        <tr><td>Matching IA des jurys PFE à 4 membres</td><td></td><td style="text-align:center;">X</td><td></td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td></td><td></td></tr>
+        <tr><td>Suivi PFE (30 min hebdo) & Stages d'été</td><td></td><td style="text-align:center;">X</td><td></td><td style="text-align:center;">X</td><td style="text-align:center;">X</td><td></td><td></td></tr>
+        <tr><td>Scolarité, quitus & verrou administratif</td><td></td><td></td><td></td><td></td><td></td><td style="text-align:center;">X</td><td style="text-align:center;">X</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.2 Planification Multi-Sites & Optimisation des Emplois du Temps</h3>
+    <p>
+      Le moteur d'optimisation basé sur <strong>Google OR-Tools (CP-SAT)</strong> génère l'emploi du temps hebdomadaire sous forme d'une grille officielle de six séances quotidiennes (Séance 1: 08h30–10h00, S2: 10h15–11h45, S3: 12h00–13h30, S4: 13h45–15h15, S5: 15h30–17h00, S6: 17h15–18h45). Le solveur respecte obligatoirement les contraintes mathématiques suivantes :
+    </p>
+    <ul>
+      <li><strong>Contrainte Stricte du Campus Fixe (Zéro Transit) :</strong> Pour chaque groupe d'étudiants (ex: 2DSI G3), l'ensemble des enseignements est affecté à un campus unique (Campus Targa). Aucun étudiant ne subit de déplacement inter-campus au cours de la journée.</li>
+      <li><strong>Priorisation Absolue des Enseignants Vacataires (P1) :</strong> Le profil d'un enseignant vacataire (ex: Dr. Karim Alami) comporte des plages horaires figées. Ces créneaux sont posés en contraintes rigides non permutables (Hard Constraints). Les enseignants permanents, soumis au quota de 18h hebdomadaires, comblent de façon flexible le reste de la grille.</li>
+      <li><strong>Typologie des Salles et Équipements TP :</strong> Les modules de programmation et intelligence artificielle (JEE Microservices, Optimisation BD, Deep Learning) sont obligatoirement orientés vers les <strong>Salles LI (Laboratoires Informatique PC)</strong>. Les modules de DevOps, Big Data et Télécoms sont orientés vers les <strong>Salles LR (Laboratoires Réseaux Cisco)</strong>. Les cours théoriques sont affectés aux salles standards ou amphithéâtres.</li>
+      <li><strong>Adéquation de Capacité :</strong> La capacité d'accueil de la salle affectée doit être strictement supérieure ou égale à l'effectif réel du groupe (ex: capacité 38 &ge; 32 étudiants).</li>
+      <li><strong>Module d'Importation Excel / CSV des Salles :</strong> Le responsable de planification peut importer un fichier Excel (.xlsx ou .csv) contenant la liste complète des salles existantes avec leurs caractéristiques techniques. Le parser valide les colonnes (Code_Salle, Campus, Type_Salle, Equipements, Capacite, Horaires) et met à jour instantanément le référentiel du solveur.</li>
+    </ul>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- PAGE 7 : CHAPITRE 3 - BESOINS FONCTIONNELS (PARTIE 2)               -->
+  <!-- =================================================================== -->
+  <div class="page">
+    <h2>3. Besoins Fonctionnels (Suite)</h2>
+
+    <h3>3.3 Écosystème Mobile Flutter, Émargement & Clôture de Séance</h3>
+    <p>
+      L'application mobile multiplateforme développée sous <strong>Flutter 3.x (Dart)</strong> constitue l'outil de terrain quotidien des professeurs et des étudiants :
+    </p>
+    <ul>
+      <li><strong>Émargement Sécurisé par QR-Code Rotatif :</strong> Lors du début de cours, l'application de l'enseignant génère un QR-code cryptographique à validité éphémère (renouvelé toutes les 15 secondes via un jeton TOTP chiffré). L'étudiant scanne le code depuis son application Flutter. Le backend vérifie simultanément la validité temporelle et la géolocalisation GPS de l'appareil (Geofencing Campus Targa / Gueliz).</li>
+      <li><strong>Calcul Automatisé des Absences et Règle des 20% :</strong> Le système incrémente automatiquement le compteur d'heures d'absence. Lorsqu'un étudiant atteint 15% d'absences (13.5 heures), une notification push préventive lui est adressée ainsi qu'à son délégué. Dès franchissement du seuil éliminatoire de 20% (18.0 heures), le statut de l'étudiant bascule automatiquement en <em>"RADIÉ DE L'EXAMEN"</em> sur les procès-verbaux officiels.</li>
+      <li><strong>Clôture de Séance et Notification Push Mobile :</strong> À l'issue des 1h30 de cours, le professeur reçoit une notification push haute priorité sur son smartphone. En moins de 30 secondes, il valide la liste d'émargement et renseigne le cahier de texte numérique (chapitre étudié, TP réalisés, devoirs).</li>
+    </ul>
+
+    <h3>3.4 Saisie Directe des Notes (Zéro Excel) & Délibérations</h3>
+    <ul>
+      <li><strong>Suppression des Tableurs Excel :</strong> Les professeurs saisissent les notes de contrôle continu (CC), travaux pratiques (TP) et examens finaux directement via des formulaires Web sécurisés avec contrôles stricts de bornes (0.00 à 20.00).</li>
+      <li><strong>Application de la Règle de Note Éliminatoire :</strong> Toute note obtenue à l'examen final strictement inférieure à <strong>7.00/20.00</strong> entraîne l'ajournement immédiat du module entier, nonobstant la moyenne pondérée globale.</li>
+      <li><strong>Procès-Verbaux Numériques Infalsifiables :</strong> Les PV de délibération semestrielle et les bulletins de notes sont générés automatiquement au format PDF sécurisé, munis d'un QR-code de certification et scellés par signature électronique.</li>
+    </ul>
+
+    <h3>3.5 Cycle Complet des PFE, Stages d'Été & Matching par IA</h3>
+    <ul>
+      <li><strong>Cycle de Vie PFE en 8 Étapes :</strong> Dépôt de la fiche de sujet &rarr; Validation commission &rarr; Attribution encadrant &rarr; Suivi hebdomadaire &rarr; Dépôt du manuscrit &rarr; Évaluation anti-plagiat &rarr; Constitution du jury &rarr; Soutenance officielle.</li>
+      <li><strong>Constitution du Jury Officiel à 4 Membres :</strong> Chaque jury de soutenance de 5ème année est obligatoirement composé de :
+        <ol style="margin-left: 20px; margin-top: 4px;">
+          <li><em>L'Enseignant Encadrant EMSI :</em> atteste de la régularité du travail et valide le cahier d'encadrement.</li>
+          <li><em>Le Rapporteur Pédagogique :</em> examine en détail le manuscrit technique et le code source.</li>
+          <li><em>L'Examinateur IA Recommandé :</em> le modèle de langage (Google Gemini 2.0 Flash / Ollama Llama 3.2) analyse le résumé technique et les stacks technologiques du projet afin d'associer le professeur le plus qualifié du domaine.</li>
+          <li><em>Le Président du Jury :</em> membre titulaire obligatoire du grade de Docteur ou d'une Habilitation à Diriger des Recherches (HDR).</li>
+        </ol>
+      </li>
+      <li><strong>Cahier d'Encadrement Hebdomadaire (Séances de 30 min) :</strong> Traçabilité numérique obligatoire d'au moins 8 séances hebdomadaires de tutorat de 30 minutes entre le binôme d'étudiants et leur encadrant.</li>
+      <li><strong>Stages d'Été (3A / 4A) :</strong> Gestion distincte et allégée des conventions de stage ouvrier (3A) et technique (4A), avec dépôt d'attestation et de rapport sans jury de soutenance lourd.</li>
+    </ul>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- PAGE 8 : CHAPITRES 4 & 5 - BESOINS NON FONCTIONNELS & ARCHITECTURE  -->
+  <!-- =================================================================== -->
+  <div class="page">
+    <h2>4. Besoins Non Fonctionnels</h2>
+
+    <ul>
+      <li><strong>Performance et Temps de Réponse :</strong> Temps de réponse transactionnel inférieur à 2.0 secondes pour 95% des requêtes Web et mobile. Temps de consultation de l'emploi du temps en cache mémoire Redis inférieur à 300 millisecondes. Résolution complète de la grille EDT de l'école par le solveur CP-SAT en moins de 120 secondes.</li>
+      <li><strong>Disponibilité et Résilience :</strong> Taux de disponibilité annuel contractuel supérieur à <strong>99.5 %</strong> (hors fenêtres de maintenance programmée de nuit). Conteneurisation de l'ensemble des microservices sous Docker avec redémarrage automatique en cas de défaillance.</li>
+      <li><strong>Sécurité des Accès et Chiffrement :</strong> Authentification stateless par jetons JWT signés en RSA-256 avec rotation des clés. Hachage salé des mots de passe par l'algorithme <strong>BCrypt (facteur de coût 12)</strong>. Chiffrement de l'ensemble des communications via HTTPS sous protocole TLS 1.3 strict.</li>
+      <li><strong>Accessibilité et Compatibilité :</strong> Interface Web responsive conforme aux standards WCAG 2.1 AA (Chrome, Safari, Firefox, Edge). Application mobile native supportant Android (API 26+, Android 8.0 et supérieur) et iOS (iOS 15.0 et supérieur).</li>
+    </ul>
+
+    <h2 style="margin-top: 25px;">5. Architecture Technique Système</h2>
+    <p>
+      L'architecture logicielle repose sur un découpage en 5 couches hautement découplées garantissant l'évolutivité et la maintenabilité à long terme :
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Couche Système</th>
+          <th style="width: 75%;">Composants Logiciels, Frameworks & Rôle Technique</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Couche Présentation</strong></td>
+          <td>
+            • <em>Portail Web d'Administration :</em> Next.js 14 / React 18, Tailwind CSS, composants graphiques Acadex, Chart.js.<br>
+            • <em>Application Mobile Native :</em> Flutter 3.24+ (Dart 3.5), architecture BLoC, persistance locale Hive chiffrée.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>2. Passerelle & Sécurité</strong></td>
+          <td>
+            Reverse Proxy Nginx haute performance, passerelle Spring Cloud Gateway, filtres Spring Security 6 pour validation des jetons JWT et limitation du débit (Rate Limiting contre les attaques DDoS).
+          </td>
+        </tr>
+        <tr>
+          <td><strong>3. Services Métier</strong></td>
+          <td>
+            Services applicatifs développés sous <strong>Spring Boot 3.3 (Java 21 LTS)</strong> : gestion de la scolarité, inscriptions, absences, saisie des notes, délibérations et encadrement PFE avec transactions ACID.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>4. Calcul & IA Locale</strong></td>
+          <td>
+            • <em>Solveur Combinatoire :</em> Google OR-Tools CP-SAT orchestré via interface C++/Java.<br>
+            • <em>Agent Intelligent :</em> Serveur LLM local Ollama (Llama 3.2 8B) et API Google Gemini 2.0 Flash.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>5. Données & Stockage</strong></td>
+          <td>
+            • <em>SGBD Relationnel :</em> PostgreSQL 16 gérant 40 tables relationnelles versionnées par Flyway.<br>
+            • <em>Cache Haute Vitesse :</em> Redis 7 pour les sessions actives et la grille EDT.<br>
+            • <em>Stockage Objets S3 :</em> Serveur MinIO pour l'archivage des rapports PFE et justificatifs d'absence.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- PAGE 9 : CHAPITRE 6 - ÉTUDE ÉCONOMIQUE & BUDGET PRÉVISIONNEL SIMULÉ  -->
+  <!-- =================================================================== -->
+  <div class="page">
+    <h2>6. Étude Économique & Budget Prévisionnel Simulé</h2>
+
+    <p>
+      Une simulation financière rigoureuse a été établie pour quantifier le coût global de possession (TCO) du projet <strong>EMSI Campus ERP</strong>, calculée sur une période d'exploitation de trois années universitaires.
+    </p>
+
+    <h3>6.1 Investissements Initiaux en Ingénierie Logicielle (CapEx)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Profil d'Ingénierie</th>
+          <th>Missions Principales & Technologies</th>
+          <th>Volume (J/H)</th>
+          <th>TJM (MAD)</th>
           <th>Total HT (MAD)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Chef de Projet & Lead Architect</strong></td>
-          <td>Architecture Microservices, CP-SAT, Gouvernance Scrum</td>
+          <td><strong>Chef de Projet / Scrum Master</strong></td>
+          <td>Gouvernance agile, pilotage des sprints, interfaces pédagogiques</td>
           <td>45 j/h</td>
-          <td>4 200 DH</td>
-          <td>189 000 DH</td>
+          <td>4 000 DH</td>
+          <td>180 000 DH</td>
         </tr>
         <tr>
-          <td><strong>Ingénieur Backend Senior</strong></td>
-          <td>Java 21, Spring Boot 3.3, Spring Security 6, PostgreSQL</td>
+          <td><strong>Technical Lead / Architecte</strong></td>
+          <td>Architecture microservices, sécurité JWT/BCrypt, Spring Boot 3.3</td>
           <td>60 j/h</td>
-          <td>3 500 DH</td>
-          <td>210 000 DH</td>
+          <td>4 200 DH</td>
+          <td>252 000 DH</td>
         </tr>
         <tr>
-          <td><strong>Ingénieur Frontend Acadex</strong></td>
-          <td>React 18, Tailwind CSS, TypeScript, Visualisation charts</td>
+          <td><strong>Développeur Frontend Acadex</strong></td>
+          <td>Développement portail Web Next.js/React, intégration Tailwind</td>
           <td>45 j/h</td>
           <td>3 000 DH</td>
           <td>135 000 DH</td>
         </tr>
         <tr>
-          <td><strong>Ingénieur Mobile Flutter</strong></td>
-          <td>Flutter 3.24, Dart, Hive, Synchronisation QR Code / GPS</td>
+          <td><strong>Développeur Mobile Flutter</strong></td>
+          <td>Application mobile native iOS/Android, BLoC, QR Code, FCM</td>
           <td>40 j/h</td>
           <td>3 200 DH</td>
           <td>128 000 DH</td>
         </tr>
         <tr>
-          <td><strong>Ingénieur IA & Data Science</strong></td>
-          <td>Google OR-Tools CP-SAT, Gemini API, RAG vectoriel</td>
+          <td><strong>Ingénieur IA & Recherche Opérat.</strong></td>
+          <td>Modélisation Google OR-Tools CP-SAT, prompts Gemini 2.0</td>
           <td>30 j/h</td>
           <td>4 000 DH</td>
           <td>120 000 DH</td>
         </tr>
         <tr>
-          <td><strong>Ingénieur QA & Sécurité (Audits)</strong></td>
-          <td>Tests Playwright, OWASP, Tests de charge K6, Intégration CI/CD</td>
+          <td><strong>Ingénieur Test & Qualité (QA)</strong></td>
+          <td>Couverture TDD 80%, tests automatisés Playwright & JUnit 5</td>
           <td>25 j/h</td>
           <td>2 800 DH</td>
           <td>70 000 DH</td>
         </tr>
         <tr class="table-total">
           <td colspan="4"><strong>SOUS-TOTAL INGÉNIERIE & DÉVELOPPEMENT LOGICIEL</strong></td>
-          <td><strong>852 000 DH (~78 500 €)</strong></td>
+          <td><strong>885 000 DH (~81 500 €)</strong></td>
         </tr>
       </tbody>
     </table>
 
-    <h3>4.2 Infrastructure Matérielle, Salles TP PC & Réseaux (CapEx)</h3>
+    <h3>6.2 Équipements Campus, Laboratoires PC & Réseaux (CapEx)</h3>
     <table>
       <thead>
         <tr>
-          <th>Composant Matériel</th>
-          <th>Spécifications Techniques</th>
+          <th>Désignation de l'Équipement</th>
+          <th>Affectation & Rôle Pédagogique</th>
           <th>Quantité</th>
-          <th>Coût Unitaire (MAD)</th>
+          <th>Coût Unit. (MAD)</th>
           <th>Total HT (MAD)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Serveurs sur Site (Targa & Centre)</strong></td>
-          <td>Serveurs rack Dell PowerEdge R650, 64 Go RAM, SSD NVMe</td>
-          <td>2 unités</td>
+          <td><strong>Serveurs Rack Locaux (Targa & Centre)</strong></td>
+          <td>Dell PowerEdge R650 (64 Go RAM, SSD NVMe redondant)</td>
+          <td>2 serveurs</td>
           <td>48 000 DH</td>
           <td>96 000 DH</td>
         </tr>
         <tr>
-          <td><strong>Équipements Laboratoires Réseaux (LR)</strong></td>
-          <td>Baies Cisco 42U, Switchs Catalyst 2960-X, Routeurs ISR 4321</td>
-          <td>2 baies complètes</td>
+          <td><strong>Baies Réseaux Cisco pour Salles LR</strong></td>
+          <td>Switchs Catalyst 2960-X, Routeurs 2901, baies de brassage</td>
+          <td>2 baies</td>
           <td>65 000 DH</td>
           <td>130 000 DH</td>
         </tr>
         <tr>
-          <td><strong>Postes Travaux Pratiques LI (PC)</strong></td>
-          <td>Stations de travail Dell i7 32 Go RAM, GPU Nvidia RTX (Upgrade)</td>
+          <td><strong>Postes PC Haute Performance pour Salles LI</strong></td>
+          <td>Stations Dell i7 32 Go RAM + GPU Nvidia (Dev / IA)</td>
           <td>35 postes</td>
           <td>9 500 DH</td>
           <td>332 500 DH</td>
         </tr>
         <tr>
           <td><strong>Tablettes Mobiles d'Émargement</strong></td>
-          <td>Tablettes tactiles sécurisées 10.5" pour professeurs et secrétariat</td>
+          <td>Tablettes tactiles 10.5" pour secrétariat et professeurs</td>
           <td>15 unités</td>
-          <td>3 200 DH</td>
-          <td>48 000 DH</td>
+          <td>3 000 DH</td>
+          <td>45 000 DH</td>
         </tr>
         <tr class="table-total">
-          <td colspan="4"><strong>SOUS-TOTAL INFRASTRUCTURE & MATÉRIEL CAMPUS</strong></td>
-          <td><strong>606 500 DH (~55 800 €)</strong></td>
+          <td colspan="4"><strong>SOUS-TOTAL INFRASTRUCTURE MATÉRIELLE & RÉSEAUX</strong></td>
+          <td><strong>603 500 DH (~55 600 €)</strong></td>
         </tr>
       </tbody>
     </table>
 
-    <h3>4.3 Coûts Récurrents Annuels d'Exploitation & Cloud (OpEx)</h3>
+    <h3>6.3 Coûts Récurrents Annuels d'Exploitation (OpEx)</h3>
     <table>
       <thead>
         <tr>
-          <th>Poste de Charge Opérationnelle</th>
-          <th>Détail & Volume Estimé</th>
+          <th>Poste de Dépense Opérationnelle</th>
+          <th>Description du Service</th>
           <th>Fréquence</th>
           <th>Montant Annuel (MAD)</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><strong>Hébergement Cloud Hybride</strong></td>
-          <td>Serveurs VPS redondants, stockage S3 pour livrables PFE</td>
-          <td>Mensuel</td>
-          <td>36 000 DH</td>
-        </tr>
-        <tr>
-          <td><strong>Consommation API Google Gemini IA</strong></td>
-          <td>Matching sémantique des jurys PFE et analyse des CV RH</td>
-          <td>À l'usage</td>
-          <td>18 000 DH</td>
-        </tr>
-        <tr>
-          <td><strong>Passerelle SMS & WhatsApp Business</strong></td>
-          <td>Envoi d'alertes instantanées aux parents/étudiants (Seuil 20%)</td>
-          <td>Au forfait</td>
-          <td>24 000 DH</td>
-        </tr>
-        <tr>
-          <td><strong>Tierce Maintenance Applicative (TMA)</strong></td>
-          <td>Correctifs, mises à jour de sécurité et support technique N2/N3</td>
-          <td>Annuel</td>
-          <td>85 000 DH</td>
-        </tr>
-        <tr class="table-total">
-          <td colspan="3"><strong>TOTAL CHARGES RÉCURRENTES ANNUELLES (OpEx)</strong></td>
-          <td><strong>163 000 DH/an (~15 000 €/an)</strong></td>
-        </tr>
+        <tr><td><strong>Hébergement Cloud Hybride</strong></td><td>VPS de secours, sauvegarde S3 chiffrée, nom de domaine</td><td>Mensuelle</td><td>36 000 DH</td></tr>
+        <tr><td><strong>Quotas API IA & Notifications</strong></td><td>Google Gemini API + Passerelle SMS/WhatsApp pour absences</td><td>À l'usage</td><td>42 000 DH</td></tr>
+        <tr><td><strong>Maintenance Applicative (TMA)</strong></td><td>Mises à jour de sécurité, correctifs et support technique N2</td><td>Annuelle</td><td>85 000 DH</td></tr>
+        <tr class="table-total"><td colspan="3"><strong>TOTAL DÉPENSES RÉCURRENTES ANNUELLES (OpEx)</strong></td><td><strong>163 000 DH/an (~15 000 €)</strong></td></tr>
       </tbody>
     </table>
 
-    <div class="meta-box" style="margin-top: 15px;">
-      <div style="font-weight: 800; color: var(--slate-900); font-size: 13px; margin-bottom: 4px;">Synthèse & Rentabilité sur 3 Ans (ROI)</div>
-      <p style="font-size: 12px; margin-bottom: 0;">
-        Pour un investissement initial global (CapEx) de <strong>1 458 500 DH HT (~134 300 €)</strong>, l'automatisation permet une économie directe de <strong>620 heures administratives</strong> par semestre, l'élimination des doublons de vacations (estimée à 140 000 DH/an) et la fidélisation étudiante grâce au zéro transit. Le point mort (ROI) est atteint dès le <strong>14ème mois</strong> d'exploitation.
-      </p>
+    <div class="info-card">
+      <strong>Rentabilité et Retour sur Investissement (ROI) :</strong> Pour un investissement initial total de <strong>1 488 500 DH HT</strong>, l'automatisation intégrale permet un gain annuel estimé à 1 200 heures administratives et la suppression des litiges de vacation. Le seuil de rentabilité économique est franchi dès le <strong>14ème mois</strong> d'exploitation.
     </div>
-
   </div>
 
   <!-- =================================================================== -->
-  <!-- PAGE 6 : PLANNING, RISQUES & VALIDATION PÉDAGOGIQUE                 -->
+  <!-- PAGE 10 : CHAPITRES 7, 8 & 9 - MÉTHODOLOGIE, RISQUES & CNDP         -->
   <!-- =================================================================== -->
   <div class="page">
-    <span class="header-tag">5. Conduite du Projet & Gouvernance</span>
-    <h2>Planning Prévisionnel, Matrice des Risques & Signatures</h2>
+    <h2>7. Planification du Projet (Agile Scrum + XP)</h2>
 
-    <h3>5.1 Feuille de Route Agile Scrum (6 Sprints de 2 Semaines)</h3>
+    <p>
+      Le projet est cadencé sur 10 semaines de développement intensif selon une approche hybride Scrum + Extreme Programming (XP), jalonnée en 5 sprints bi-hebdomadaires :
+    </p>
+    <ul>
+      <li><strong>Sprint 0 (Semaines 1–2) :</strong> Initialisation du dépôt Git, conteneurisation Docker Compose, migrations Flyway (40 tables relationnelles) et chaîne d'intégration continue CI/CD.</li>
+      <li><strong>Sprint 1 (Semaines 3–4) :</strong> Sécurité Spring Security 6 (JWT stateless / BCrypt), modélisation mathématique du solveur OR-Tools avec contrainte stricte de campus fixe et priorité P1 des vacataires.</li>
+      <li><strong>Sprint 2 (Semaines 5–6) :</strong> Application mobile Flutter 3.x, émargement par QR-code rotatif (15s), geofencing et notification push mobile pour la clôture du cahier de texte.</li>
+      <li><strong>Sprint 3 (Semaines 7–8) :</strong> Module Zéro Excel, contrôles de saisie des notes avec note éliminatoire (< 7.00/20.00), calcul automatique des délibérations et verrou de scolarité.</li>
+      <li><strong>Sprint 4 (Semaines 9–10) :</strong> Gestion des fiches PFE, suivi hebdomadaire de 30 min, matching intelligent du jury à 4 membres avec l'IA, tests automatisés Playwright et recette finale.</li>
+    </ul>
+    <p>
+      <strong>Clause Contractuelle de Pénalité de Retard :</strong> Tout retard de livraison non justifié entraîne l'application d'une pénalité contractuelle de 1 % par jour ouvré de retard, plafonnée à 10 % de la note globale du projet.
+    </p>
+
+    <h2>8. Tests, Assurance Qualité & Livrables Formels</h2>
+    <p>
+      La démarche qualité impose l'application rigoureuse du <strong>Test-Driven Development (TDD)</strong> avec un seuil de couverture de code garanti d'au moins <strong>80 %</strong> (tests unitaires JUnit 5, tests d'intégration Spring Data et tests E2E Playwright).
+    </p>
+    <p>
+      Les six livrables contractuels formels sont :
+    </p>
+    <ol>
+      <li>Code source intégral et commenté sur le dépôt GitHub officiel de l'école.</li>
+      <li>Scripts SQL de migration Flyway et jeux complets de données de test (données anonymisées).</li>
+      <li>Spécification exhaustive des APIs REST au format OpenAPI 3.0 / Swagger.</li>
+      <li>Guide d'installation et de déploiement conteneurisé Docker.</li>
+      <li>Manuels d'utilisation dédiés pour les profils Administrateur, Enseignant et Étudiant.</li>
+      <li>Rapport officiel de validation et procès-verbal de recette fonctionnelle.</li>
+    </ol>
+
+    <h2>9. Analyse des Risques et Mesures de Mitigation</h2>
     <table>
       <thead>
         <tr>
-          <th>Sprint</th>
-          <th>Période</th>
-          <th>Livrables Clés & Objectifs Opérationnels</th>
-          <th>Statut</th>
+          <th>Catégorie</th>
+          <th>Description du Risque Identifié</th>
+          <th>Criticité</th>
+          <th>Mesures Préventives & Plan de Continuité</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Sprint 1</strong></td>
-          <td>Semaines 1 - 2</td>
-          <td>Modélisation UML, Architecture Microservices, Maquette Acadex & Solveur CP-SAT basique</td>
-          <td><span class="badge badge-green">Validé (100%)</span></td>
+          <td><strong>Technique</strong></td>
+          <td>Panne réseau sur l'un des campus (Targa ou Gueliz)</td>
+          <td>Élevée</td>
+          <td>Mode hors-ligne natif sur l'application mobile Flutter (stockage local Hive) avec synchronisation différée.</td>
         </tr>
         <tr>
-          <td><strong>Sprint 2</strong></td>
-          <td>Semaines 3 - 4</td>
-          <td>Module d'Importation Excel des Salles, Contrainte 1 Groupe = 1 Campus & Sanctuarisation Vacataires</td>
-          <td><span class="badge badge-green">Validé (100%)</span></td>
+          <td><strong>Humain</strong></td>
+          <td>Réticence du corps professoral à abandonner Excel</td>
+          <td>Moyenne</td>
+          <td>Interface Acadex ergonomique en 3 clics, sessions de formation express et outil d'import initial en 1 clic.</td>
         </tr>
         <tr>
-          <td><strong>Sprint 3</strong></td>
-          <td>Semaines 5 - 6</td>
-          <td>Écosystème Mobile Flutter (EDT, QR Code dynamique, Mode Hors-Ligne Hive)</td>
-          <td><span class="badge badge-gold">En Cours</span></td>
-        </tr>
-        <tr>
-          <td><strong>Sprint 4</strong></td>
-          <td>Semaines 7 - 8</td>
-          <td>Arbitrage des Jurys PFE à 4 Membres via Gemini 2.0 Flash & Suivi Hebdomadaire 30 min</td>
-          <td><span class="badge badge-slate">Planifié</span></td>
-        </tr>
-        <tr>
-          <td><strong>Sprint 5</strong></td>
-          <td>Semaines 9 - 10</td>
-          <td>Système d'Émargement, Calcul Automatisé du Seuil 20% & Notifications SMS/WhatsApp</td>
-          <td><span class="badge badge-slate">Planifié</span></td>
-        </tr>
-        <tr>
-          <td><strong>Sprint 6</strong></td>
-          <td>Semaines 11 - 12</td>
-          <td>Audits de Sécurité OWASP, Tests de Charge K6, Intégration Continue & Recette Finale</td>
-          <td><span class="badge badge-slate">Planifié</span></td>
+          <td><strong>Opérationnel</strong></td>
+          <td>Pic de charge massif lors des délibérations officielles</td>
+          <td>Élevée</td>
+          <td>Mise en cache mémoire Redis des requêtes de calcul et optimisation des index PostgreSQL.</td>
         </tr>
       </tbody>
     </table>
 
-    <h3>5.2 Matrice de Gestion des Risques Opérationnels</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Risque Identifié</th>
-          <th>Impact</th>
-          <th>Probabilité</th>
-          <th>Stratégie de Mitigation & Plan de Continuité</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Pannes Réseau sur Campus Targa/Centre</td>
-          <td>Élevé</td>
-          <td>Moyenne</td>
-          <td>Mode hors-ligne natif sur l'application mobile Flutter avec synchronisation asynchrone différée.</td>
-        </tr>
-        <tr>
-          <td>Indisponibilité API Google Gemini</td>
-          <td>Moyen</td>
-          <td>Faible</td>
-          <td>Fallback automatisé sur un modèle open-source local Ollama (Llama 3 8B) pré-embarqué sur serveur.</td>
-        </tr>
-        <tr>
-          <td>Résistance au Changement du Corps Professoral</td>
-          <td>Moyen</td>
-          <td>Moyenne</td>
-          <td>Interface Acadex ultra-intuitive, émargement en 2 clics et ateliers de formation interactifs.</td>
-        </tr>
-      </tbody>
-    </table>
+    <h2>10. Contraintes Légales et Protection des Données (Loi 09-08 CNDP)</h2>
+    <p>
+      Le traitement des données académiques, des notes et des transactions financières s'inscrit en conformité absolue avec la <strong>Loi marocaine n° 09-08</strong> relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel, régie par la <strong>CNDP</strong>.
+    </p>
+    <p>
+      Toutes les données sont hébergées exclusivement sur des serveurs souverains situés sur le territoire marocain. L'utilisation conjointe de moteurs d'IA locaux garantit qu'aucune donnée nominative d'étudiant ou de professeur n'est transmise à des tiers. Toute modification d'évaluation ou d'assiduité fait l'objet d'une consignation inaltérable dans la table <code>audit_logs</code> garantissant une traçabilité légale intégrale.
+    </p>
+  </div>
 
-    <!-- Cadre de validation et signatures -->
-    <div style="margin-top: 30px; border: 1px solid var(--slate-300); border-radius: 8px; padding: 18px; background: #FFFFFF;">
-      <div style="font-weight: 800; text-transform: uppercase; font-size: 11px; color: var(--emsi-green); margin-bottom: 15px; letter-spacing: 0.05em;">
-        Visas & Approbations Officielles du Cahier des Charges
-      </div>
+  <!-- =================================================================== -->
+  <!-- PAGE 11 : CONCLUSION GÉNÉRALE & PERSPECTIVES DU PROJET              -->
+  <!-- =================================================================== -->
+  <div class="page">
+    <h2>11. Conclusion Générale & Perspectives d'Évolution</h2>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 11.5px;">
-        <div style="border-right: 1px dashed var(--slate-200); padding-right: 15px;">
-          <strong style="display: block; margin-bottom: 4px;">Le Porteur de Projet</strong>
-          <span style="color: var(--slate-600); display: block;">Moad Moussaoui</span>
-          <span style="font-size: 10px; color: var(--slate-400);">Lead Architect & Scrum Master</span>
-          <div style="margin-top: 35px; border-top: 1px solid var(--slate-300); padding-top: 4px; font-size: 9.5px; color: var(--slate-400);">Signature & Date</div>
-        </div>
+    <p style="margin-top: 15px;">
+      Le présent cahier des charges formalise de façon exhaustive et rigoureuse l'ensemble des exigences fonctionnelles, techniques, ergonomiques, financières et réglementaires du progiciel <strong>EMSI Campus ERP (Univora)</strong>. En apportant une réponse technologique innovante aux problématiques logistiques de l'agglomération de Marrakech (campus de Targa et de Gueliz), le système résout définitivement les défis majeurs de l'institution :
+    </p>
+    <ul>
+      <li><strong>L'éradication complète des déplacements inter-campus</strong> grâce à la modélisation mathématique stricte de la contrainte <em>1 groupe = 1 campus fixe</em> au sein du solveur Google OR-Tools CP-SAT.</li>
+      <li><strong>La sanctuarisation contractuelle des créneaux des enseignants vacataires</strong> tout en optimisant le quota statutaire de 18 heures des enseignants permanents.</li>
+      <li><strong>L'adéquation physique des salles d'enseignement</strong>, orientant sans ambiguïté les séances de travaux pratiques vers les laboratoires informatiques (LI) équipés de PC performants ou vers les laboratoires réseaux (LR) dotés de baies Cisco.</li>
+      <li><strong>L'abandon définitif des tableurs Excel vulnérables</strong> au profit d'un environnement numérique infalsifiable respectant la note éliminatoire de 7.00/20.00 et le seuil d'assiduité critique des 20%.</li>
+      <li><strong>La modernisation du cycle de fin d'études (PFE)</strong> par l'arbitrage automatisé des jurys à 4 membres via l'intelligence artificielle et la traçabilité des séances de tutorat de 30 minutes.</li>
+    </ul>
 
-        <div style="border-right: 1px dashed var(--slate-200); padding-right: 15px;">
-          <strong style="display: block; margin-bottom: 4px;">L'Encadrant Pédagogique</strong>
-          <span style="color: var(--slate-600); display: block;">Pr. Amine</span>
-          <span style="font-size: 10px; color: var(--slate-400);">Référent Systèmes d'Information</span>
-          <div style="margin-top: 35px; border-top: 1px solid var(--slate-300); padding-top: 4px; font-size: 9.5px; color: var(--slate-400);">Visa & Mention "Lu et Approuvé"</div>
-        </div>
+    <h3 style="margin-top: 25px;">Perspectives d'Évolution Post-Lancement</h3>
+    <p>
+      Au-delà de la livraison du MVP pour les campus de Marrakech, la plateforme EMSI Campus ERP a été pensée dès sa conception pour soutenir les déploiements futurs suivants :
+    </p>
+    <ul>
+      <li><strong>Extension Multi-Villes :</strong> Déploiement multi-tenant à l'échelle des campus EMSI de Casablanca, Rabat et Fès avec mutualisation des solveurs d'optimisation.</li>
+      <li><strong>Intégration d'Agents IA Vocaux (Voice AI) :</strong> Interaction vocale en langage naturel pour la consultation d'emploi du temps et la déclaration rapide des devoirs par les enseignants.</li>
+      <li><strong>Passeport Numérique des Compétences :</strong> Émission automatique de diplômes et certifications académiques vérifiables par signature cryptographique sécurisée.</li>
+    </ul>
 
-        <div>
-          <strong style="display: block; margin-bottom: 4px;">L'Encadrante Pédagogique</strong>
-          <span style="color: var(--slate-600); display: block;">Mme Sbai</span>
-          <span style="font-size: 10px; color: var(--slate-400);">Référente Génie Logiciel & Qualité</span>
-          <div style="margin-top: 35px; border-top: 1px solid var(--slate-300); padding-top: 4px; font-size: 9.5px; color: var(--slate-400);">Visa & Mention "Lu et Approuvé"</div>
-        </div>
-      </div>
+    <div style="margin-top: 45px; border-top: 1.5px solid var(--slate-900); padding-top: 18px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--slate-600);">
+      <div>École Marocaine des Sciences de l'Ingénieur (EMSI)</div>
+      <div>Campus Targa & Gueliz • Marrakech</div>
+      <div>Projet d'Ingénierie Informatique & Réseaux (2DSI)</div>
     </div>
-
   </div>
 
 </body>
