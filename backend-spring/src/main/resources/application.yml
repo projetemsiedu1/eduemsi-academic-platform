@@ -4,34 +4,90 @@ server:
 spring:
   application:
     name: eduemsi-backend
+  profiles:
+    active: local
+
+---
+# ====================================================================
+# PROFIL : LOCAL (Laragon MySQL Port 3306)
+# ====================================================================
+spring:
+  config:
+    activate:
+      on-profile: local
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:eduemsi_db}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:mysql://localhost:3306/emsi_academic_db?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: ""
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: EmsiLaragonMySQLPool
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 30
+          order_inserts: true
+          order_updates: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration/mysql
+
+---
+# ====================================================================
+# PROFIL : PROD / DOCKER (PostgreSQL ou Cloud)
+# ====================================================================
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:emsi_academic_db}
+    username: ${DB_USER:emsi_admin}
+    password: ${DB_PASSWORD:emsi_secure_password_2026}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: EmsiPostgresProdPool
+      maximum-pool-size: 25
   jpa:
     hibernate:
       ddl-auto: validate
+    open-in-view: false
     show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
   flyway:
     enabled: true
     baseline-on-migrate: true
     locations: classpath:db/migration
 
-# Google Gemini Flash Free Tier Configuration
+---
+# ====================================================================
+# CONFIGURATION COMMUNE (IA, SÉCURITÉ, ACADÉMIQUE)
+# ====================================================================
 gemini:
   api:
     key: ${GEMINI_API_KEY:FREE_TIER_DEMO_KEY}
     url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
     fallback-enabled: true
 
-# EMSI Academic Constraints
 emsi:
+  academic:
+    annee-universitaire: 2026-2027
+    semestre-actif: S1
   constraints:
     morning-break-minutes: 15
     max-midday-gap-minutes: 90
-    max-absences-threshold-percent: 20
-    alert-absences-threshold-percent: 15
+    max-absences-threshold-percent: 20.0
+    alert-absences-threshold-percent: 15.0
+    seuil-eliminatoire-examen: 7.0
+    heures-contractuelles-permanent: 18
