@@ -78,6 +78,37 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("Inscription réussie d'un nouvel utilisateur")
+    void testRegister_Success() {
+        ma.emsi.academic.dto.auth.RegisterRequest request = ma.emsi.academic.dto.auth.RegisterRequest.builder()
+                .username("new_student")
+                .password("Pass@2026!")
+                .email("new.student@emsi.ma")
+                .nom("El Mansouri")
+                .prenom("Karim")
+                .role(RoleEnum.ROLE_ETUDIANT)
+                .build();
+
+        when(utilisateurRepository.existsByUsername("new_student")).thenReturn(false);
+        when(utilisateurRepository.existsByEmail("new.student@emsi.ma")).thenReturn(false);
+        when(passwordEncoder.encode("Pass@2026!")).thenReturn("hashed_pass");
+        when(utilisateurRepository.save(any(Utilisateur.class))).thenAnswer(invocation -> {
+            Utilisateur u = invocation.getArgument(0);
+            u.setId(99L);
+            return u;
+        });
+        when(jwtProperties.getExpirationMs()).thenReturn(86400000L);
+        when(tokenProvider.generateToken(any(CustomUserDetails.class))).thenReturn("jwt.token.registered");
+
+        LoginResponse response = authService.register(request);
+
+        assertNotNull(response);
+        assertEquals("jwt.token.registered", response.getAccessToken());
+        assertEquals("new_student", response.getUsername());
+        assertEquals("ROLE_ETUDIANT", response.getRole());
+    }
+
+    @Test
     @DisplayName("Authentification réussie retourne le token JWT et les informations de profil")
     void testLogin_Success() {
         LoginRequest request = new LoginRequest("resp_planning", "Emsi@2026!");

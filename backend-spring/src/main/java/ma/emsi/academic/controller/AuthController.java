@@ -32,6 +32,12 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @PostMapping("/register")
+    @Operation(summary = "Inscription d'un nouvel acteur (étudiant, enseignant, administratif) et obtention du JWT")
+    public ResponseEntity<LoginResponse> register(@Valid @RequestBody ma.emsi.academic.dto.auth.RegisterRequest request) {
+        return ResponseEntity.ok(authService.register(request));
+    }
+
     @GetMapping("/me")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Obtenir les informations du profil connecté")

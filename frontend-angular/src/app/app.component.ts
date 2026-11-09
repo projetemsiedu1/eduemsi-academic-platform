@@ -1,16 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterModule, HeaderComponent, SidebarComponent],
   template: `
-    <div class="h-screen flex overflow-hidden font-sans text-slate-800 bg-[#F4F6F9]">
-      <!-- Barre Latérale Navigation Style Acadex -->
+    <!-- Vue Plein Écran pour Login / Register -->
+    <div *ngIf="isAuthPage()" class="min-h-screen bg-slate-900">
+      <router-outlet></router-outlet>
+    </div>
+
+    <!-- Vue Espace de Travail pour Utilisateur Connecté -->
+    <div *ngIf="!isAuthPage()" class="h-screen flex overflow-hidden font-sans text-slate-800 bg-[#F4F6F9]">
+      <!-- Barre Latérale Navigation Rôle-Dédiée -->
       <app-sidebar></app-sidebar>
 
       <!-- Zone Principale -->
@@ -24,4 +31,12 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
     </div>
   `
 })
-export class AppComponent {}
+export class AppComponent {
+  readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  isAuthPage(): boolean {
+    const url = this.router.url;
+    return url === '/login' || url === '/register' || !this.authService.isAuthenticated();
+  }
+}

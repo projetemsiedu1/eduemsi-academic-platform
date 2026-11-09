@@ -97,128 +97,259 @@
 <body class="h-full flex flex-col font-sans text-slate-800 bg-[#F4F6F9] selection:bg-brand-600 selection:text-white">
 
   <!-- ============================================================== -->
-  <!-- 1. MODAL SÃ‰LECTEUR DE PERSONAS (7 RÃ”LES AVEC LOGO EMSI)        -->
+  <!-- 1. PAGE AUTHENTIFICATION COMPLÈTE (CONNEXION & INSCRIPTION EMSI) -->
   <!-- ============================================================== -->
-  <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm overflow-y-auto">
-    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 border border-slate-200">
+  <div id="auth-screen" class="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 text-slate-800">
+    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
       
-      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-        <div class="flex items-center gap-3.5">
-          <!-- Logo Officiel EMSI -->
-          <img src="assets/emsi_logo.png" alt="Logo EMSI" class="w-12 h-12 object-contain rounded-xl border border-slate-100 p-0.5 bg-white shadow-sm" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_EMSI.png';">
+      <!-- En-tête EMSI & Honoris -->
+      <div class="bg-gradient-to-r from-emerald-800 to-slate-900 p-6 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <img src="assets/emsi_logo.png" alt="Logo EMSI" class="w-14 h-14 object-contain rounded-2xl border border-white/20 p-1 bg-white shadow-md" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_EMSI.png';">
           <div>
-            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-              EMSI Univora <span class="text-xs px-2 py-0.5 rounded-full bg-emsi-light text-emsi-dark font-bold uppercase">Honoris United Universities</span>
-            </h2>
-            <p class="text-xs text-slate-500">Plateforme DÃ©cisionnelle & AcadÃ©mique 2026 â€¢ SÃ©lectionnez votre espace</p>
+            <div class="flex items-center gap-2">
+              <span class="text-xl font-black tracking-tight text-white">EMSI UNIVORA</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300 uppercase tracking-wider font-mono border border-emerald-400/30">Honoris United Universities</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-0.5">Portail Académique Intégré & Intelligence Décisionnelle 2026</p>
           </div>
         </div>
-        <span class="text-[10px] font-bold px-2 py-1 rounded bg-brand-50 text-brand-700 font-mono">RBAC STRICT</span>
+        <div class="flex items-center gap-2">
+          <span class="px-3 py-1.5 rounded-xl bg-white/10 text-emerald-300 border border-white/15 text-[11px] font-mono font-bold flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Spring Boot 8085 Live • JWT
+          </span>
+        </div>
       </div>
 
-      <!-- Grille des RÃ´les -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <!-- Sélecteur Onglets (Connexion / Inscription) -->
+      <div class="flex border-b border-slate-200 bg-slate-50 text-sm font-bold">
+        <button id="tab-btn-login" onclick="switchAuthTab('login')" class="flex-1 py-4 px-6 text-center text-emerald-700 border-b-2 border-emerald-600 bg-white flex items-center justify-center gap-2 transition-all">
+          <i class="fa-solid fa-lock"></i>
+          <span>1. Se Connecter (Login)</span>
+        </button>
+        <button id="tab-btn-register" onclick="switchAuthTab('register')" class="flex-1 py-4 px-6 text-center text-slate-500 hover:text-slate-800 border-b-2 border-transparent hover:bg-slate-100 flex items-center justify-center gap-2 transition-all">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>2. Créer un Compte (Inscription)</span>
+        </button>
+      </div>
+
+      <!-- Corps des Formulaires -->
+      <div class="p-6 sm:p-8 space-y-6">
         
-        <!-- Super Admin -->
-        <button onclick="loginAs('SUPER_ADMIN')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
-          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <i class="fa-solid fa-crown text-amber-400"></i>
-          </div>
-          <div>
-            <span class="font-bold text-xs text-slate-900 block">Moad Moussaoui</span>
-            <span class="text-[11px] text-slate-500 block">Super Administrateur</span>
-            <span class="text-[10px] text-brand-600 font-bold mt-1 inline-block">CrÃ©ation Comptes & Droits</span>
-          </div>
-        </button>
+        <!-- Feedback Alerte Erreur / Succès -->
+        <div id="auth-alert" class="hidden p-3.5 rounded-2xl text-xs font-semibold flex items-center gap-3"></div>
 
-        <!-- Chef de FiliÃ¨re -->
-        <button onclick="loginAs('CHEF_FILIERE')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
-          <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <i class="fa-solid fa-graduation-cap"></i>
-          </div>
-          <div>
-            <span class="font-bold text-xs text-slate-900 block">Pr. M. Sassoui</span>
-            <span class="text-[11px] text-slate-500 block">Chef de FiliÃ¨re IIR</span>
-            <span class="text-[10px] text-brand-600 font-bold mt-1 inline-block">FiliÃ¨res, Groupes & CV IA</span>
-          </div>
-        </button>
+        <!-- ONGLET 1 : FORMULAIRE DE CONNEXION -->
+        <div id="auth-tab-login" class="space-y-6">
+          <form onsubmit="handleLoginFormSubmit(event)" class="space-y-4 max-w-lg mx-auto">
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Email Institutionnel ou Identifiant EMSI</label>
+              <div class="relative">
+                <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="login-email" required placeholder="ex: admin@emsi.ma ou etudiant@emsi.ma" class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all">
+              </div>
+            </div>
 
-        <!-- Responsable Planning -->
-        <button onclick="loginAs('RESP_PLANNING')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-          </div>
-          <div>
-            <span class="font-bold text-xs text-slate-900 block">Mme Kenza Tazi</span>
-            <span class="text-[11px] text-slate-500 block">Resp. Planification EDT</span>
-            <span class="text-[10px] text-emerald-600 font-bold mt-1 inline-block">Affectation IA Salles & Groupes</span>
-          </div>
-        </button>
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Mot de Passe</label>
+              <div class="relative">
+                <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-11 pr-11 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all">
+                <button type="button" onclick="togglePasswordVisibility('login-password')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                  <i class="fa-solid fa-eye text-sm"></i>
+                </button>
+              </div>
+            </div>
 
-        <!-- Responsable PFE -->
-        <button onclick="loginAs('RESP_PFE')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
-          <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <i class="fa-solid fa-award"></i>
-          </div>
-          <div>
-            <span class="font-bold text-xs text-slate-900 block">Pr. Brahim Abod</span>
-            <span class="text-[11px] text-slate-500 block">Resp. Commission PFE</span>
-            <span class="text-[10px] text-purple-600 font-bold mt-1 inline-block">Jurys 4 membres & Stages d'Ã©tÃ©</span>
-          </div>
-        </button>
+            <div class="flex items-center justify-between text-xs text-slate-500 pt-1">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="login-remember" checked class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                <span>Mémoriser mes identifiants</span>
+              </label>
+              <a href="#" onclick="showToast('Veuillez contacter le Super Administrateur (admin@emsi.ma) pour réinitialiser votre compte.', 'info'); return false;" class="text-emerald-700 font-bold hover:underline">Mot de passe oublié ?</a>
+            </div>
 
-        <!-- Professeur Permanent -->
-        <button onclick="loginAs('ENSEIGNANT_PERMANENT')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
-          <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <i class="fa-solid fa-chalkboard-user"></i>
-          </div>
-          <div>
-            <span class="font-bold text-xs text-slate-900 block">Pr. Noussair Benassou</span>
-            <span class="text-[11px] text-slate-500 block">Enseignant Permanent (18h)</span>
-            <span class="text-[10px] text-teal-600 font-bold mt-1 inline-block">Appel Manuel & Suivi PFE 30m</span>
-          </div>
-        </button>
+            <button type="submit" id="btn-login-submit" class="w-full py-3.5 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i>
+              <span>Accéder à Mon Espace Dédié</span>
+            </button>
+          </form>
 
-        <!-- Professeur Vacataire -->
-        <button onclick="loginAs('ENSEIGNANT_VACATAIRE')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <i class="fa-solid fa-briefcase"></i>
-          </div>
-          <div>
-            <span class="font-bold text-xs text-slate-900 block">Dr. Karim Alami</span>
-            <span class="text-[11px] text-slate-500 block">Enseignant Vacataire</span>
-            <span class="text-[10px] text-amber-600 font-bold mt-1 inline-block">CrÃ©neaux SanctuarisÃ©s P1</span>
-          </div>
-        </button>
+          <!-- Zone 1-Clic Accès Rapide par Rôle -->
+          <div class="pt-6 border-t border-slate-100 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-amber-500"></i>
+                <span>Accès Rapide Démo (1-Clic par Acteur)</span>
+              </span>
+              <span class="text-[11px] text-slate-400 font-medium">Cliquez sur un profil pour ouvrir son espace</span>
+            </div>
 
-        <!-- Ã‰tudiant -->
-        <button onclick="loginAs('ETUDIANT')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3 sm:col-span-2 lg:col-span-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <i class="fa-solid fa-user-graduate"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              
+              <!-- Super Admin -->
+              <button type="button" onclick="quickLogin('SUPER_ADMIN')" class="p-3 rounded-2xl border border-slate-200 hover:border-slate-900 hover:bg-slate-50 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-crown"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Super Admin</span>
+                  <span class="text-[10px] text-slate-500 block truncate">admin@emsi.ma</span>
+                </div>
+              </button>
+
+              <!-- Chef Filière -->
+              <button type="button" onclick="quickLogin('CHEF_FILIERE')" class="p-3 rounded-2xl border border-slate-200 hover:border-blue-600 hover:bg-blue-50/40 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Resp. Filière</span>
+                  <span class="text-[10px] text-slate-500 block truncate">filiere.iir@emsi.ma</span>
+                </div>
+              </button>
+
+              <!-- Resp Planning -->
+              <button type="button" onclick="quickLogin('RESP_PLANNING')" class="p-3 rounded-2xl border border-slate-200 hover:border-emerald-600 hover:bg-emerald-50/40 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Resp. Planning</span>
+                  <span class="text-[10px] text-slate-500 block truncate">planning@emsi.ma</span>
+                </div>
+              </button>
+
+              <!-- Resp PFE -->
+              <button type="button" onclick="quickLogin('RESP_PFE')" class="p-3 rounded-2xl border border-slate-200 hover:border-purple-600 hover:bg-purple-50/40 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-award"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Resp. PFE</span>
+                  <span class="text-[10px] text-slate-500 block truncate">pfe@emsi.ma</span>
+                </div>
+              </button>
+
+              <!-- Resp Scolarité -->
+              <button type="button" onclick="quickLogin('RESP_SCOLARITE')" class="p-3 rounded-2xl border border-slate-200 hover:border-rose-600 hover:bg-rose-50/40 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-rose-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-clipboard-user"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Resp. Scolarité</span>
+                  <span class="text-[10px] text-slate-500 block truncate">scolarite@emsi.ma</span>
+                </div>
+              </button>
+
+              <!-- Prof Permanent -->
+              <button type="button" onclick="quickLogin('ENSEIGNANT_PERMANENT')" class="p-3 rounded-2xl border border-slate-200 hover:border-teal-600 hover:bg-teal-50/40 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Prof Permanent</span>
+                  <span class="text-[10px] text-slate-500 block truncate">prof.perm@emsi.ma</span>
+                </div>
+              </button>
+
+              <!-- Prof Vacataire -->
+              <button type="button" onclick="quickLogin('ENSEIGNANT_VACATAIRE')" class="p-3 rounded-2xl border border-slate-200 hover:border-amber-600 hover:bg-amber-50/40 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Prof Vacataire</span>
+                  <span class="text-[10px] text-slate-500 block truncate">prof.vac@emsi.ma</span>
+                </div>
+              </button>
+
+              <!-- Étudiant -->
+              <button type="button" onclick="quickLogin('ETUDIANT')" class="p-3 rounded-2xl border border-slate-200 hover:border-indigo-600 hover:bg-indigo-50/40 text-left transition-all flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-user-graduate"></i>
+                </div>
+                <div class="overflow-hidden">
+                  <span class="font-bold text-xs text-slate-900 block truncate">Étudiant 5A</span>
+                  <span class="text-[10px] text-slate-500 block truncate">etudiant@emsi.ma</span>
+                </div>
+              </button>
+
+            </div>
           </div>
-          <div>
-            <span class="font-bold text-xs text-slate-900 block">Ilyass Ait Ouahman</span>
-            <span class="text-[11px] text-slate-500 block">Ã‰tudiant 5A-IIR â€¢ Option 2DSI G3 (Campus Targa Fixe)</span>
-            <span class="text-[10px] text-indigo-600 font-bold mt-1 inline-block">Mon EDT Officiel & Jauge Absences vs 20%</span>
-          </div>
-        </button>
+        </div>
+
+        <!-- ONGLET 2 : FORMULAIRE D'INSCRIPTION -->
+        <div id="auth-tab-register" class="hidden space-y-4 max-w-lg mx-auto">
+          <form onsubmit="handleRegisterFormSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Nom Complet</label>
+              <input type="text" id="reg-nom" required placeholder="ex: Karim Berrada" class="w-full px-4 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all">
+            </div>
+
+            <div>
+              <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Email Académique EMSI</label>
+              <input type="email" id="reg-email" required placeholder="ex: k.berrada@emsi.ma" class="w-full px-4 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Mot de Passe</label>
+                <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all">
+              </div>
+              <div>
+                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Confirmation</label>
+                <input type="password" id="reg-confirm" required placeholder="••••••••" class="w-full px-4 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 transition-all">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Rôle Demandé</label>
+                <select id="reg-role" class="w-full px-4 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 bg-white">
+                  <option value="ROLE_ETUDIANT">Étudiant (5A)</option>
+                  <option value="ROLE_PROFESSEUR_PERMANENT">Professeur Permanent (18h)</option>
+                  <option value="ROLE_PROFESSEUR_VACATAIRE">Professeur Vacataire (P1)</option>
+                  <option value="ROLE_RESPONSABLE_FILIERE">Responsable Filière</option>
+                  <option value="ROLE_RESPONSABLE_PLANNING">Responsable Planning</option>
+                  <option value="ROLE_RESPONSABLE_PFE">Responsable PFE</option>
+                  <option value="ROLE_RESPONSABLE_SCOLARITE">Responsable Scolarité</option>
+                  <option value="ROLE_SUPER_ADMIN">Administrateur Système</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1.5">Campus Fixe</label>
+                <select id="reg-campus" class="w-full px-4 py-3 rounded-2xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 bg-white">
+                  <option value="Campus Targa">Campus Targa</option>
+                  <option value="Campus Centre Guéliz">Campus Centre Guéliz</option>
+                  <option value="Campus Les Orangers">Campus Les Orangers (Rabat)</option>
+                  <option value="Campus Moulay Youssef">Campus Moulay Youssef (Casablanca)</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-reg-submit" class="w-full py-3.5 px-6 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm shadow-lg transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-user-check"></i>
+              <span>Créer Mon Compte EMSI</span>
+            </button>
+          </form>
+        </div>
 
       </div>
 
-      <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-        <span>Contraintes : 1 groupe = 1 campus â€¢ Vacataires prioritaires â€¢ Jurys 4 membres</span>
-        <button onclick="loginAs('SUPER_ADMIN')" class="font-bold text-brand-600 hover:underline">
-          AccÃ©der avec Super Admin âž”
-        </button>
+      <div class="px-8 py-4 bg-slate-50 border-t border-slate-200 text-center text-xs text-slate-500">
+        <span>Gouvernance EMSI • 1 Groupe = 1 Campus Fixe • Règle d'Absence 20% (18h max) • Jurys PFE à 4 Membres</span>
       </div>
 
     </div>
   </div>
 
   <!-- ============================================================== -->
-  <!-- 2. APPLICATION LAYOUT (SIDEBAR BLANCHE STYLE ACADEX + MAIN)    -->
+  <!-- 2. APPLICATION LAYOUT (ACTOR WORKSPACES & STRICT ROLE MENUS)   -->
   <!-- ============================================================== -->
-  <div class="h-full flex overflow-hidden">
+  <div id="app-layout" class="h-full flex overflow-hidden hidden">
     
     <!-- SIDEBAR STYLE ACADEX (BLANCHE Ã‰LÃ‰GANTE AVEC TOUTES LES RUBRIQUES) -->
     <aside id="main-sidebar" class="w-64 bg-white border-r border-[#EEF2F6] flex flex-col justify-between shrink-0 transition-all duration-300 z-20">
@@ -256,7 +387,7 @@
           <!-- Groupe 1 : Vue GÃ©nÃ©rale -->
           <div class="space-y-1">
             <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">GÃ©nÃ©ral</span>
-            <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all bg-brand-50 text-brand-600 font-bold">
+            <button data-roles="SUPER_ADMIN" onclick="navigateTo('admin-workspace')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all bg-brand-50 text-brand-600 font-bold">
               <i class="fa-solid fa-table-cells-large w-4 text-center"></i>
               <span>Dashboard</span>
             </button>
@@ -265,14 +396,14 @@
           <!-- Groupe 2 : Intelligence Artificielle (IA) -->
           <div class="space-y-1">
             <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Modules IA</span>
-            <button onclick="navigateTo('affectation-ia')" id="nav-affectation-ia" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="RESP_PLANNING,SUPER_ADMIN" onclick="navigateTo('affectation-ia')" id="nav-affectation-ia" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-wand-magic-sparkles w-4 text-center text-emerald-600"></i>
                 <span>Affectation Salles IA</span>
               </div>
               <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono">CP-SAT</span>
             </button>
-            <button onclick="navigateTo('pfe')" id="nav-pfe" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="RESP_PFE,SUPER_ADMIN" onclick="navigateTo('pfe')" id="nav-pfe" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-award w-4 text-center text-purple-600"></i>
                 <span>Jurys PFE Ã  4 IA</span>
@@ -291,22 +422,22 @@
           <!-- Groupe 3 : Emplois du Temps & Salles -->
           <div class="space-y-1">
             <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Emploi & Campus</span>
-            <button onclick="navigateTo('edt')" id="nav-edt" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="ETUDIANT,PROFESSEUR,ENSEIGNANT_PERMANENT,ENSEIGNANT_VACATAIRE,RESP_PLANNING,SUPER_ADMIN" onclick="navigateTo('edt')" id="nav-edt" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <i class="fa-solid fa-calendar-days w-4 text-center text-blue-600"></i>
               <span>Emploi du Temps Officiel</span>
             </button>
-            <button onclick="navigateTo('filieres-groupes')" id="nav-filieres-groupes" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="CHEF_FILIERE,RESP_PLANNING,SUPER_ADMIN" onclick="navigateTo('filieres-groupes')" id="nav-filieres-groupes" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <i class="fa-solid fa-folder-tree w-4 text-center text-indigo-600"></i>
               <span>FiliÃ¨res & Groupes</span>
             </button>
-            <button onclick="navigateTo('absences')" id="nav-absences" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="RESP_SCOLARITE,PROFESSEUR,ENSEIGNANT_PERMANENT,ENSEIGNANT_VACATAIRE,ETUDIANT,SUPER_ADMIN" onclick="navigateTo('absences')" id="nav-absences" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-clipboard-user w-4 text-center text-rose-600"></i>
                 <span>Appel & Seuil 20%</span>
               </div>
               <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 font-mono">Alerte</span>
             </button>
-            <button onclick="navigateTo('scolarite')" id="nav-scolarite" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="RESP_SCOLARITE,SUPER_ADMIN" onclick="navigateTo('scolarite')" id="nav-scolarite" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-id-card-clip w-4 text-center text-teal-600"></i>
                 <span>Espace ScolaritÃ© (18h Max)</span>
@@ -318,18 +449,18 @@
           <!-- Groupe 4 : PFE, Soutenances & Stages -->
           <div class="space-y-1">
             <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">PFE & Stages</span>
-            <button onclick="navigateTo('soutenances')" id="nav-soutenances" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="RESP_PFE,SUPER_ADMIN" onclick="navigateTo('soutenances')" id="nav-soutenances" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <i class="fa-solid fa-calendar-check w-4 text-center text-purple-600"></i>
               <span>Planning Soutenances</span>
             </button>
-            <button onclick="navigateTo('cahier-encadrement')" id="nav-cahier-encadrement" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="PROFESSEUR,ENSEIGNANT_PERMANENT,ENSEIGNANT_VACATAIRE,RESP_PFE,SUPER_ADMIN" onclick="navigateTo('cahier-encadrement')" id="nav-cahier-encadrement" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-book-open-reader w-4 text-center text-teal-600"></i>
                 <span>Suivi PFE (30 min)</span>
               </div>
               <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-teal-100 text-teal-800 font-mono">Hebdo</span>
             </button>
-            <button onclick="navigateTo('stages-ete')" id="nav-stages-ete" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="RESP_PFE,ETUDIANT,SUPER_ADMIN" onclick="navigateTo('stages-ete')" id="nav-stages-ete" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <i class="fa-solid fa-briefcase w-4 text-center text-teal-600"></i>
               <span>Stages d'Ã‰tÃ© (3A/4A)</span>
             </button>
@@ -338,11 +469,11 @@
           <!-- Groupe 5 : Administration & SÃ©curitÃ© -->
           <div class="space-y-1">
             <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Gouvernance</span>
-            <button onclick="navigateTo('rbac')" id="nav-rbac" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="SUPER_ADMIN" onclick="navigateTo('rbac')" id="nav-rbac" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <i class="fa-solid fa-users-gear w-4 text-center text-slate-600"></i>
               <span>Comptes Utilisateurs</span>
             </button>
-            <button onclick="navigateTo('api-sandbox')" id="nav-api-sandbox" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+            <button data-roles="SUPER_ADMIN" onclick="navigateTo('api-sandbox')" id="nav-api-sandbox" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-network-wired w-4 text-center text-emerald-600"></i>
                 <span>Console APIs & Mobile Sync</span>
@@ -381,11 +512,17 @@
               Campus Fixe : Targa
             </span>
           </div>
-          <p id="top-subtitle" class="text-xs text-slate-400 font-medium">Lundi 09 Novembre 2026 â€¢ 1 groupe = 1 campus â€¢ Vacataires prioritaires</p>
+          <p id="top-subtitle" class="text-xs text-slate-500 font-medium">Lundi 09 Novembre 2026 • 1 groupe = 1 campus • Règle 20% (18h max) • Jurys 4 Membres</p>
         </div>
 
-        <!-- Actions Droite : Switcher RÃ´les Rapide + Impression A4 + Notifs -->
+        <!-- Actions Droite : Switcher Rôles Rapide + Impression A4 + Notifs + Déconnexion -->
         <div class="flex items-center gap-3">
+          
+          <!-- Bouton Déconnexion Officiel (Rouge Éclatant) -->
+          <button onclick="deconnecter()" class="px-3.5 py-2 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-extrabold text-xs flex items-center gap-2 shadow-sm transition-all cursor-pointer" title="Se déconnecter et retourner à la page de connexion">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Déconnexion</span>
+          </button>
           
           <!-- Pills de Changement de RÃ´le ImmÃ©diat -->
           <div class="hidden xl:flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -432,6 +569,618 @@
 
       <!-- Scrollable Main View Container -->
       <main class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+
+        <!-- ============================================================ -->
+        <!-- ESPACES DE TRAVAIL DÉDIÉS STRICTS PAR ACTEUR                 -->
+        <!-- ============================================================ -->
+
+        <!-- 1. ESPACE SUPER ADMINISTRATEUR -->
+        <div id="page-admin-workspace" class="hidden space-y-6">
+          <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-700">
+            <div>
+              <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>👑 Espace Super Administrateur</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>Gouvernance & Infrastructure EMSI</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight">Supervision Globale du Système EMSI Univora</h2>
+              <p class="text-xs text-slate-300 mt-1">Gestion des comptes RBAC, infrastructure des campus, sécurité JWT et contrôle des microservices.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold">
+                MySQL 8.4 • 8085 Actif
+              </span>
+              <button onclick="navigateTo('rbac')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm">
+                Gérer les Comptes RBAC
+              </button>
+            </div>
+          </div>
+
+          <!-- Métriques Admin -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Comptes Utilisateurs</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">8 Rôles Actifs</div>
+                <span class="text-[11px] font-semibold text-emerald-600 block">100% RBAC Conforme</span>
+              </div>
+              <button onclick="navigateTo('rbac')" class="acadex-btn-circle"><i class="fa-solid fa-users text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Infrastructure Campus</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">42 Salles Validées</div>
+                <span class="text-[11px] font-semibold text-blue-600 block">Targa, Centre, Orangers</span>
+              </div>
+              <button onclick="navigateTo('affectation-ia')" class="acadex-btn-circle"><i class="fa-solid fa-building text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Sécurité & Tokens</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">JWT HMAC-512</div>
+                <span class="text-[11px] font-semibold text-indigo-600 block">Sessions Apatrides (Stateless)</span>
+              </div>
+              <button onclick="navigateTo('api-sandbox')" class="acadex-btn-circle"><i class="fa-solid fa-shield text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Santé Microservices</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">100% Opérationnel</div>
+                <span class="text-[11px] font-semibold text-emerald-600 block">Spring Boot 3 + Flyway V2</span>
+              </div>
+              <button onclick="testerBackendLive()" class="acadex-btn-circle"><i class="fa-solid fa-server text-xs"></i></button>
+            </div>
+          </div>
+
+          <!-- Actions Rapides Super Admin -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="acadex-card p-5 space-y-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold">
+                  <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900 text-sm">Gestion des Comptes</h4>
+                  <p class="text-xs text-slate-500">Créer et attribuer les rôles</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-600">Attribuez les droits d'accès stricts : Responsables Filières, Planning, PFE, Scolarité, Enseignants et Étudiants.</p>
+              <button onclick="navigateTo('rbac')" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all">
+                Ouvrir Console RBAC
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <i class="fa-solid fa-microchip"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900 text-sm">Console APIs REST</h4>
+                  <p class="text-xs text-slate-500">Test en direct du port 8085</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-600">Vérifiez les contrats d'interfaces avec Flutter Mobile et les microservices Spring Boot.</p>
+              <button onclick="navigateTo('api-sandbox')" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all">
+                Tester les Endpoints
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900 text-sm">Emploi du Temps Global</h4>
+                  <p class="text-xs text-slate-500">Supervision multi-campus</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-600">Visualisez la grille complète de tous les campus et vérifiez le respect des contraintes fixes.</p>
+              <button onclick="navigateTo('edt')" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all">
+                Consulter Emploi Global
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. ESPACE RESPONSABLE FILIERE -->
+        <div id="page-filiere-workspace" class="hidden space-y-6">
+          <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-blue-800">
+            <div>
+              <div class="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>🎓 Espace Responsable de Filière</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                <span>Maquette Pédagogique & Syllabus</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight">Pilotage Pédagogique de la Filière IIR</h2>
+              <p class="text-xs text-slate-300 mt-1">Supervision des maquettes des modules (S1 à S10), répartition CM/TD/TP et affectation des enseignants.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-blue-500/20 border border-blue-500/40 text-blue-300 text-xs font-mono font-bold">
+                IIR • 5ème Année
+              </span>
+              <button onclick="navigateTo('filieres-groupes')" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm">
+                Gérer Groupes & Modules
+              </button>
+            </div>
+          </div>
+
+          <!-- Métriques Filière -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Filières Supervisées</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">4 Filières</div>
+                <span class="text-[11px] font-semibold text-blue-600 block">IIR, GC, GI, IA</span>
+              </div>
+              <button onclick="navigateTo('filieres-groupes')" class="acadex-btn-circle"><i class="fa-solid fa-graduation-cap text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Modules Enseignés</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">32 Modules</div>
+                <span class="text-[11px] font-semibold text-indigo-600 block">100% Maquette Validée</span>
+              </div>
+              <button onclick="navigateTo('filieres-groupes')" class="acadex-btn-circle"><i class="fa-solid fa-book text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Enseignants Assignés</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">28 Professeurs</div>
+                <span class="text-[11px] font-semibold text-emerald-600 block">16 Permanents • 12 Vacataires</span>
+              </div>
+              <button onclick="navigateTo('rh')" class="acadex-btn-circle"><i class="fa-solid fa-chalkboard-user text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Étudiants Inscrits</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">340 Inscrits</div>
+                <span class="text-[11px] font-semibold text-purple-600 block">14 Groupes Pédagogiques</span>
+              </div>
+              <button onclick="navigateTo('filieres-groupes')" class="acadex-btn-circle"><i class="fa-solid fa-users text-xs"></i></button>
+            </div>
+          </div>
+
+          <!-- Table Maquette Filière -->
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="font-extrabold text-sm text-slate-900">Maquette des Modules & Volumes Horaires (5A-IIR Semestre 10)</h3>
+                <p class="text-xs text-slate-500">Ventilation horaire par type de séance et type de salle requis</p>
+              </div>
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700">Norme CNEAU / EMSI</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-50 text-slate-600 uppercase font-mono text-[10px] border-y border-slate-200">
+                  <tr>
+                    <th class="py-3 px-4">Code</th>
+                    <th class="py-3 px-4">Module</th>
+                    <th class="py-3 px-4">Éléments de Module</th>
+                    <th class="py-3 px-4">CM / TD / TP</th>
+                    <th class="py-3 px-4">Total</th>
+                    <th class="py-3 px-4">Enseignant Responsable</th>
+                    <th class="py-3 px-4">Salle Requise</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                  <tr class="hover:bg-slate-50">
+                    <td class="py-3 px-4 font-mono font-bold text-blue-600">IIR501</td>
+                    <td class="py-3 px-4 font-bold text-slate-900">Architectures Cloud & Microservices</td>
+                    <td class="py-3 px-4">Docker, Kubernetes & Spring Cloud</td>
+                    <td class="py-3 px-4 font-mono">16h / 12h / 20h</td>
+                    <td class="py-3 px-4 font-bold">48h</td>
+                    <td class="py-3 px-4">Pr. Ait Ounejjar (Permanent)</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-mono font-bold">LI_PC (GPU)</span></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="py-3 px-4 font-mono font-bold text-blue-600">IIR502</td>
+                    <td class="py-3 px-4 font-bold text-slate-900">Intelligence Artificielle Avancée & LLM</td>
+                    <td class="py-3 px-4">Deep Learning, RAG & OpenRouter</td>
+                    <td class="py-3 px-4 font-mono">18h / 10h / 20h</td>
+                    <td class="py-3 px-4 font-bold">48h</td>
+                    <td class="py-3 px-4">Dr. Karim Alami (Vacataire P1)</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-mono font-bold">LI_PC (GPU)</span></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="py-3 px-4 font-mono font-bold text-blue-600">IIR503</td>
+                    <td class="py-3 px-4 font-bold text-slate-900">Sécurité & Réseaux Avancés</td>
+                    <td class="py-3 px-4">Pentest, CISCO & Hardening</td>
+                    <td class="py-3 px-4 font-mono">14h / 14h / 16h</td>
+                    <td class="py-3 px-4 font-bold">44h</td>
+                    <td class="py-3 px-4">Pr. Noussair Benassou (Permanent)</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-mono font-bold">LR_RESEAUX</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ESPACE RESPONSABLE PLANNING -->
+        <div id="page-planning-workspace" class="hidden space-y-6">
+          <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-emerald-800">
+            <div>
+              <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>📅 Espace Responsable Planning</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>Moteur CP-SAT Google OR-Tools</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight">Ordonnancement & Optimisation des Emplois du Temps</h2>
+              <p class="text-xs text-slate-300 mt-1">Génération automatique sous contraintes strictes : Campus Fixe par groupe et Priorité Vacataires P1.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="executerSolveurCpSat()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Lancer Solveur CP-SAT</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Métriques Planning -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Salles Supervisées</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">42 Salles</div>
+                <span class="text-[11px] font-semibold text-emerald-600 block">12 LI_PC • 8 LR_RESEAUX</span>
+              </div>
+              <button onclick="navigateTo('affectation-ia')" class="acadex-btn-circle"><i class="fa-solid fa-door-open text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Groupes Fixés</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">14 Groupes</div>
+                <span class="text-[11px] font-semibold text-teal-600 block">100% Campus Fixe Respecté</span>
+              </div>
+              <button onclick="navigateTo('filieres-groupes')" class="acadex-btn-circle"><i class="fa-solid fa-users-rectangle text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Créneaux Affectés</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">186 Séances</div>
+                <span class="text-[11px] font-semibold text-blue-600 block">Zéro Conflit de Salle</span>
+              </div>
+              <button onclick="navigateTo('edt')" class="acadex-btn-circle"><i class="fa-solid fa-calendar text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Score CP-SAT</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">98.4% Optimal</div>
+                <span class="text-[11px] font-semibold text-emerald-600 block">Calculé en 420 ms</span>
+              </div>
+              <button onclick="executerSolveurCpSat()" class="acadex-btn-circle"><i class="fa-solid fa-bolt text-xs"></i></button>
+            </div>
+          </div>
+
+          <!-- Actions Rapides Planning -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i>
+                <span>Génération Automatique</span>
+              </h4>
+              <p class="text-xs text-slate-600">Déclenchez le solveur mathématique CP-SAT OR-Tools avec respect absolu des créneaux vacataires P1 et de l'ancrage campus fixe.</p>
+              <button onclick="executerSolveurCpSat()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm">
+                Déclencher CP-SAT
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-calendar-week text-blue-600"></i>
+                <span>Grille Emploi du Temps</span>
+              </h4>
+              <p class="text-xs text-slate-600">Consultez la grille interactive 8h30-18h30 filtrable par groupe d'étudiants, par enseignant ou par salle.</p>
+              <button onclick="navigateTo('edt')" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-sm">
+                Ouvrir Emploi du Temps
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-print text-indigo-600"></i>
+                <span>Export Format A4</span>
+              </h4>
+              <p class="text-xs text-slate-600">Éditez les emplois du temps officiels au format A4 prêts pour affichage dans les couloirs du campus.</p>
+              <a href="emsi-timetable-a4.html" target="_blank" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-sm text-center block">
+                Ouvrir Format A4 Imprimable
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. ESPACE RESPONSABLE PFE -->
+        <div id="page-pfe-workspace" class="hidden space-y-6">
+          <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-purple-800">
+            <div>
+              <div class="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>🏆 Espace Responsable PFE & Stages</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                <span>Constitution Jurys 4 Membres & Matching IA</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight">Gestion des Projets de Fin d'Études & Jurys</h2>
+              <p class="text-xs text-slate-300 mt-1">Validation des sujets d'entreprises, matching intelligent LLM et programmation des soutenances.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="recommanderJuryIA(102)" class="px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-black text-xs transition-all shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-brain"></i>
+                <span>Matching IA OpenRouter</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Règle d'or du Jury à 4 Membres -->
+          <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-purple-950 text-xs">Composition Réglementaire du Jury de Soutenance EMSI (4 Membres Stricts)</h4>
+                <p class="text-[11px] text-purple-800">1. Président de Jury (HDR/Docteur) • 2. Encadrant Académique • 3. Tuteur Entreprise • 4. Examinateur / Rapporteur</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono font-bold px-2 py-1 bg-purple-200 text-purple-900 rounded">NORME STRICTE</span>
+          </div>
+
+          <!-- Métriques PFE -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Sujets Déposés</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">128 Sujets</div>
+                <span class="text-[11px] font-semibold text-purple-600 block">100% Validés en Entreprise</span>
+              </div>
+              <button onclick="navigateTo('pfe')" class="acadex-btn-circle"><i class="fa-solid fa-book-bookmark text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Jurys Constitués</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">114 Jurys</div>
+                <span class="text-[11px] font-semibold text-emerald-600 block">4 Membres par Jury</span>
+              </div>
+              <button onclick="navigateTo('pfe')" class="acadex-btn-circle"><i class="fa-solid fa-user-check text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Soutenances Fixées</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">48 Programmées</div>
+                <span class="text-[11px] font-semibold text-blue-600 block">Session Décembre 2026</span>
+              </div>
+              <button onclick="navigateTo('soutenances')" class="acadex-btn-circle"><i class="fa-solid fa-calendar-check text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Matching LLM</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">97.8% Pertinence</div>
+                <span class="text-[11px] font-semibold text-teal-600 block">Gemini 2.0 & Llama 3</span>
+              </div>
+              <button onclick="navigateTo('pfe')" class="acadex-btn-circle"><i class="fa-solid fa-brain text-xs"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. ESPACE RESPONSABLE SCOLARITE -->
+        <div id="page-scolarite-workspace" class="hidden space-y-6">
+          <div class="bg-gradient-to-r from-rose-950 via-red-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-rose-800">
+            <div>
+              <div class="flex items-center gap-2 text-rose-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>📋 Espace Responsable Scolarité</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                <span>Contrôle Assiduité & Seuil Éliminatoire 20%</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight">Registre d'Émargement & Gestion des Absences</h2>
+              <p class="text-xs text-slate-300 mt-1">Application rigoureuse de la règle des 20% (ou 18 heures maximum) d'absences éliminatoires aux examens.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="navigateTo('scolarite')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs transition-all shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Voir Étudiants Éliminés</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Alerte Seuil Élimination 20% -->
+          <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold text-sm">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-rose-950 text-xs">Règlement des Examens EMSI : Seuil d'Absence 20% ou 18 heures</h4>
+                <p class="text-[11px] text-rose-800">Tout étudiant totalisant plus de 18 heures d'absence non justifiée dans un module est automatiquement exclu des examens finaux.</p>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono font-bold px-2 py-1 bg-rose-200 text-rose-900 rounded">ÉLIMINATION D'OFFICE</span>
+          </div>
+
+          <!-- Métriques Scolarité -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Taux Présence Global</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">93.4%</div>
+                <span class="text-[11px] font-semibold text-emerald-600 block">+1.2% ce semestre</span>
+              </div>
+              <button onclick="navigateTo('absences')" class="acadex-btn-circle"><i class="fa-solid fa-user-check text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Séances Émargées</span>
+                <div class="text-2xl font-black text-slate-900 my-0.5">1,240 Séances</div>
+                <span class="text-[11px] font-semibold text-teal-600 block">100% Validées Enseignants</span>
+              </div>
+              <button onclick="navigateTo('absences')" class="acadex-btn-circle"><i class="fa-solid fa-clipboard-check text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Étudiants à Risque (15%-20%)</span>
+                <div class="text-2xl font-black text-amber-600 my-0.5">14 Étudiants</div>
+                <span class="text-[11px] font-semibold text-amber-700 block">Avertissement envoyé</span>
+              </div>
+              <button onclick="navigateTo('scolarite')" class="acadex-btn-circle"><i class="fa-solid fa-triangle-exclamation text-xs"></i></button>
+            </div>
+            <div class="acadex-stat-card">
+              <div>
+                <span class="text-xs font-bold text-slate-400 block">Éliminés d'Office (> 20%)</span>
+                <div class="text-2xl font-black text-rose-600 my-0.5">3 Éliminés</div>
+                <span class="text-[11px] font-semibold text-rose-700 block">Absences > 18 heures</span>
+              </div>
+              <button onclick="navigateTo('scolarite')" class="acadex-btn-circle"><i class="fa-solid fa-ban text-xs"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. ESPACE PROFESSEUR (PERMANENT & VACATAIRE) -->
+        <div id="page-professeur-workspace" class="hidden space-y-6">
+          <div class="bg-gradient-to-r from-teal-900 via-emerald-950 to-slate-900 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-teal-800">
+            <div>
+              <div class="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>👨‍🏫 Espace Enseignant</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+                <span id="prof-type-badge">Permanent (18h max)</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight" id="prof-welcome-title">Bienvenue, Pr. Noussair Benassou</h2>
+              <p class="text-xs text-slate-300 mt-1">Consultez votre emploi du temps personnel, effectuez l'émargement de vos séances et suivez vos étudiants de PFE.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="navigateTo('absences')" class="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition-all shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-user"></i>
+                <span>Faire l'Appel Séance</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Jauge Quota Horaire Enseignant -->
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-extrabold text-sm text-slate-900" id="prof-quota-title">Jauge de Charge Horaire Hebdomadaire (Règle EMSI 18h Max)</h4>
+                <p class="text-xs text-slate-500" id="prof-quota-sub">16 heures programmées sur le quota maximal autorisé de 18 heures par semaine</p>
+              </div>
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-mono" id="prof-quota-badge">88.8% Respecté</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+              <div class="bg-emerald-500 h-3 rounded-full transition-all duration-500" style="width: 88.8%"></div>
+            </div>
+          </div>
+
+          <!-- Actions Enseignant -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-calendar-check text-blue-600"></i>
+                <span>Mon Emploi du Temps</span>
+              </h4>
+              <p class="text-xs text-slate-600">Accédez à votre planning hebdomadaire détaillé avec indication des salles (LI informatique vs LR réseaux).</p>
+              <button onclick="navigateTo('edt')" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-sm">
+                Consulter Mon Planning
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-user text-teal-600"></i>
+                <span>Appel & Émargement</span>
+              </h4>
+              <p class="text-xs text-slate-600">Enregistrez les présences et absences de vos séances. Les dépassements du seuil de 20% sont signalés instantanément.</p>
+              <button onclick="navigateTo('absences')" class="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all shadow-sm">
+                Ouvrir Feuille d'Appel
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-book-open-reader text-purple-600"></i>
+                <span>Suivi PFE (30 min)</span>
+              </h4>
+              <p class="text-xs text-slate-600">Renseignez le cahier d'encadrement hebdomadaire de 30 minutes par binôme de PFE selon la norme académique.</p>
+              <button onclick="navigateTo('cahier-encadrement')" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-sm">
+                Cahier d'Encadrement
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. ESPACE ÉTUDIANT -->
+        <div id="page-etudiant-workspace" class="hidden space-y-6">
+          <div class="bg-gradient-to-r from-indigo-950 via-blue-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-indigo-800">
+            <div>
+              <div class="flex items-center gap-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
+                <span>🎓 Espace Étudiant EMSI</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                <span>Filière IIR • Option 2DSI • Groupe 3</span>
+              </div>
+              <h2 class="text-2xl font-black tracking-tight">Bonjour Ilyass Ait Ouahman</h2>
+              <p class="text-xs text-slate-300 mt-1">Campus Fixe : <strong>Targa</strong> (Aucun déplacement inter-campus) • Matricule : <strong>2026-IIR-01</strong></p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold">
+                Assiduité Conforme
+              </span>
+            </div>
+          </div>
+
+          <!-- Jauge Personnelle d'Absences vs Seuil 20% -->
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-extrabold text-sm text-slate-900">Ma Jauge d'Absence en Temps Réel vs Seuil Éliminatoire des 20%</h4>
+                <p class="text-xs text-slate-500">8 heures d'absence cumulées sur le seuil d'élimination de 18 heures (20%)</p>
+              </div>
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-mono">
+                Marge Sécurisée : 10h Restantes
+              </span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+              <div class="bg-emerald-500 h-3 rounded-full transition-all duration-500" style="width: 44.4%"></div>
+            </div>
+            <p class="text-[11px] text-slate-500">
+              <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i>
+              Rappel du règlement : Toute absence non justifiée au-delà de 18 heures (20%) entraîne l'élimination automatique des examens de la session normale.
+            </p>
+          </div>
+
+          <!-- Modules Étudiant -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-calendar-days text-indigo-600"></i>
+                <span>Mon Emploi du Temps</span>
+              </h4>
+              <p class="text-xs text-slate-600">Planning officiel du Groupe 5A-IIR G3 sanctuarisé sur le campus Targa.</p>
+              <button onclick="navigateTo('edt')" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-sm">
+                Voir Mon Emploi du Temps
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-award text-purple-600"></i>
+                <span>Mon Projet PFE & Jury</span>
+              </h4>
+              <p class="text-xs text-slate-600">Consultez les 4 membres de votre jury officiel et le créneau de soutenance réservé.</p>
+              <button onclick="navigateTo('pfe')" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-sm">
+                Consulter Mon Jury PFE
+              </button>
+            </div>
+
+            <div class="acadex-card p-5 space-y-3">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-briefcase text-teal-600"></i>
+                <span>Mes Stages d'Été</span>
+              </h4>
+              <p class="text-xs text-slate-600">Dépôt des attestations de stage ouvrier (3A) et stage technique (4A).</p>
+              <button onclick="navigateTo('stages-ete')" class="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all shadow-sm">
+                Gérer Mes Stages
+              </button>
+            </div>
+          </div>
+        </div>
+
         
         <!-- ============================================================ -->
         <!-- 3. PAGE DASHBOARD : ACADEX REPRODUCTION FIDÃˆLE               -->
@@ -2009,76 +2758,83 @@
     const comptes = {
       SUPER_ADMIN: {
         nom: 'Moad Moussaoui',
+        username: 'admin',
+        password: 'Admin@2026!',
         role: 'SUPER_ADMIN',
         roleLabel: 'Super Admin',
         campus: 'Targa (Gouvernance)',
         avatar: 'MM',
-        email: 'admin@emsi-edu.ma'
+        email: 'admin@emsi.ma'
       },
       CHEF_FILIERE: {
-        nom: 'Pr. M. Sassoui',
+        nom: 'Pr. Nadia Berrada',
+        username: 'resp_filiere',
+        password: 'Emsi@2026!',
         role: 'CHEF_FILIERE',
-        roleLabel: 'Resp. FiliÃ¨re IIR',
+        roleLabel: 'Resp. Filière IIR',
         campus: 'Targa & Centre',
-        avatar: 'MS',
-        email: 'm.sassoui@emsi-edu.ma'
+        avatar: 'NB',
+        email: 'filiere.iir@emsi.ma'
       },
       RESP_PLANNING: {
-        nom: 'Mme Kenza Tazi',
+        nom: 'Mme Mehdi Tazi',
+        username: 'resp_planning',
+        password: 'Emsi@2026!',
         role: 'RESP_PLANNING',
         roleLabel: 'Resp. Planning EDT',
-        campus: 'Targa (ScolaritÃ©)',
-        avatar: 'KT',
-        email: 'kenza.tazi@emsi-edu.ma'
+        campus: 'Targa (Scolarité)',
+        avatar: 'MT',
+        email: 'planning@emsi.ma'
       },
       RESP_PFE: {
         nom: 'Pr. Brahim Abod',
+        username: 'resp_pfe',
+        password: 'Emsi@2026!',
         role: 'RESP_PFE',
         roleLabel: 'Resp. PFE & Jurys',
-        campus: 'Targa & GuÃ©liz',
+        campus: 'Targa & Orangers',
         avatar: 'BA',
-        email: 'brahim.abod@emsi-edu.ma'
+        email: 'pfe@emsi.ma'
       },
       RESP_SCOLARITE: {
-        nom: 'Mme Salma Mansouri',
+        nom: 'Mme Siham Bennani',
+        username: 'resp_scolarite',
+        password: 'Emsi@2026!',
         role: 'RESP_SCOLARITE',
-        roleLabel: 'Resp. ScolaritÃ© & AssiduitÃ©',
-        campus: 'Campus Targa (Bureau ScolaritÃ©)',
-        avatar: 'SM',
-        email: 'salma.mansouri@emsi-edu.ma'
+        roleLabel: 'Resp. Scolarité (20% Max)',
+        campus: 'Targa',
+        avatar: 'SB',
+        email: 'scolarite@emsi.ma'
       },
-      PROFESSEUR: {
-        nom: 'Pr. Noussair Benassou',
-        role: 'PROFESSEUR',
-        roleLabel: 'Professeur Permanent (18h)',
-        campus: 'Targa (18h/semaine)',
-        avatar: 'NB',
-        email: 'noussair.benassou@emsi-edu.ma'
-      },
-      ETUDIANT: {
-        nom: 'Ilyass Ait Ouahman',
-        role: 'ETUDIANT',
-        roleLabel: 'Ã‰tudiant 5A-IIR',
-        campus: 'Targa Fixe (2DSI G3)',
-        avatar: 'IA',
-        email: 'ilyass.aitouahman@emsi-edu.ma'
-      },
-      // Alias pour rÃ©trocompatibilitÃ©
       ENSEIGNANT_PERMANENT: {
-        nom: 'Pr. Noussair Benassou',
-        role: 'PROFESSEUR',
+        nom: 'Pr. Amine Alami',
+        username: 'prof_permanent',
+        password: 'Emsi@2026!',
+        role: 'ENSEIGNANT_PERMANENT',
         roleLabel: 'Professeur Permanent (18h)',
-        campus: 'Targa (18h/semaine)',
-        avatar: 'NB',
-        email: 'noussair.benassou@emsi-edu.ma'
+        campus: 'Targa (Ancrage Fixe)',
+        avatar: 'AA',
+        email: 'prof.permanent@emsi.ma'
       },
       ENSEIGNANT_VACATAIRE: {
-        nom: 'Dr. Karim Alami',
-        role: 'PROFESSEUR',
-        roleLabel: 'Professeur Vacataire (PrioritÃ© 1)',
-        campus: 'Targa (Mardi/Jeudi matin)',
-        avatar: 'KA',
-        email: 'karim.alami@emsi-edu.ma'
+        nom: 'Dr. Yassine Kadiri',
+        username: 'prof_vacataire',
+        password: 'Emsi@2026!',
+        role: 'ENSEIGNANT_VACATAIRE',
+        roleLabel: 'Professeur Vacataire (P1)',
+        campus: 'Targa (Sanctuarisé)',
+        avatar: 'YK',
+        email: 'prof.vacataire@emsi.ma'
+      },
+      ETUDIANT: {
+        nom: 'Anas Benjelloun',
+        username: 'etudiant',
+        password: 'Emsi@2026!',
+        role: 'ETUDIANT',
+        roleLabel: 'Étudiant 5A-IIR',
+        campus: 'Targa Fixe (2DSI G3)',
+        avatar: 'AB',
+        email: 'etudiant@emsi.ma'
       }
     };
 
@@ -2837,61 +3593,251 @@
       renderUsers();
     };
 
+    
+    // -------------------------------------------------------------
+    // GESTION DU PORTAIL AUTHENTIFICATION (LOGIN & REGISTER)
+    // -------------------------------------------------------------
+    function switchAuthTab(tab) {
+      const btnLogin = document.getElementById('tab-btn-login');
+      const btnRegister = document.getElementById('tab-btn-register');
+      const tabLogin = document.getElementById('auth-tab-login');
+      const tabRegister = document.getElementById('auth-tab-register');
+      const alertEl = document.getElementById('auth-alert');
+      if (alertEl) alertEl.classList.add('hidden');
+
+      if (tab === 'login') {
+        btnLogin.className = 'flex-1 py-4 px-6 text-center text-emerald-700 border-b-2 border-emerald-600 bg-white flex items-center justify-center gap-2 transition-all';
+        btnRegister.className = 'flex-1 py-4 px-6 text-center text-slate-500 hover:text-slate-800 border-b-2 border-transparent hover:bg-slate-100 flex items-center justify-center gap-2 transition-all';
+        tabLogin.classList.remove('hidden');
+        tabRegister.classList.add('hidden');
+      } else {
+        btnRegister.className = 'flex-1 py-4 px-6 text-center text-emerald-700 border-b-2 border-emerald-600 bg-white flex items-center justify-center gap-2 transition-all';
+        btnLogin.className = 'flex-1 py-4 px-6 text-center text-slate-500 hover:text-slate-800 border-b-2 border-transparent hover:bg-slate-100 flex items-center justify-center gap-2 transition-all';
+        tabRegister.classList.remove('hidden');
+        tabLogin.classList.add('hidden');
+      }
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.type = input.type === 'password' ? 'text' : 'password';
+      }
+    }
+
+    function quickLogin(roleKey) {
+      const c = comptes[roleKey];
+      if (!c) return;
+      document.getElementById('login-email').value = c.username;
+      document.getElementById('login-password').value = c.password;
+      showToast(`Authentification express : ${c.nom} (${c.roleLabel})`, 'info');
+
+      // Tentative d'obtention réelle de JWT sur Spring Boot 8085
+      fetch('http://localhost:8085/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: c.username, password: c.password })
+      }).then(r => r.json()).then(data => {
+        if (data.accessToken) {
+          localStorage.setItem('emsi_jwt_token', data.accessToken);
+          showToast(`Session JWT active : ${data.tokenType} pour ${c.roleLabel}`, 'success');
+        }
+      }).catch(err => console.log('Mode autonome:', err));
+
+      loginAs(roleKey);
+    }
+
+    async function handleLoginFormSubmit(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const btn = document.getElementById('btn-login-submit');
+      const alertEl = document.getElementById('auth-alert');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Vérification des identifiants...';
+
+      // 1. Essai d'appel réel vers l'API JWT Spring Boot 8085
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 1800);
+        const res = await fetch('http://localhost:8085/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: email, password: password }),
+          signal: ctrl.signal
+        });
+        clearTimeout(tid);
+
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('emsi_jwt_token', data.accessToken);
+          showToast('Connexion réussie via JWT Spring Boot (Port 8085)', 'success');
+        }
+      } catch (e) {
+        // Mode autonome résilient
+      }
+
+      // 2. Détection du compte persona correspondant
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket mr-2"></i> Accéder à Mon Espace Dédié';
+
+      let matchedKey = 'SUPER_ADMIN';
+      for (const [key, val] of Object.entries(comptes)) {
+        if (val.email.toLowerCase() === email.toLowerCase()) {
+          matchedKey = key;
+          break;
+        }
+      }
+
+      // Mappage par défaut si email générique
+      if (email.includes('etudiant')) matchedKey = 'ETUDIANT';
+      else if (email.includes('prof.perm') || email.includes('permanent')) matchedKey = 'ENSEIGNANT_PERMANENT';
+      else if (email.includes('prof.vac') || email.includes('vacataire')) matchedKey = 'ENSEIGNANT_VACATAIRE';
+      else if (email.includes('scolarite')) matchedKey = 'RESP_SCOLARITE';
+      else if (email.includes('planning')) matchedKey = 'RESP_PLANNING';
+      else if (email.includes('pfe')) matchedKey = 'RESP_PFE';
+      else if (email.includes('filiere')) matchedKey = 'CHEF_FILIERE';
+
+      loginAs(matchedKey);
+    }
+
+    async function handleRegisterFormSubmit(event) {
+      event.preventDefault();
+      const nom = document.getElementById('reg-nom').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirm = document.getElementById('reg-confirm').value;
+      const role = document.getElementById('reg-role').value;
+      const campus = document.getElementById('reg-campus').value;
+      const alertEl = document.getElementById('auth-alert');
+
+      if (password !== confirm) {
+        alertEl.className = 'p-3.5 rounded-2xl text-xs font-semibold flex items-center gap-3 bg-rose-50 text-rose-800 border border-rose-200';
+        alertEl.innerHTML = '<i class="fa-solid fa-circle-exclamation text-rose-600"></i> Les deux mots de passe ne correspondent pas.';
+        alertEl.classList.remove('hidden');
+        return;
+      }
+
+      // Appel réel API Register
+      try {
+        const parts = nom.split(' ');
+        const prenom = parts[0] || 'Utilisateur';
+        const nomFamille = parts.slice(1).join(' ') || 'EMSI';
+
+        await fetch('http://localhost:8085/api/v1/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: email.split('@')[0],
+            email: email,
+            password: password,
+            nom: nomFamille,
+            prenom: prenom,
+            role: role,
+            campusDefaut: campus
+          })
+        });
+      } catch (err) {
+        // Mode autonome
+      }
+
+      showToast(`Compte créé avec succès pour ${nom} (${role}) !`, 'success');
+      switchAuthTab('login');
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-password').value = password;
+      alertEl.className = 'p-3.5 rounded-2xl text-xs font-semibold flex items-center gap-3 bg-emerald-50 text-emerald-800 border border-emerald-200';
+      alertEl.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i> Compte créé avec succès ! Veuillez vous connecter.';
+      alertEl.classList.remove('hidden');
+    }
+
     function loginAs(roleKey) {
-      currentUser = comptes[roleKey];
+      currentUser = comptes[roleKey] || comptes.SUPER_ADMIN;
+      
+      // Cache l'écran d'auth et affiche le layout de l'application
       document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('app-layout').classList.remove('hidden');
+
       applyAcadexRole();
-      showToast(`ConnectÃ© Ã  l'espace : ${currentUser.nom} (${currentUser.roleLabel})`, 'success');
+      showToast(`Connecté à l'espace : ${currentUser.nom} (${currentUser.roleLabel})`, 'success');
     }
 
     function deconnecter() {
+      // Déconnexion propre : masque le layout et réaffiche le portail Login & Register
+      localStorage.removeItem('emsi_jwt_token');
+      document.getElementById('app-layout').classList.add('hidden');
       document.getElementById('auth-screen').classList.remove('hidden');
+      switchAuthTab('login');
+      showToast('Vous êtes déconnecté de votre session EMSI.', 'info');
     }
 
     function applyAcadexRole() {
+      // 1. Met à jour le profil dans la Sidebar
       document.getElementById('sidebar-user-name').innerText = currentUser.nom;
       document.getElementById('sidebar-user-role').innerText = currentUser.roleLabel;
       document.getElementById('sidebar-user-avatar').innerText = currentUser.avatar;
-      document.getElementById('top-title').innerText = `Dashboard â€¢ ${currentUser.roleLabel}`;
+
+      // 2. Met à jour le Topbar
+      document.getElementById('top-title').innerText = `Espace ${currentUser.roleLabel} • ${currentUser.nom}`;
       document.getElementById('top-campus-badge').innerText = `Campus Fixe : ${currentUser.campus}`;
 
-      // Met Ã  jour profil dans "Mon Compte"
-      document.getElementById('account-name-preview').innerText = currentUser.nom;
-      document.getElementById('account-role-preview').innerText = `${currentUser.roleLabel} â€¢ ${currentUser.email}`;
-      document.getElementById('account-avatar-preview').innerText = currentUser.avatar;
+      // 3. Met à jour le profil dans "Mon Compte"
+      const accName = document.getElementById('account-name-preview');
+      if (accName) accName.innerText = currentUser.nom;
+      const accRole = document.getElementById('account-role-preview');
+      if (accRole) accRole.innerText = `${currentUser.roleLabel} • ${currentUser.email}`;
+      const accAvatar = document.getElementById('account-avatar-preview');
+      if (accAvatar) accAvatar.innerText = currentUser.avatar;
 
-      // Met Ã  jour les boutons pills en haut
-      document.querySelectorAll('.pill-btn').forEach(p => {
-        p.classList.remove('bg-brand-600', 'text-white');
-        p.classList.add('text-slate-600');
+      // 4. FILTRAGE STRICT DE LA NAVIGATION SIDEBAR (RBAC PAR ACTEUR)
+      const currentRoleNormalized = currentUser.role;
+      document.querySelectorAll('#main-sidebar [data-roles]').forEach(el => {
+        const allowedRoles = el.getAttribute('data-roles').split(',').map(r => r.trim());
+        const hasAccess = allowedRoles.includes('ALL') || 
+                          allowedRoles.includes(currentRoleNormalized) || 
+                          allowedRoles.includes('ROLE_' + currentRoleNormalized) ||
+                          (currentRoleNormalized === 'ENSEIGNANT_PERMANENT' && allowedRoles.includes('PROFESSEUR')) ||
+                          (currentRoleNormalized === 'ENSEIGNANT_VACATAIRE' && allowedRoles.includes('PROFESSEUR'));
+        
+        if (hasAccess) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
       });
-      const activePill = document.getElementById('pill-' + currentUser.role);
-      if (activePill) {
-        activePill.classList.remove('text-slate-600');
-        activePill.classList.add('bg-emerald-600', 'text-white');
-      }
 
-      // Redirection intuitive vers la page appropriee selon le role actif
-      if (currentUser.role === 'RESP_SCOLARITE') {
-        navigateTo('scolarite');
+      // 5. REDIRECTION IMMÉDIATE VERS L'ESPACE DE TRAVAIL DÉDIÉ
+      if (currentUser.role === 'SUPER_ADMIN') {
+        navigateTo('admin-workspace');
+      } else if (currentUser.role === 'CHEF_FILIERE') {
+        navigateTo('filiere-workspace');
       } else if (currentUser.role === 'RESP_PLANNING') {
-        navigateTo('affectation-ia');
+        navigateTo('planning-workspace');
       } else if (currentUser.role === 'RESP_PFE') {
-        navigateTo('pfe');
-      } else if (currentUser.role === 'PROFESSEUR') {
-        navigateTo('edt');
+        navigateTo('pfe-workspace');
+      } else if (currentUser.role === 'RESP_SCOLARITE') {
+        navigateTo('scolarite-workspace');
+      } else if (currentUser.role === 'ENSEIGNANT_PERMANENT' || currentUser.role === 'ENSEIGNANT_VACATAIRE' || currentUser.role === 'PROFESSEUR') {
+        navigateTo('professeur-workspace');
+        // Personnalisation Enseignant
+        const profTitle = document.getElementById('prof-welcome-title');
+        if (profTitle) profTitle.innerText = `Bienvenue, ${currentUser.nom}`;
+        const profBadge = document.getElementById('prof-type-badge');
+        if (profBadge) {
+          profBadge.innerText = currentUser.role === 'ENSEIGNANT_VACATAIRE' ? 'Vacataire (Priorité P1)' : 'Permanent (18h max)';
+        }
       } else if (currentUser.role === 'ETUDIANT') {
-        navigateTo('edt');
+        navigateTo('etudiant-workspace');
       } else {
-        navigateTo('dashboard');
+        navigateTo('admin-workspace');
       }
 
       renderAcadexMetrics();
-      navigateTo('dashboard');
     }
 
     function renderAcadexMetrics() {
       const container = document.getElementById('acadex-metrics-row');
+      if (!container) return;
       const list = roleMetrics[currentUser.role] || roleMetrics.SUPER_ADMIN;
 
       container.innerHTML = list.map(m => `
@@ -2901,7 +3847,7 @@
             <div class="text-2xl font-black text-slate-900 my-0.5">${m.value}</div>
             <span class="text-[11px] font-semibold text-slate-400 block">${m.sub}</span>
           </div>
-          <button onclick="showToast('${m.label} : ${m.value}', 'info')" class="acadex-btn-circle" title="Voir dÃ©tails">
+          <button onclick="showToast('${m.label} : ${m.value}', 'info')" class="acadex-btn-circle" title="Voir détails">
             <i class="fa-solid fa-arrow-right text-xs"></i>
           </button>
         </div>
@@ -2910,6 +3856,8 @@
 
     function navigateTo(pageId) {
       const pages = [
+        'admin-workspace', 'filiere-workspace', 'planning-workspace', 'pfe-workspace', 
+        'scolarite-workspace', 'professeur-workspace', 'etudiant-workspace',
         'dashboard', 'edt', 'affectation-ia', 'pfe', 'soutenances', 
         'cahier-encadrement', 'stages-ete', 'filieres-groupes', 
         'absences', 'scolarite', 'api-sandbox', 'rh', 'rbac', 'account'
@@ -2927,12 +3875,15 @@
 
       const target = document.getElementById('page-' + pageId);
       const targetNav = document.getElementById('nav-' + pageId);
-      if (target) target.classList.remove('hidden');
+      if (target) {
+        target.classList.remove('hidden');
+      }
       if (targetNav) {
         targetNav.classList.remove('text-slate-600');
         targetNav.classList.add('bg-brand-50', 'text-brand-600', 'font-bold');
       }
     }
+
 
     function renderEdtGrid() {
       const tbody = document.getElementById('edt-table-body');

@@ -57,10 +57,21 @@ import { UserRole } from '../../core/models/models';
         <!-- Bouton Mon Compte -->
         <a
           routerLink="/account"
-          class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-brand-600 flex items-center justify-center shadow-sm"
+          class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 flex items-center justify-center shadow-sm"
           title="Mon Compte & Sécurité">
           <i class="fa-solid fa-shield-halved text-xs"></i>
         </a>
+
+        <!-- Bouton Déconnexion Officiel -->
+        <button
+          (click)="auth.logout()"
+          class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+          title="Se déconnecter de la session JWT">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span class="hidden sm:inline">Déconnexion</span>
+        </button>
       </div>
     </header>
   `

@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { CurrentUser, UserRole } from '../models/models';
 import { environment } from '../../../environments/environment';
 import { Observable, tap } from 'rxjs';
@@ -18,132 +19,78 @@ export interface LoginResponse {
   campusNom?: string;
 }
 
+export interface RegisterPayload {
+  username: string;
+  email: string;
+  password: string;
+  nom: string;
+  prenom: string;
+  role: string;
+  campusId?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
 
-  private readonly defaultUsers: Record<UserRole, CurrentUser> = {
-    SUPER_ADMIN: {
-      id: 1,
-      matricule: 'EMSI-ADM-01',
-      nom: 'Moussaoui',
-      prenom: 'Moad',
-      email: 'moad.moussaoui@emsi.ma',
-      role: 'SUPER_ADMIN',
-      roleLabel: 'Super Administrateur',
-      campusDefaut: 'Campus Targa & Guéliz',
-      avatarClass: 'bg-emerald-700 text-white'
-    },
-    CHEF_FILIERE: {
-      id: 2,
-      matricule: 'EMSI-DIR-02',
-      nom: 'Berrada',
-      prenom: 'Pr. Nadia',
-      email: 'nadia.berrada@emsi.ma',
-      role: 'CHEF_FILIERE',
-      roleLabel: 'Responsable Filière IIR & GI',
-      campusDefaut: 'Campus Targa',
-      avatarClass: 'bg-indigo-700 text-white'
-    },
-    RESP_PLANNING: {
-      id: 3,
-      matricule: 'EMSI-PLN-04',
-      nom: 'Tazi',
-      prenom: 'Pr. Mehdi',
-      email: 'mehdi.tazi@emsi.ma',
-      role: 'RESP_PLANNING',
-      roleLabel: 'Responsable Planning & Salles',
-      campusDefaut: 'Campus Targa',
-      avatarClass: 'bg-blue-700 text-white'
-    },
-    RESP_PFE: {
-      id: 4,
-      matricule: 'EMSI-PFE-03',
-      nom: 'Abod',
-      prenom: 'Pr. Brahim',
-      email: 'brahim.abod@emsi.ma',
-      role: 'RESP_PFE',
-      roleLabel: 'Responsable PFE & Jurys',
-      campusDefaut: 'Campus Targa',
-      avatarClass: 'bg-purple-700 text-white'
-    },
-    RESP_SCOLARITE: {
-      id: 5,
-      matricule: 'EMSI-SCO-05',
-      nom: 'Bennani',
-      prenom: 'Mme. Siham',
-      email: 'siham.bennani@emsi.ma',
-      role: 'RESP_SCOLARITE',
-      roleLabel: 'Responsable Scolarité & Absences',
-      campusDefaut: 'Campus Guéliz & Targa',
-      avatarClass: 'bg-amber-700 text-white'
-    },
-    ENSEIGNANT_PERMANENT: {
-      id: 6,
-      matricule: 'ENS-PERM-02',
-      nom: 'Alami',
-      prenom: 'Pr. Amine',
-      email: 'amine.alami@emsi.ma',
-      role: 'ENSEIGNANT_PERMANENT',
-      roleLabel: 'Professeur Permanent (Quota 18h)',
-      campusDefaut: 'Campus Targa',
-      avatarClass: 'bg-teal-700 text-white'
-    },
-    ENSEIGNANT_VACATAIRE: {
-      id: 7,
-      matricule: 'ENS-VAC-01',
-      nom: 'Kadiri',
-      prenom: 'Pr. Yassine',
-      email: 'yassine.kadiri@emsi.ma',
-      role: 'ENSEIGNANT_VACATAIRE',
-      roleLabel: 'Professeur Vacataire (Priorité 1 P1)',
-      campusDefaut: 'Campus Targa',
-      avatarClass: 'bg-cyan-700 text-white'
-    },
-    ETUDIANT: {
-      id: 8,
-      matricule: 'ETU-2026-08',
-      nom: 'Benjelloun',
-      prenom: 'Anas',
-      email: 'anas.benjelloun@emsi.ma',
-      role: 'ETUDIANT',
-      roleLabel: 'Étudiant 5ème Année (5A-IIR G1)',
-      campusDefaut: 'Campus Targa',
-      avatarClass: 'bg-slate-700 text-white'
-    }
-  };
-
-  private readonly credentialsMap: Record<UserRole, { u: string; p: string }> = {
-    SUPER_ADMIN: { u: 'admin', p: 'Admin@2026!' },
-    CHEF_FILIERE: { u: 'resp_filiere', p: 'Emsi@2026!' },
-    RESP_PLANNING: { u: 'resp_planning', p: 'Emsi@2026!' },
-    RESP_PFE: { u: 'resp_pfe', p: 'Emsi@2026!' },
-    RESP_SCOLARITE: { u: 'resp_scolarite', p: 'Emsi@2026!' },
-    ENSEIGNANT_PERMANENT: { u: 'prof_permanent', p: 'Emsi@2026!' },
-    ENSEIGNANT_VACATAIRE: { u: 'prof_vacataire', p: 'Emsi@2026!' },
-    ETUDIANT: { u: 'etudiant', p: 'Emsi@2026!' }
-  };
-
-  readonly currentUser = signal<CurrentUser>(this.defaultUsers['SUPER_ADMIN']);
   readonly jwtToken = signal<string | null>(localStorage.getItem('emsi_jwt_token'));
   readonly isAuthenticated = computed(() => !!this.jwtToken());
+
+  readonly currentUser = signal<CurrentUser>({
+    id: 1,
+    matricule: 'EMSI-ADM-01',
+    nom: 'Moussaoui',
+    prenom: 'Moad',
+    email: 'moad.moussaoui@emsi.ma',
+    role: 'SUPER_ADMIN',
+    roleLabel: 'Super Administrateur',
+    campusDefaut: 'Campus Targa & Guéliz',
+    avatarClass: 'bg-emerald-700 text-white'
+  });
+
   readonly isSuperAdmin = computed(() => this.currentUser().role === 'SUPER_ADMIN');
-  readonly isPlanningResp = computed(() => this.currentUser().role === 'RESP_PLANNING' || this.isSuperAdmin());
-  readonly isPfeResp = computed(() => this.currentUser().role === 'RESP_PFE' || this.isSuperAdmin());
 
   constructor() {
-    // Tenter de restaurer la session ou se connecter par défaut
-    this.autoLoginDefault();
+    const savedUser = localStorage.getItem('emsi_current_user');
+    if (savedUser) {
+      try {
+        this.currentUser.set(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Erreur de lecture du profil stocké :', e);
+      }
+    }
   }
 
-  private autoLoginDefault() {
-    const creds = this.credentialsMap['SUPER_ADMIN'];
-    this.login(creds.u, creds.p).subscribe({
-      next: (res) => console.log('[AUTH] Connexion JWT automatique active :', res.username),
-      error: () => console.warn('[AUTH] Serveur local non encore joignable ou initialisé.')
-    });
+  getWorkspaceRouteForRole(role: string): string {
+    const normalized = role.replace('ROLE_', '');
+    switch (normalized) {
+      case 'SUPER_ADMIN':
+        return '/espace-admin';
+      case 'RESPONSABLE_FILIERE':
+      case 'CHEF_FILIERE':
+        return '/espace-filiere';
+      case 'RESPONSABLE_PLANNING':
+      case 'RESP_PLANNING':
+        return '/espace-planning';
+      case 'RESPONSABLE_PFE':
+      case 'RESP_PFE':
+        return '/espace-pfe';
+      case 'RESPONSABLE_SCOLARITE':
+      case 'RESP_SCOLARITE':
+        return '/espace-scolarite';
+      case 'PROFESSEUR_PERMANENT':
+      case 'PROFESSEUR_VACATAIRE':
+      case 'ENSEIGNANT_PERMANENT':
+      case 'ENSEIGNANT_VACATAIRE':
+        return '/espace-professeur';
+      case 'ETUDIANT':
+        return '/espace-etudiant';
+      default:
+        return '/espace-admin';
+    }
   }
 
   login(username: string, password: string): Observable<LoginResponse> {
@@ -152,25 +99,46 @@ export class AuthService {
         this.jwtToken.set(res.accessToken);
         localStorage.setItem('emsi_jwt_token', res.accessToken);
 
-        // Mettre à jour l'utilisateur courant
-        const matched = Object.values(this.defaultUsers).find(
-          (u) => u.email === res.email || u.nom.toLowerCase() === res.nom.toLowerCase()
-        );
-        if (matched) {
-          this.currentUser.set(matched);
-        } else {
-          this.currentUser.set({
-            id: res.userId,
-            matricule: 'EMSI-USER-' + res.userId,
-            nom: res.nom,
-            prenom: res.prenom,
-            email: res.email,
-            role: (res.role.replace('ROLE_', '') as UserRole) || 'SUPER_ADMIN',
-            roleLabel: res.role,
-            campusDefaut: res.campusNom || 'Campus Targa',
-            avatarClass: 'bg-emerald-700 text-white'
-          });
-        }
+        const roleClean = (res.role.replace('ROLE_', '') as UserRole) || 'SUPER_ADMIN';
+        const userObj: CurrentUser = {
+          id: res.userId,
+          matricule: 'EMSI-' + res.username.toUpperCase(),
+          nom: res.nom,
+          prenom: res.prenom,
+          email: res.email,
+          role: roleClean,
+          roleLabel: res.role.replace('ROLE_', '').replace(/_/g, ' '),
+          campusDefaut: res.campusNom || 'Campus Targa',
+          avatarClass: 'bg-emerald-700 text-white'
+        };
+
+        this.currentUser.set(userObj);
+        localStorage.setItem('emsi_current_user', JSON.stringify(userObj));
+      })
+    );
+  }
+
+  register(payload: RegisterPayload): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/register`, payload).pipe(
+      tap((res) => {
+        this.jwtToken.set(res.accessToken);
+        localStorage.setItem('emsi_jwt_token', res.accessToken);
+
+        const roleClean = (res.role.replace('ROLE_', '') as UserRole) || 'ETUDIANT';
+        const userObj: CurrentUser = {
+          id: res.userId,
+          matricule: 'EMSI-' + res.username.toUpperCase(),
+          nom: res.nom,
+          prenom: res.prenom,
+          email: res.email,
+          role: roleClean,
+          roleLabel: res.role.replace('ROLE_', '').replace(/_/g, ' '),
+          campusDefaut: res.campusNom || 'Campus Targa',
+          avatarClass: 'bg-indigo-700 text-white'
+        };
+
+        this.currentUser.set(userObj);
+        localStorage.setItem('emsi_current_user', JSON.stringify(userObj));
       })
     );
   }
@@ -178,19 +146,8 @@ export class AuthService {
   logout() {
     this.jwtToken.set(null);
     localStorage.removeItem('emsi_jwt_token');
-  }
-
-  switchRole(role: UserRole) {
-    if (this.defaultUsers[role]) {
-      this.currentUser.set(this.defaultUsers[role]);
-      const creds = this.credentialsMap[role];
-      if (creds) {
-        this.login(creds.u, creds.p).subscribe({
-          next: () => console.log(`[AUTH] Switched to ${role} with fresh JWT`),
-          error: (err) => console.error(`[AUTH] Switch failed:`, err)
-        });
-      }
-    }
+    localStorage.removeItem('emsi_current_user');
+    this.router.navigate(['/login']);
   }
 
   changePassword(currentPassword: string, newPassword: string, confirmPassword: string) {
@@ -199,9 +156,5 @@ export class AuthService {
       newPassword,
       confirmPassword
     });
-  }
-
-  getAllUsers(): CurrentUser[] {
-    return Object.values(this.defaultUsers);
   }
 }

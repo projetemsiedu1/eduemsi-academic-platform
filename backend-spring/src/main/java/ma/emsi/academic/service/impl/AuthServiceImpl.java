@@ -8,6 +8,7 @@ import ma.emsi.academic.domain.enums.RoleEnum;
 import ma.emsi.academic.dto.auth.ChangePasswordRequest;
 import ma.emsi.academic.dto.auth.LoginRequest;
 import ma.emsi.academic.dto.auth.LoginResponse;
+import ma.emsi.academic.dto.auth.RegisterRequest;
 import ma.emsi.academic.dto.auth.UserSummaryDto;
 import ma.emsi.academic.exception.BusinessRuleException;
 import ma.emsi.academic.exception.ResourceNotFoundException;
@@ -71,6 +72,62 @@ public class AuthServiceImpl implements AuthService {
                 .role(userDetails.getRole())
                 .campusId(userDetails.getCampusId())
                 .campusNom(userDetails.getCampusNom())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public LoginResponse register(RegisterRequest request) {
+        log.info("Inscription d'un nouvel utilisateur : {}", request.getUsername());
+
+        if (utilisateurRepository.existsByUsername(request.getUsername())) {
+            throw new BusinessRuleException("Cet identifiant (" + request.getUsername() + ") est déjà utilisé.");
+        }
+
+        if (utilisateurRepository.existsByEmail(request.getEmail())) {
+            throw new BusinessRuleException("Cette adresse email (" + request.getEmail() + ") est déjà associée à un compte.");
+        }
+
+        Campus campus = null;
+        if (request.getCampusId() != null) {
+            campus = campusRepository.findById(request.getCampusId()).orElse(null);
+        }
+        if (campus == null) {
+            campus = campusRepository.findAll().stream().findFirst().orElse(null);
+        }
+
+        RoleEnum userRole = request.getRole() != null ? request.getRole() : RoleEnum.ROLE_ETUDIANT;
+
+        Utilisateur newUser = Utilisateur.builder()
+                .username(request.getUsername())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail())
+                .nom(request.getNom())
+                .prenom(request.getPrenom())
+                .role(userRole)
+                .campus(campus)
+                .actif(true)
+                .build();
+
+        Utilisateur savedUser = utilisateurRepository.save(newUser);
+        log.info("Nouvel utilisateur créé avec succès avec l'id : {}", savedUser.getId());
+
+        // Connecter directement l'utilisateur inscrit et générer son JWT
+        CustomUserDetails userDetails = CustomUserDetails.build(savedUser);
+        String jwt = tokenProvider.generateToken(userDetails);
+
+        return LoginResponse.builder()
+                .accessToken(jwt)
+                .tokenType("Bearer")
+                .expiresIn(jwtProperties.getExpirationMs() / 1000)
+                .userId(savedUser.getId())
+                .username(savedUser.getUsername())
+                .email(savedUser.getEmail())
+                .nom(savedUser.getNom())
+                .prenom(savedUser.getPrenom())
+                .role(savedUser.getRole().name())
+                .campusId(campus != null ? campus.getId() : null)
+                .campusNom(campus != null ? campus.getNom() : null)
                 .build();
     }
 
