@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080/api/v1',
+  apiUrl: 'http://localhost:8085/api/v1',
   openRouter: {
     url: 'https://openrouter.ai/api/v1/chat/completions',
     defaultModel: 'google/gemini-2.0-flash-exp:free',

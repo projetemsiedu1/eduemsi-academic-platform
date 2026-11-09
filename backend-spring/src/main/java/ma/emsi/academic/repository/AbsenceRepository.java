@@ -21,6 +21,9 @@ public interface AbsenceRepository extends JpaRepository<Absence, Long>, JpaSpec
     @EntityGraph(attributePaths = {"etudiant", "seance", "seance.elementModule"})
     Page<Absence> findByEtudiantId(Long etudiantId, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"etudiant", "seance", "seance.elementModule"})
+    List<Absence> findByEtudiantId(Long etudiantId);
+
     @EntityGraph(attributePaths = {"etudiant", "seance"})
     List<Absence> findBySeanceIdAndDateSeance(Long seanceId, LocalDate dateSeance);
 

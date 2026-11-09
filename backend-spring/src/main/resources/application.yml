@@ -1,103 +1,32 @@
 server:
-  port: 8080
+  port: 8085
+  servlet:
+    context-path: /
 
 spring:
   application:
     name: eduemsi-backend
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 20MB
 
----
-# ====================================================================
-# PROFIL : LOCAL (Laragon MySQL Port 3306)
-# ====================================================================
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    url: jdbc:mysql://localhost:3306/emsi_academic_db?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: ""
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      pool-name: EmsiLaragonMySQLPool
-      maximum-pool-size: 20
-      minimum-idle: 5
-      idle-timeout: 300000
-      connection-timeout: 20000
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    open-in-view: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-        jdbc:
-          batch_size: 30
-          order_inserts: true
-          order_updates: true
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration/mysql
+app:
+  jwt:
+    secret: EMSI_UNIVORA_ACADEMIC_SECURITY_SUPER_SECRET_KEY_2026_HMAC_SHA256_SECURED
+    expiration-ms: 86400000 # 24 heures
+    refresh-expiration-ms: 604800000 # 7 jours
+  openrouter:
+    base-url: https://openrouter.ai/api/v1
+    free-model: google/gemini-2.0-flash-exp:free
+    fallback-model: meta-llama/llama-3.3-70b-instruct:free
 
----
-# ====================================================================
-# PROFIL : PROD / DOCKER (PostgreSQL ou Cloud)
-# ====================================================================
-spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:emsi_academic_db}
-    username: ${DB_USER:emsi_admin}
-    password: ${DB_PASSWORD:emsi_secure_password_2026}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      pool-name: EmsiPostgresProdPool
-      maximum-pool-size: 25
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    open-in-view: false
-    show-sql: false
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration
-
----
-# ====================================================================
-# CONFIGURATION COMMUNE (IA OPENROUTER, GEMINI, SÉCURITÉ, ACADÉMIQUE)
-# ====================================================================
-openrouter:
-  api:
-    key: ${OPENROUTER_API_KEY:}
-    url: ${OPENROUTER_API_URL:https://openrouter.ai/api/v1/chat/completions}
-    default-model: ${OPENROUTER_DEFAULT_MODEL:google/gemini-2.0-flash-exp:free}
-    fallback-model: ${OPENROUTER_FALLBACK_MODEL:meta-llama/llama-3.3-70b-instruct:free}
-    site-url: https://univora.emsi.ma
-    site-name: EMSI Univora Academic Platform
-    timeout-seconds: 8
-
-gemini:
-  api:
-    key: ${GEMINI_API_KEY:FREE_TIER_DEMO_KEY}
-    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
-    fallback-enabled: true
-
-emsi:
-  academic:
-    annee-universitaire: 2026-2027
-    semestre-actif: S1
-  constraints:
-    morning-break-minutes: 15
-    max-midday-gap-minutes: 90
-    max-absences-threshold-percent: 20.0
-    alert-absences-threshold-percent: 15.0
-    seuil-eliminatoire-examen: 7.0
-    heures-contractuelles-permanent: 18
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

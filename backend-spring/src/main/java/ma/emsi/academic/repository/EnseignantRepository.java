@@ -24,6 +24,8 @@ public interface EnseignantRepository extends JpaRepository<Enseignant, Long>, J
 
     Page<Enseignant> findByTypeContrat(TypeContrat typeContrat, Pageable pageable);
 
+    List<Enseignant> findByTypeContrat(TypeContrat typeContrat);
+
     List<Enseignant> findByTypeContratAndEstActifTrue(TypeContrat typeContrat);
 
     long countByTypeContrat(TypeContrat typeContrat);
