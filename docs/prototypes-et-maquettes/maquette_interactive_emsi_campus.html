@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EMSI Univora • Dashboard Académique (Style Acadex)</title>
+  <title>EMSI Univora • Plateforme Académique & Décisionnelle 2026 (Version Finale)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome 6.5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Fonts Google : Plus Jakarta Sans -->
+  <!-- Fonts Google : Plus Jakarta Sans & JetBrains Mono -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
@@ -66,6 +66,11 @@
       align-items: center;
       justify-content: space-between;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s;
+    }
+    .acadex-stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.05);
     }
     .acadex-btn-circle {
       width: 2.25rem;
@@ -92,24 +97,23 @@
 <body class="h-full flex flex-col font-sans text-slate-800 bg-[#F4F6F9] selection:bg-brand-600 selection:text-white">
 
   <!-- ============================================================== -->
-  <!-- 1. MODAL SÉLECTEUR DE PERSONAS (7 RÔLES DÉDIÉS)                -->
+  <!-- 1. MODAL SÉLECTEUR DE PERSONAS (7 RÔLES AVEC LOGO EMSI)        -->
   <!-- ============================================================== -->
   <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm overflow-y-auto">
     <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 border border-slate-200">
       
       <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-brand-500/20">
-            <i class="fa-solid fa-layer-group"></i>
-          </div>
+        <div class="flex items-center gap-3.5">
+          <!-- Logo Officiel EMSI -->
+          <img src="assets/emsi_logo.png" alt="Logo EMSI" class="w-12 h-12 object-contain rounded-xl border border-slate-100 p-0.5 bg-white shadow-sm" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_EMSI.png';">
           <div>
             <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
-              EMSI Acadex <span class="text-xs px-2 py-0.5 rounded-full bg-brand-100 text-brand-700 font-bold uppercase">2026</span>
+              EMSI Univora <span class="text-xs px-2 py-0.5 rounded-full bg-emsi-light text-emsi-dark font-bold uppercase">Honoris United Universities</span>
             </h2>
-            <p class="text-xs text-slate-500">Sélectionnez votre espace acteur pour charger son tableau de bord sur-mesure</p>
+            <p class="text-xs text-slate-500">Plateforme Décisionnelle & Académique 2026 • Sélectionnez votre espace</p>
           </div>
         </div>
-        <span class="text-xs font-bold text-slate-400 font-mono">STYLE ACADEX</span>
+        <span class="text-[10px] font-bold px-2 py-1 rounded bg-brand-50 text-brand-700 font-mono">RBAC STRICT</span>
       </div>
 
       <!-- Grille des Rôles -->
@@ -123,7 +127,7 @@
           <div>
             <span class="font-bold text-xs text-slate-900 block">Moad Moussaoui</span>
             <span class="text-[11px] text-slate-500 block">Super Administrateur</span>
-            <span class="text-[10px] text-brand-600 font-bold mt-1 inline-block">Gouvernance & Comptes</span>
+            <span class="text-[10px] text-brand-600 font-bold mt-1 inline-block">Création Comptes & Droits</span>
           </div>
         </button>
 
@@ -146,7 +150,7 @@
           </div>
           <div>
             <span class="font-bold text-xs text-slate-900 block">Mme Kenza Tazi</span>
-            <span class="text-[11px] text-slate-500 block">Resp. Planification & EDT</span>
+            <span class="text-[11px] text-slate-500 block">Resp. Planification EDT</span>
             <span class="text-[10px] text-emerald-600 font-bold mt-1 inline-block">Affectation IA Salles & Groupes</span>
           </div>
         </button>
@@ -175,24 +179,36 @@
           </div>
         </button>
 
+        <!-- Professeur Vacataire -->
+        <button onclick="loginAs('ENSEIGNANT_VACATAIRE')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-briefcase"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Dr. Karim Alami</span>
+            <span class="text-[11px] text-slate-500 block">Enseignant Vacataire</span>
+            <span class="text-[10px] text-amber-600 font-bold mt-1 inline-block">Créneaux Sanctuarisés P1</span>
+          </div>
+        </button>
+
         <!-- Étudiant -->
-        <button onclick="loginAs('ETUDIANT')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+        <button onclick="loginAs('ETUDIANT')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3 sm:col-span-2 lg:col-span-3">
           <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
             <i class="fa-solid fa-user-graduate"></i>
           </div>
           <div>
             <span class="font-bold text-xs text-slate-900 block">Ilyass Ait Ouahman</span>
-            <span class="text-[11px] text-slate-500 block">Étudiant 5A-IIR (2DSI G3)</span>
-            <span class="text-[10px] text-indigo-600 font-bold mt-1 inline-block">Mon EDT & Absences vs 20%</span>
+            <span class="text-[11px] text-slate-500 block">Étudiant 5A-IIR • Option 2DSI G3 (Campus Targa Fixe)</span>
+            <span class="text-[10px] text-indigo-600 font-bold mt-1 inline-block">Mon EDT Officiel & Jauge Absences vs 20%</span>
           </div>
         </button>
 
       </div>
 
       <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-        <span>Design System Acadex • Composants modernes & graphiques vectoriels</span>
+        <span>Contraintes : 1 groupe = 1 campus • Vacataires prioritaires • Jurys 4 membres</span>
         <button onclick="loginAs('SUPER_ADMIN')" class="font-bold text-brand-600 hover:underline">
-          Accéder en tant que Super Admin ➔
+          Accéder avec Super Admin ➔
         </button>
       </div>
 
@@ -204,31 +220,29 @@
   <!-- ============================================================== -->
   <div class="h-full flex overflow-hidden">
     
-    <!-- SIDEBAR STYLE ACADEX (BLANCHE ÉLÉGANTE, AVATAR PROFILE EN HAUT) -->
+    <!-- SIDEBAR STYLE ACADEX (BLANCHE ÉLÉGANTE AVEC TOUTES LES RUBRIQUES) -->
     <aside id="main-sidebar" class="w-64 bg-white border-r border-[#EEF2F6] flex flex-col justify-between shrink-0 transition-all duration-300 z-20">
       
-      <div class="p-6 space-y-6 overflow-y-auto">
+      <div class="p-5 space-y-5 overflow-y-auto">
         
-        <!-- Logo Acadex / EMSI -->
+        <!-- Logo Officiel EMSI + Nom Brand -->
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-brand-500/20">
-            <i class="fa-solid fa-layer-group"></i>
-          </div>
+          <img src="assets/emsi_logo.png" alt="Logo EMSI" class="w-9 h-9 object-contain rounded-xl border border-slate-100 bg-white p-0.5 shadow-sm" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_EMSI.png';">
           <div>
-            <span class="font-black text-lg tracking-tight text-slate-900 block leading-none">Acadex</span>
-            <span class="text-[10px] font-bold text-emsi-primary tracking-wider uppercase block mt-1">EMSI Univora</span>
+            <span class="font-black text-base tracking-tight text-slate-900 block leading-none">EMSI Univora</span>
+            <span class="text-[9px] font-bold text-emsi-primary tracking-wider uppercase block mt-1">Honoris United Universities</span>
           </div>
         </div>
 
         <!-- Profil Utilisateur Card Style Acadex -->
         <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-          <div class="flex items-center gap-3 overflow-hidden">
-            <div id="sidebar-user-avatar" class="w-10 h-10 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center shrink-0">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <div id="sidebar-user-avatar" class="w-9 h-9 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
               MM
             </div>
             <div class="overflow-hidden">
               <span id="sidebar-user-name" class="font-extrabold text-xs text-slate-900 block truncate">Moad Moussaoui</span>
-              <span id="sidebar-user-role" class="text-[11px] text-slate-400 font-medium block truncate">Admin</span>
+              <span id="sidebar-user-role" class="text-[10px] text-slate-400 font-semibold block truncate">Super Admin</span>
             </div>
           </div>
           <button onclick="deconnecter()" title="Changer d'espace acteur" class="text-slate-400 hover:text-slate-700 p-1">
@@ -236,24 +250,104 @@
           </button>
         </div>
 
-        <!-- Section Navigation Menus Principaux -->
-        <nav class="space-y-1 text-xs font-semibold" id="dynamic-nav-container">
-          <!-- Injecté par JavaScript selon le rôle -->
+        <!-- Section Navigation Menus Principaux Structurés sans Troncature -->
+        <nav class="space-y-4 text-xs font-semibold">
+          
+          <!-- Groupe 1 : Vue Générale -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Général</span>
+            <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all bg-brand-50 text-brand-600 font-bold">
+              <i class="fa-solid fa-table-cells-large w-4 text-center"></i>
+              <span>Dashboard</span>
+            </button>
+          </div>
+
+          <!-- Groupe 2 : Intelligence Artificielle (IA) -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Modules IA</span>
+            <button onclick="navigateTo('affectation-ia')" id="nav-affectation-ia" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-wand-magic-sparkles w-4 text-center text-emerald-600"></i>
+                <span>Affectation Salles IA</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono">CP-SAT</span>
+            </button>
+            <button onclick="navigateTo('pfe')" id="nav-pfe" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-award w-4 text-center text-purple-600"></i>
+                <span>Jurys PFE à 4 IA</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-100 text-purple-800 font-mono">Gemini</span>
+            </button>
+            <button onclick="navigateTo('rh')" id="nav-rh" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-invoice w-4 text-center text-cyan-600"></i>
+                <span>CV Matching RH</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-100 text-cyan-800 font-mono">Top 3</span>
+            </button>
+          </div>
+
+          <!-- Groupe 3 : Emplois du Temps & Salles -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Emploi & Campus</span>
+            <button onclick="navigateTo('edt')" id="nav-edt" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-calendar-days w-4 text-center text-blue-600"></i>
+              <span>Emploi du Temps Officiel</span>
+            </button>
+            <button onclick="navigateTo('filieres-groupes')" id="nav-filieres-groupes" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-folder-tree w-4 text-center text-indigo-600"></i>
+              <span>Filières & Groupes</span>
+            </button>
+            <button onclick="navigateTo('absences')" id="nav-absences" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-clipboard-user w-4 text-center text-rose-600"></i>
+                <span>Appel & Seuil 20%</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 font-mono">Alerte</span>
+            </button>
+          </div>
+
+          <!-- Groupe 4 : PFE, Soutenances & Stages -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">PFE & Stages</span>
+            <button onclick="navigateTo('soutenances')" id="nav-soutenances" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-calendar-check w-4 text-center text-purple-600"></i>
+              <span>Planning Soutenances</span>
+            </button>
+            <button onclick="navigateTo('cahier-encadrement')" id="nav-cahier-encadrement" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-book-open-reader w-4 text-center text-teal-600"></i>
+                <span>Suivi PFE (30 min)</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-teal-100 text-teal-800 font-mono">Hebdo</span>
+            </button>
+            <button onclick="navigateTo('stages-ete')" id="nav-stages-ete" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-briefcase w-4 text-center text-teal-600"></i>
+              <span>Stages d'Été (3A/4A)</span>
+            </button>
+          </div>
+
+          <!-- Groupe 5 : Administration & Sécurité -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Gouvernance</span>
+            <button onclick="navigateTo('rbac')" id="nav-rbac" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-users-gear w-4 text-center text-slate-600"></i>
+              <span>Comptes Utilisateurs</span>
+            </button>
+            <button onclick="navigateTo('account')" id="nav-account" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-key w-4 text-center text-amber-600"></i>
+              <span>Mon Compte & Password</span>
+            </button>
+          </div>
+
         </nav>
 
-        <!-- Section Navigation Secondaire (Account, Help, Settings comme sur l'image) -->
-        <div class="pt-4 border-t border-slate-100 space-y-1 text-xs font-semibold text-slate-400">
-          <button onclick="navigateTo('rbac')" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:text-slate-800 hover:bg-slate-50 transition-all">
-            <i class="fa-regular fa-user w-4 text-center"></i>
-            <span>Account</span>
-          </button>
-          <a href="rapport_etat_des_lieux_emsi.html" target="_blank" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:text-slate-800 hover:bg-slate-50 transition-all">
-            <i class="fa-regular fa-circle-question w-4 text-center"></i>
-            <span>Help & Specs</span>
-          </a>
-          <button onclick="deconnecter()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:text-rose-600 hover:bg-rose-50 transition-all">
+        <!-- Section Navigation Secondaire (Déconnexion Propre) -->
+        <div class="pt-3 border-t border-slate-100 space-y-1 text-xs font-semibold text-slate-400">
+          <button onclick="deconnecter()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:text-rose-600 hover:bg-rose-50 transition-all">
             <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
-            <span>Changer de rôle</span>
+            <span>Se déconnecter</span>
           </button>
         </div>
 
@@ -265,23 +359,29 @@
     <div class="flex-1 flex flex-col overflow-hidden">
       
       <!-- Top Header Style Acadex (Clean, Minimal, Search & Notifs) -->
-      <header class="h-18 px-8 py-5 flex items-center justify-between bg-[#F4F6F9] shrink-0">
+      <header class="h-18 px-8 py-4 flex items-center justify-between bg-[#F4F6F9] shrink-0 border-b border-slate-200/50">
         <div>
-          <h1 id="top-title" class="text-2xl font-black text-slate-900 tracking-tight">Dashboard</h1>
-          <p id="top-subtitle" class="text-xs text-slate-400 font-medium">Lundi 09 Novembre 2026 • Semestre Automne</p>
+          <div class="flex items-center gap-2">
+            <h1 id="top-title" class="text-xl font-black text-slate-900 tracking-tight">Dashboard • Moad Moussaoui</h1>
+            <span id="top-campus-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 font-mono">
+              Campus Fixe : Targa
+            </span>
+          </div>
+          <p id="top-subtitle" class="text-xs text-slate-400 font-medium">Lundi 09 Novembre 2026 • 1 groupe = 1 campus • Vacataires prioritaires</p>
         </div>
 
-        <!-- Actions Droite : Switcher Rôles Rapide + Recherche + Notifs -->
+        <!-- Actions Droite : Switcher Rôles Rapide + Impression A4 + Notifs -->
         <div class="flex items-center gap-3">
           
           <!-- Pills de Changement de Rôle Immédiat -->
           <div class="hidden xl:flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200/80 shadow-sm">
             <button onclick="loginAs('SUPER_ADMIN')" id="pill-SUPER_ADMIN" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Admin</button>
-            <button onclick="loginAs('CHEF_FILIERE')" id="pill-CHEF_FILIERE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Filière</button>
+            <button onclick="loginAs('CHEF_FILIERE')" id="pill-CHEF_FILIERE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Chef Filière</button>
             <button onclick="loginAs('RESP_PLANNING')" id="pill-RESP_PLANNING" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Planning</button>
-            <button onclick="loginAs('RESP_PFE')" id="pill-RESP_PFE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">PFE</button>
-            <button onclick="loginAs('ENSEIGNANT_PERMANENT')" id="pill-ENSEIGNANT_PERMANENT" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Permanent</button>
-            <button onclick="loginAs('ETUDIANT')" id="pill-ETUDIANT" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Étudiant</button>
+            <button onclick="loginAs('RESP_PFE')" id="pill-RESP_PFE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Resp. PFE</button>
+            <button onclick="loginAs('ENSEIGNANT_PERMANENT')" id="pill-ENSEIGNANT_PERMANENT" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Permanent (18h)</button>
+            <button onclick="loginAs('ENSEIGNANT_VACATAIRE')" id="pill-ENSEIGNANT_VACATAIRE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Vacataire</button>
+            <button onclick="loginAs('ETUDIANT')" id="pill-ETUDIANT" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Étudiant 5A</button>
           </div>
 
           <!-- Lien Emploi A4 Officiel Direct -->
@@ -290,13 +390,13 @@
             <span>EDT Imprimable A4</span>
           </a>
 
-          <!-- Bouton Recherche Icon Style Acadex -->
-          <button class="w-10 h-10 rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center shadow-sm">
-            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+          <!-- Bouton Gestion de Compte & Mot de Passe -->
+          <button onclick="navigateTo('account')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 text-slate-500 hover:text-brand-600 flex items-center justify-center shadow-sm" title="Mon Compte & Sécurité">
+            <i class="fa-solid fa-shield-halved text-sm"></i>
           </button>
 
           <!-- Bouton Notification Icon Style Acadex -->
-          <button onclick="showToast('3 alertes académiques actives (1 seuil 20%, 2 fiches PFE)', 'info')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center relative shadow-sm">
+          <button onclick="showToast('Alerte : Seuil 20% franchi par Hamza Chraibi (19.5h d\'absence)', 'warning')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center relative shadow-sm">
             <i class="fa-regular fa-bell text-sm"></i>
             <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500"></span>
           </button>
@@ -304,27 +404,43 @@
       </header>
 
       <!-- Scrollable Main View Container -->
-      <main class="flex-1 overflow-y-auto px-8 pb-8 space-y-6">
+      <main class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
         
         <!-- ============================================================ -->
-        <!-- 3. VUE DASHBOARD PRINCIPALE STYLE ACADEX (4 STATS + 2 GRAPHS) -->
+        <!-- 3. PAGE DASHBOARD : ACADEX REPRODUCTION FIDÈLE               -->
         <!-- ============================================================ -->
         <div id="page-dashboard" class="space-y-6">
           
-          <!-- LIGNE 1 : LES 4 CARTES MÉTRIQUES AVEC BOUTON FLÈCHE (->) EXACTEMENT COMME ACADEX -->
+          <!-- RANGÉE 1 : 4 CARTES MÉTRIQUES AVEC BOUTON FLÈCHE (->) -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="acadex-metrics-row">
-            <!-- Rempli par renderAcadexMetrics() selon le rôle -->
+            <!-- Rendu par renderAcadexMetrics() -->
           </div>
 
-          <!-- LIGNE 2 : LES 2 GRANDS GRAPHIQUES (Academic Performance + Earnings/Heures) -->
+          <!-- PANNEAU DES CONTRAINTES MÉTIERS STRICTES SANCTUARISÉES -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-teal-950 text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emsi-gold bg-white/10 px-2 py-0.5 rounded-full">
+                Contraintes Académiques EMSI Satisfaites à 100%
+              </span>
+              <h3 class="font-extrabold text-sm text-white">Règles d'Affectation & de Gestion Validées par le Solveur CP-SAT :</h3>
+              <p class="text-xs text-emerald-100/80">
+                1. <strong>Un Groupe = Un Campus Fixe</strong> (pas de déplacement inter-campus) • 2. <strong>Vacataires Sanctuarisés P1</strong> puis Permanents (18h) • 3. <strong>Salles LI (PC Informatique) vs LR (Réseaux)</strong> • 4. <strong>Pause 15 min obligatoire</strong>.
+              </p>
+            </div>
+            <button onclick="navigateTo('affectation-ia')" class="px-3.5 py-2 rounded-xl bg-white text-slate-900 hover:bg-emerald-50 font-black text-xs shrink-0 transition-all shadow-sm">
+              Consulter Solveur IA ➔
+            </button>
+          </div>
+
+          <!-- RANGÉE 2 : LES 2 GRANDS GRAPHIQUES (Spline Dégradé + Bar Chart Groupé) -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- Graphique 1 : Courbe Spline Dégradé (Academic Performance) (7 cols) -->
+            <!-- Graphique 1 : Courbe Spline Dégradé (Academic Performance) -->
             <div class="lg:col-span-7 acadex-card p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <div>
                   <h3 class="font-extrabold text-sm text-slate-900">Academic Performance & Assiduité</h3>
-                  <p class="text-xs text-slate-400 font-medium">Taux de présence et validation des crédits ECTS</p>
+                  <p class="text-xs text-slate-400 font-medium">Taux moyen de présence aux séances et respect du seuil de 20%</p>
                 </div>
                 <div class="flex items-center gap-2">
                   <select class="text-xs font-bold text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1">
@@ -334,7 +450,7 @@
                 </div>
               </div>
 
-              <!-- SVG Spline Area Chart avec Dégradé Vert/Bleu et Tooltip "76%" comme dans Acadex -->
+              <!-- SVG Spline Area Chart avec Dégradé Vert/Bleu et Tooltip "91%" comme dans Acadex -->
               <div class="relative pt-2">
                 <svg viewBox="0 0 500 180" class="w-full h-44 overflow-visible">
                   <defs>
@@ -344,21 +460,15 @@
                     </linearGradient>
                   </defs>
                   
-                  <!-- Lignes de repère horizontales -->
                   <line x1="20" y1="30" x2="480" y2="30" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
                   <line x1="20" y1="80" x2="480" y2="80" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
                   <line x1="20" y1="130" x2="480" y2="130" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
 
-                  <!-- Ligne verticale de repère Tooltip -->
                   <line x1="320" y1="40" x2="320" y2="160" stroke="#10B981" stroke-width="1.5" stroke-dasharray="3,3"/>
 
-                  <!-- Surface sous la courbe avec dégradé -->
                   <path d="M 30,140 Q 90,120 150,135 T 270,105 T 320,50 T 400,65 T 470,80 L 470,160 L 30,160 Z" fill="url(#acadexGreenGrad)"/>
-
-                  <!-- Courbe spline principale -->
                   <path d="M 30,140 Q 90,120 150,135 T 270,105 T 320,50 T 400,65 T 470,80" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
 
-                  <!-- Points circulaires sur la courbe -->
                   <circle cx="30" cy="140" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
                   <circle cx="150" cy="135" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
                   <circle cx="210" cy="120" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
@@ -367,13 +477,11 @@
                   <circle cx="400" cy="65" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
                   <circle cx="470" cy="80" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
 
-                  <!-- Badge Tooltip "91.2%" comme le "76%" de Acadex -->
                   <g transform="translate(300, 18)">
                     <rect x="0" y="0" width="40" height="22" rx="6" fill="#0F172A"/>
                     <text x="20" y="15" fill="#FFFFFF" font-size="10" font-weight="bold" text-anchor="middle" font-family="'Plus Jakarta Sans'">91%</text>
                   </g>
 
-                  <!-- Labels Axes Années / Mois -->
                   <text x="30" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sept</text>
                   <text x="150" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Oct</text>
                   <text x="270" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Nov</text>
@@ -384,59 +492,56 @@
               </div>
             </div>
 
-            <!-- Graphique 2 : Histogramme Groupé Bleu & Vert (Earnings / Heures d'Enseignement) (5 cols) -->
+            <!-- Graphique 2 : Histogramme Groupé Bleu & Vert (Quotas Enseignants) -->
             <div class="lg:col-span-5 acadex-card p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <div>
                   <h3 class="font-extrabold text-sm text-slate-900">Quotas & Heures Enseignées</h3>
                   <div class="flex items-center gap-3 text-[11px] font-bold mt-0.5">
                     <span class="flex items-center gap-1.5 text-brand-600"><span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span> Permanents (18h)</span>
-                    <span class="flex items-center gap-1.5 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Vacataires</span>
+                    <span class="flex items-center gap-1.5 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Vacataires P1</span>
                   </div>
                 </div>
                 <span class="text-xs font-bold text-slate-400">Semestre 1</span>
               </div>
 
-              <!-- Bar Chart SVG Groupé -->
               <div class="pt-2">
                 <svg viewBox="0 0 350 180" class="w-full h-44">
-                  <!-- Lignes repères -->
                   <line x1="20" y1="30" x2="330" y2="30" stroke="#F1F5F9" stroke-width="1.5"/>
                   <line x1="20" y1="80" x2="330" y2="80" stroke="#F1F5F9" stroke-width="1.5"/>
                   <line x1="20" y1="130" x2="330" y2="130" stroke="#F1F5F9" stroke-width="1.5"/>
 
-                  <!-- Paires de barres (Bleu / Vert) -->
-                  <!-- Sept -->
+                  <!-- S1 -->
                   <rect x="40" y="70" width="10" height="70" rx="3" fill="#2563EB"/>
                   <rect x="54" y="90" width="10" height="50" rx="3" fill="#10B981"/>
-                  <text x="52" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">S1</text>
+                  <text x="52" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 1</text>
 
-                  <!-- Oct -->
+                  <!-- S2 -->
                   <rect x="95" y="45" width="10" height="95" rx="3" fill="#2563EB"/>
                   <rect x="109" y="80" width="10" height="60" rx="3" fill="#10B981"/>
-                  <text x="107" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">S2</text>
+                  <text x="107" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 2</text>
 
-                  <!-- Nov -->
+                  <!-- S3 -->
                   <rect x="150" y="35" width="10" height="105" rx="3" fill="#2563EB"/>
                   <rect x="164" y="60" width="10" height="80" rx="3" fill="#10B981"/>
-                  <text x="162" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">S3</text>
+                  <text x="162" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 3</text>
 
-                  <!-- Déc -->
+                  <!-- S4 -->
                   <rect x="205" y="50" width="10" height="90" rx="3" fill="#2563EB"/>
                   <rect x="219" y="75" width="10" height="65" rx="3" fill="#10B981"/>
-                  <text x="217" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">S4</text>
+                  <text x="217" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 4</text>
 
-                  <!-- Janv -->
+                  <!-- S5 -->
                   <rect x="260" y="30" width="10" height="110" rx="3" fill="#2563EB"/>
                   <rect x="274" y="55" width="10" height="85" rx="3" fill="#10B981"/>
-                  <text x="272" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">S5</text>
+                  <text x="272" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 5</text>
                 </svg>
               </div>
             </div>
 
           </div>
 
-          <!-- LIGNE 3 : LES 3 COLONNES INFÉRIEURES (Messages + Donut Students + Student Activity) -->
+          <!-- RANGÉE 3 : LES 3 COLONNES INFÉRIEURES (Messages + Donut Students + Recent Activity) -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             <!-- Colonne 1 : Messages / Notifications Récentes -->
@@ -456,7 +561,7 @@
                       <span class="font-bold text-slate-900">Pr. M. Sassoui</span>
                       <span class="text-[10px] text-slate-400">3:00 PM</span>
                     </div>
-                    <p class="text-slate-500 truncate text-[11px] mt-0.5">2 nouvelles fiches PFE déposées pour validation.</p>
+                    <p class="text-slate-500 truncate text-[11px] mt-0.5">2 fiches PFE en attente de votre avis de commission.</p>
                   </div>
                 </div>
 
@@ -469,7 +574,7 @@
                       <span class="font-bold text-slate-900">Mme Kenza Tazi</span>
                       <span class="text-[10px] text-slate-400">11:15 AM</span>
                     </div>
-                    <p class="text-slate-500 truncate text-[11px] mt-0.5">Affectation IA des salles LI terminée (0 conflit).</p>
+                    <p class="text-slate-500 truncate text-[11px] mt-0.5">Affectation des salles LI 8 et LI 3 validée par OR-Tools.</p>
                   </div>
                 </div>
 
@@ -482,30 +587,25 @@
                       <span class="font-bold text-slate-900">Alerte Scolarité</span>
                       <span class="text-[10px] text-slate-400">09:40 AM</span>
                     </div>
-                    <p class="text-rose-600 font-semibold truncate text-[11px] mt-0.5">Seuil 20% franchi par l'étudiant Hamza Chraibi.</p>
+                    <p class="text-rose-600 font-semibold truncate text-[11px] mt-0.5">Seuil 20% franchi : Hamza Chraibi radié d'examen.</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Colonne 2 : Donut Ring Students Répartition (Exactement comme Acadex) -->
+            <!-- Colonne 2 : Donut Ring Students Répartition -->
             <div class="acadex-card p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <h3 class="font-extrabold text-sm text-slate-900">Students Distribution</h3>
-                <span class="text-xs text-slate-400">2026</span>
+                <span class="text-xs text-slate-400">Campus EMSI</span>
               </div>
 
               <div class="flex flex-col items-center justify-center py-2">
-                <!-- SVG Donut Chart avec texte au centre "1,420 Total Students" -->
                 <div class="relative w-36 h-36">
                   <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
-                    <!-- Segment Fond Gris -->
                     <circle cx="50" cy="50" r="38" stroke="#F1F5F9" stroke-width="12" fill="none"/>
-                    <!-- Segment IIR (52% = ~124 sur circonférence 238) -->
                     <circle cx="50" cy="50" r="38" stroke="#2563EB" stroke-width="12" stroke-dasharray="124 238" fill="none" stroke-linecap="round"/>
-                    <!-- Segment GI (28% = ~66 sur 238) -->
                     <circle cx="50" cy="50" r="38" stroke="#10B981" stroke-width="12" stroke-dasharray="66 238" stroke-dashoffset="-128" fill="none" stroke-linecap="round"/>
-                    <!-- Segment IFA (20% = ~48 sur 238) -->
                     <circle cx="50" cy="50" r="38" stroke="#F59E0B" stroke-width="12" stroke-dasharray="48 238" stroke-dashoffset="-198" fill="none" stroke-linecap="round"/>
                   </svg>
                   <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
@@ -514,7 +614,6 @@
                   </div>
                 </div>
 
-                <!-- Légende Acadex sous le Donut -->
                 <div class="w-full pt-4 space-y-1.5 text-xs">
                   <div class="flex items-center justify-between">
                     <span class="flex items-center gap-2 text-slate-600"><span class="w-2.5 h-2.5 rounded bg-brand-600"></span> 5A-IIR (Ingénierie Info)</span>
@@ -532,7 +631,7 @@
               </div>
             </div>
 
-            <!-- Colonne 3 : Student Activity / Événements Récents Style Acadex -->
+            <!-- Colonne 3 : Student Activity / Événements Récents -->
             <div class="acadex-card p-6 space-y-4">
               <div class="flex items-center justify-between">
                 <h3 class="font-extrabold text-sm text-slate-900">Recent Activity</h3>
@@ -547,10 +646,10 @@
                   </div>
                   <div class="flex-1">
                     <div class="flex items-center justify-between">
-                      <span class="font-bold text-slate-900">Jury PFE IA Assigné</span>
+                      <span class="font-bold text-slate-900">Jury PFE IA Composé</span>
                       <span class="text-[10px] text-slate-400">Il y a 10m</span>
                     </div>
-                    <p class="text-[11px] text-slate-500">Jury 4 membres validé pour Amine Bella & Ilyass Ait Ouahman.</p>
+                    <p class="text-[11px] text-slate-500">Jury à 4 membres validé pour Amine Bella & Ilyass Ait Ouahman.</p>
                   </div>
                 </div>
 
@@ -563,12 +662,12 @@
                       <span class="font-bold text-slate-900">CP-SAT Solveur Validé</span>
                       <span class="text-[10px] text-slate-400">Il y a 1h</span>
                     </div>
-                    <p class="text-[11px] text-slate-500">EDT 6 séances avec 15m pause généré sans conflit.</p>
+                    <p class="text-[11px] text-slate-500">Contrainte 1 groupe = 1 campus vérifiée sans conflit.</p>
                   </div>
                 </div>
 
                 <div class="flex items-start gap-3">
-                  <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+                  <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
                     <i class="fa-solid fa-clock"></i>
                   </div>
                   <div class="flex-1">
@@ -588,21 +687,31 @@
         </div>
 
         <!-- ============================================================ -->
-        <!-- 4. SUB-PAGES INTÉGRÉES DANS LE TEMPLATE ACADEX              -->
+        <!-- 4. SUB-PAGE : EMPLOI DU TEMPS (CONFORME PHOTO EMSI)          -->
         <!-- ============================================================ -->
-
-        <!-- SOUS-PAGE : EMPLOI DU TEMPS -->
         <div id="page-edt" class="hidden space-y-6">
           <div class="acadex-card p-6 space-y-4">
+            
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 class="text-lg font-black text-slate-900">Emploi du Temps Officiel • Grille 6 Séances</h2>
-                <p class="text-xs text-slate-500">Pauses obligatoires de 15 minutes • Salles LI (PC Informatique) & LR (Réseaux)</p>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-lg font-black text-slate-900">Emploi du Temps Hebdomadaire • Grille Officielle 6 Séances</h2>
+                  <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] font-mono">0 CONFLIT CP-SAT</span>
+                </div>
+                <p class="text-xs text-slate-500">Règle de Campus Unique : Le groupe étudie à 100% sur le Campus Targa • Pauses obligatoires de 15 min</p>
               </div>
               <a href="emploi_du_temps_officiel_emsi.html" target="_blank" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs flex items-center gap-2 hover:bg-brand-700 transition-all shadow-sm">
                 <i class="fa-solid fa-print"></i>
-                <span>Imprimer Format A4 Paysage Officiel</span>
+                <span>Imprimer Format A4 Paysage Officiel (avec Tampon)</span>
               </a>
+            </div>
+
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i class="fa-solid fa-lock text-amber-700"></i>
+                <span><strong>Priorisation Contractuelle :</strong> Les créneaux du Dr. Karim Alami (Vacataire) sont sanctuarisés en priorité 1 (Mardi & Jeudi matin). Les permanents (18h) complètent la grille.</span>
+              </span>
+              <span class="font-mono font-bold bg-white px-2 py-0.5 rounded border border-amber-300">P1 SANCTUARISÉE</span>
             </div>
             
             <div class="overflow-x-auto rounded-xl border border-slate-200">
@@ -628,16 +737,238 @@
                 </tbody>
               </table>
             </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-300"></span> <strong>LI</strong> = Laboratoire Informatique (PC dédiés)</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-purple-100 border border-purple-300"></span> <strong>LR</strong> = Laboratoire Réseaux (Cisco & Baies)</span>
+              </div>
+              <span class="font-bold text-slate-700">Campus Fixe : Targa (Aucun transit)</span>
+            </div>
+
           </div>
         </div>
 
-        <!-- SOUS-PAGE : GESTION DES FILIÈRES & GROUPES (CHEF DE FILIÈRE) -->
+        <!-- ============================================================ -->
+        <!-- 5. SUB-PAGE : AFFECTATION IA DES SALLES (CP-SAT OR-TOOLS)    -->
+        <!-- ============================================================ -->
+        <div id="page-affectation-ia" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Affectation Intelligente des Salles & Groupes</h2>
+                <p class="text-xs text-slate-500">Moteur CP-SAT OR-Tools : optimisation sous contraintes d'équipement informatique, de campus et de priorisation des vacataires.</p>
+              </div>
+              <button onclick="lancerAffectationIaComplete()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-700 to-teal-800 text-white font-bold text-xs flex items-center gap-2 shadow-md hover:opacity-95 transition-all">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                <span>Exécuter le Solveur IA CP-SAT</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-200">
+                <span class="font-bold text-blue-900 block">1. Salles LI (Informatique PC)</span>
+                <p class="text-[11px] text-blue-700 mt-0.5">8 salles équipées réservées aux cours de programmation : JEE Microservices, Deep Learning, Optimisation BD.</p>
+              </div>
+              <div class="p-3 bg-purple-50/70 rounded-xl border border-purple-200">
+                <span class="font-bold text-purple-900 block">2. Salles LR (Réseaux / Cisco)</span>
+                <p class="text-[11px] text-purple-700 mt-0.5">6 salles équipées avec baies de test réservées à DevOps, Big Data, Réseaux et Télécoms.</p>
+              </div>
+              <div class="p-3 bg-emerald-50/70 rounded-xl border border-emerald-200">
+                <span class="font-bold text-emerald-900 block">3. Sanctuarisation Vacataires</span>
+                <p class="text-[11px] text-emerald-700 mt-0.5">Priorité absolue aux disponibilités vacataires (Mardi & Jeudi matin), les permanents 18h comblent la grille.</p>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Groupe & Campus</th>
+                    <th class="p-3">Matière</th>
+                    <th class="p-3">Créneau Horaire</th>
+                    <th class="p-3">Salle Affectée par IA</th>
+                    <th class="p-3">Type Matériel</th>
+                    <th class="p-3">Enseignant</th>
+                    <th class="p-3">Statut Contrainte</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100" id="allocation-table-body">
+                  <!-- Rempli par renderAllocations() -->
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 6. SUB-PAGE : JURYS PFE À 4 MEMBRES (GEMINI 2.0 FLASH)       -->
+        <!-- ============================================================ -->
+        <div id="page-pfe" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Jurys Officiels PFE à 4 Membres & Arbitrage IA</h2>
+                <p class="text-xs text-slate-500">1. Encadrant • 2. Rapporteur • 3. Examinateur (Recommandé par Gemini 2.0 Flash) • 4. Président Docteur / HDR</p>
+              </div>
+              <button onclick="ouvrirModalNouveauPfe()" class="px-4 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>Nouveau Sujet PFE</span>
+              </button>
+            </div>
+
+            <!-- Liste des Cartes PFE -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="pfe-cards-container">
+              <!-- Rempli par renderPfe() -->
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 7. SUB-PAGE : PLANNING DES SOUTENANCES (SANS CHEVAUCHEMENT)  -->
+        <!-- ============================================================ -->
+        <div id="page-soutenances" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Planning Officiel des Soutenances PFE</h2>
+                <p class="text-xs text-slate-500">Séances de 45 minutes sans chevauchement de salle ni conflit pour les membres du jury</p>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-bold text-xs">
+                Salles Dédiées : Targa Salle M & Centre Salle V1
+              </span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Date & Heure</th>
+                    <th class="p-3">Salle & Campus</th>
+                    <th class="p-3">Étudiants Binôme</th>
+                    <th class="p-3">Intitulé du Sujet</th>
+                    <th class="p-3">Président (Docteur HDR)</th>
+                    <th class="p-3">Jury Complet</th>
+                    <th class="p-3 text-right">Convocation</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-mono font-bold text-purple-700">Samedi 20 Déc à 10:00</td>
+                    <td class="p-3 font-bold text-slate-900">Targa Salle M</td>
+                    <td class="p-3 font-bold">Amine Bella & Ilyass Ait Ouahman</td>
+                    <td class="p-3 text-slate-700">Plateforme Microservices & CP-SAT OR-Tools</td>
+                    <td class="p-3 font-bold text-blue-700">Pr. Noussair Benassou (HDR)</td>
+                    <td class="p-3 text-slate-600">Encadrant: Pr. Ait Ounejjar • Rap: Dr. Alami • Ex: Mme Kenza</td>
+                    <td class="p-3 text-right">
+                      <button onclick="showToast('Convocation officielle téléchargée pour le binôme', 'success')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded">Convocation</button>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-mono font-bold text-purple-700">Lundi 22 Déc à 14:30</td>
+                    <td class="p-3 font-bold text-slate-900">Centre Salle V1</td>
+                    <td class="p-3 font-bold">Ikram Mellakh</td>
+                    <td class="p-3 text-slate-700">Jumeau Numérique SCADA Industrielle</td>
+                    <td class="p-3 font-bold text-blue-700">Pr. Brahim Abod (HDR)</td>
+                    <td class="p-3 text-slate-600">Encadrant: Mme Kenza • Rap: Pr. Sassoui • Ex: Dr. Alami</td>
+                    <td class="p-3 text-right">
+                      <button onclick="showToast('Convocation officielle téléchargée', 'success')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded">Convocation</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 8. SUB-PAGE : CAHIER D'ENCADREMENT NUMÉRIQUE (30 MIN)        -->
+        <!-- ============================================================ -->
+        <div id="page-cahier-encadrement" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Cahier d'Encadrement Numérique PFE (30 min)</h2>
+                <p class="text-xs text-slate-500">Journal hebdomadaire obligatoire de 30 minutes avec visa et directives techniques</p>
+              </div>
+              <button onclick="ouvrirModalAjoutSeanceEncadrement()" class="px-4 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>Consigner Séance 30 min</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="prof-binomes-container">
+              <!-- Rempli par renderProfBinomes() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 9. SUB-PAGE : STAGES D'ÉTÉ (3A & 4A) - MODULE SÉPARÉ         -->
+        <!-- ============================================================ -->
+        <div id="page-stages-ete" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Stages d'Été (3ème & 4ème Année)</h2>
+                <p class="text-xs text-slate-500">Séparation nette du PFE : simple convention d'entreprise, attestation et rapport validé par le tuteur (sans soutenance).</p>
+              </div>
+              <button onclick="showToast('Formulaire de convention de stage 4A ouvert', 'info')" class="px-4 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 shadow-sm">
+                + Déposer Convention
+              </button>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Étudiant</th>
+                    <th class="p-3">Niveau</th>
+                    <th class="p-3">Entreprise d'Accueil</th>
+                    <th class="p-3">Période</th>
+                    <th class="p-3">Rapport PDF</th>
+                    <th class="p-3">Statut Tuteur</th>
+                    <th class="p-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-slate-900">Ilyass Ait Ouahman</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold">4A-IIR</span></td>
+                    <td class="p-3 text-slate-700">Capgemini Maroc (Casablanca)</td>
+                    <td class="p-3 text-slate-500">01 Juil - 31 Août (2 mois)</td>
+                    <td class="p-3"><span class="text-emerald-700 font-bold"><i class="fa-solid fa-file-pdf mr-1"></i> rapport_4A.pdf</span></td>
+                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">VALIDÉ</span></td>
+                    <td class="p-3 text-right"><button class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded font-bold">Consulter</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-slate-900">Ikram Mellakh</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">4A-GI</span></td>
+                    <td class="p-3 text-slate-700">OCP Group (Safi)</td>
+                    <td class="p-3 text-slate-500">15 Juil - 15 Sept (2 mois)</td>
+                    <td class="p-3"><span class="text-emerald-700 font-bold"><i class="fa-solid fa-file-pdf mr-1"></i> rapport_ocp.pdf</span></td>
+                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">VALIDÉ</span></td>
+                    <td class="p-3 text-right"><button class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded font-bold">Consulter</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 10. SUB-PAGE : FILIÈRES & GROUPES (CRUD CHEF DE FILIÈRE)     -->
+        <!-- ============================================================ -->
         <div id="page-filieres-groupes" class="hidden space-y-6">
           <div class="acadex-card p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
                 <h2 class="text-lg font-black text-slate-900">Filières & Groupes d'Ingénierie</h2>
-                <p class="text-xs text-slate-500">Administration des promotions, des groupes TD/TP et attribution des laboratoires</p>
+                <p class="text-xs text-slate-500">Administration des promotions, des groupes TD/TP et attribution du campus fixe</p>
               </div>
               <div class="flex gap-2">
                 <button onclick="ouvrirModalAjoutFiliere()" class="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200">
@@ -649,12 +980,13 @@
               </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
               <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
                   <tr>
                     <th class="p-3">Code Groupe</th>
                     <th class="p-3">Filière</th>
+                    <th class="p-3">Campus Fixe Attribué</th>
                     <th class="p-3">Spécialité / Option</th>
                     <th class="p-3">Effectif</th>
                     <th class="p-3">Laboratoires Requis</th>
@@ -669,100 +1001,82 @@
           </div>
         </div>
 
-        <!-- SOUS-PAGE : AFFECTATION IA DES SALLES (RESP PLANNING) -->
-        <div id="page-affectation-ia" class="hidden space-y-6">
+        <!-- ============================================================ -->
+        <!-- 11. SUB-PAGE : ÉMARGEMENT & SEUIL D'ABSENCES 20%             -->
+        <!-- ============================================================ -->
+        <div id="page-absences" class="hidden space-y-6">
           <div class="acadex-card p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <h2 class="text-lg font-black text-slate-900">Affectation Intelligente des Salles & Groupes (IA)</h2>
-                <p class="text-xs text-slate-500">Solveur CP-SAT : attribution optimale des laboratoires LI (PC) et LR (Réseaux) sans conflit</p>
+                <h2 class="text-lg font-black text-slate-900">Feuille d'Émargement & Seuil d'Absence 20%</h2>
+                <p class="text-xs text-slate-500">Appel manuel nominatif obligatoire (QR code formellement banni) • 20% = Radiation immédiate</p>
               </div>
-              <button onclick="lancerAffectationIaComplete()" class="px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Exécuter Solveur IA CP-SAT</span>
+              <button onclick="validerAppelComplet()" class="px-4 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 shadow-sm">
+                Valider l'Émargement de la Séance
               </button>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
               <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
                   <tr>
-                    <th class="p-3">Groupe</th>
-                    <th class="p-3">Matière</th>
-                    <th class="p-3">Horaire</th>
-                    <th class="p-3">Salle Affectée</th>
-                    <th class="p-3">Type Salle</th>
-                    <th class="p-3">Enseignant</th>
-                    <th class="p-3">Conformité</th>
+                    <th class="p-3">Matricule</th>
+                    <th class="p-3">Étudiant</th>
+                    <th class="p-3">Cumul Absences</th>
+                    <th class="p-3">Taux Actuel</th>
+                    <th class="p-3">Statut Seuil 20%</th>
+                    <th class="p-3 text-center">Émargement Présence</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100" id="allocation-table-body">
-                  <!-- Rempli par renderAllocations() -->
+                <tbody class="divide-y divide-slate-100" id="appel-table-body">
+                  <!-- Rempli par renderAppel() -->
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- SOUS-PAGE : RELEVÉ D'ASSIDUITÉ ÉTUDIANT (VS SEUIL 20%) -->
-        <div id="page-etudiant-absences" class="hidden space-y-6">
+        <!-- ============================================================ -->
+        <!-- 12. SUB-PAGE : CV MATCHING RH IA (TOP 3 MODULES)             -->
+        <!-- ============================================================ -->
+        <div id="page-rh" class="hidden space-y-6">
           <div class="acadex-card p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <h2 class="text-lg font-black text-slate-900">Mon Suivi d'Assiduité par Module</h2>
-                <p class="text-xs text-slate-500">Seuil éliminatoire fixé à 20% (18h max d'absence injustifiée)</p>
+                <h2 class="text-lg font-black text-slate-900">Recommandation CV Enseignants (Gemini 2.0 Flash)</h2>
+                <p class="text-xs text-slate-500">Analyse automatique du CV PDF et préconisation du TOP 3 des matières à attribuer</p>
               </div>
-              <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs">
-                8.8% Global • 10h de marge restante
-              </span>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
-                  <tr>
-                    <th class="p-3">Module</th>
-                    <th class="p-3">Professeur</th>
-                    <th class="p-3">Volume Global</th>
-                    <th class="p-3">Heures Absence</th>
-                    <th class="p-3">Taux (%)</th>
-                    <th class="p-3">Statut Examen</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100" id="etudiant-absences-table">
-                  <!-- Rempli par renderEtudiantAbsencesTable() -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- SOUS-PAGE : CAHIER D'ENCADREMENT PROFESSEUR (30 MIN) -->
-        <div id="page-prof-encadrement" class="hidden space-y-6">
-          <div class="acadex-card p-6 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div>
-                <h2 class="text-lg font-black text-slate-900">Cahier d'Encadrement PFE (Séances 30 min)</h2>
-                <p class="text-xs text-slate-500">Consignation obligatoire des réunions de suivi technique avec vos binômes</p>
-              </div>
-              <button onclick="ouvrirModalAjoutSeanceEncadrement()" class="px-3.5 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 shadow-sm">
-                + Consigner Séance 30 min
+              <button onclick="showToast('Téléversement CV PDF enseignant prêt (Gemini 2.0 Flash)', 'info')" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold text-xs hover:bg-cyan-700 shadow-sm">
+                + Analyser Nouveau CV
               </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="prof-binomes-container">
-              <!-- Rempli par renderProfBinomes() -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 space-y-2">
+                <span class="font-bold text-cyan-950 block text-sm">1. Architecture Cloud Native (98%)</span>
+                <p class="text-cyan-800 text-[11px]">5A-IIR • Alignement avec publications Kubernetes et Docker.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 space-y-2">
+                <span class="font-bold text-cyan-950 block text-sm">2. DevOps & CI/CD Pipelines (94%)</span>
+                <p class="text-cyan-800 text-[11px]">4A-IIR • 5 ans d'expérience pratique GitLab CI, Terraform et ArgoCD.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 space-y-2">
+                <span class="font-bold text-cyan-950 block text-sm">3. Programmation Réseau Avancée (89%)</span>
+                <p class="text-cyan-800 text-[11px]">3A-IIR • Maîtrise des sockets, gRPC et protocoles sécurisés.</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- SOUS-PAGE : GESTION DES COMPTES RBAC (SUPER ADMIN) -->
+        <!-- ============================================================ -->
+        <!-- 13. SUB-PAGE : GESTION DES COMPTES RBAC (SUPER ADMIN)        -->
+        <!-- ============================================================ -->
         <div id="page-rbac" class="hidden space-y-6">
           <div class="acadex-card p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <h2 class="text-lg font-black text-slate-900">Administration & Création des Utilisateurs</h2>
-                <p class="text-xs text-slate-500">Création des Responsables, Enseignants (Permanents 18h / Vacataires) et Inscription des Étudiants</p>
+                <h2 class="text-lg font-black text-slate-900">Administration des Comptes & Matrice RBAC</h2>
+                <p class="text-xs text-slate-500">Gestion des Responsables, Enseignants (Permanents 18h & Vacataires P1) et Étudiants</p>
               </div>
               <div class="flex gap-2">
                 <button onclick="ouvrirModalNouveauResponsable()" class="px-3 py-1.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800">
@@ -777,15 +1091,15 @@
               </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
               <table class="w-full text-left text-xs">
                 <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
                   <tr>
                     <th class="p-3">Matricule</th>
                     <th class="p-3">Nom Complet</th>
                     <th class="p-3">Rôle Assigné</th>
-                    <th class="p-3">Email</th>
-                    <th class="p-3">Département / Statut</th>
+                    <th class="p-3">Email Institutionnel</th>
+                    <th class="p-3">Statut Contractuel</th>
                     <th class="p-3 text-right">Action</th>
                   </tr>
                 </thead>
@@ -797,7 +1111,90 @@
           </div>
         </div>
 
+        <!-- ============================================================ -->
+        <!-- 14. SUB-PAGE : MON COMPTE & CHANGEMENT DE MOT DE PASSE       -->
+        <!-- ============================================================ -->
+        <div id="page-account" class="hidden space-y-6">
+          <div class="acadex-card p-6 max-w-2xl mx-auto space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-brand-600 text-white font-black text-sm flex items-center justify-center shadow-md">
+                  <span id="account-avatar-preview">MM</span>
+                </div>
+                <div>
+                  <h2 class="text-base font-black text-slate-900" id="account-name-preview">Moad Moussaoui</h2>
+                  <p class="text-xs text-slate-400" id="account-role-preview">Super Administrateur • admin@emsi-edu.ma</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs font-mono">Compte Actif</span>
+            </div>
+
+            <!-- Formulaire Changement de Mot de Passe -->
+            <form onsubmit="handleChangerPassword(event)" class="space-y-4 text-xs">
+              <div class="border-b border-slate-100 pb-2">
+                <h3 class="font-extrabold text-xs text-slate-800 uppercase tracking-wider">Sécurité & Changement de Mot de Passe</h3>
+                <p class="text-slate-400 text-[11px]">Chiffrement BCrypt conforme aux exigences de sécurité EMSI</p>
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Mot de passe actuel</label>
+                <input type="password" id="old-pass" required placeholder="••••••••••••" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-xs focus:ring-2 focus:ring-brand-500">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Nouveau mot de passe</label>
+                  <input type="password" id="new-pass" required placeholder="Minimum 8 caractères" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-xs focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Confirmer le nouveau mot de passe</label>
+                  <input type="password" id="confirm-pass" required placeholder="Répéter le mot de passe" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-xs focus:ring-2 focus:ring-brand-500">
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1 text-[11px] text-slate-500">
+                <span class="font-bold text-slate-700 block">Exigences de sécurité :</span>
+                <div>✓ Au moins 8 caractères</div>
+                <div>✓ Au moins une lettre majuscule et un chiffre</div>
+                <div>✓ Déconnexion automatique des sessions inactives après 30 minutes</div>
+              </div>
+
+              <div class="flex items-center justify-between pt-2">
+                <button type="button" onclick="deconnecter()" class="px-4 py-2 rounded-xl text-rose-600 hover:bg-rose-50 font-bold text-xs">
+                  Se déconnecter
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 shadow-sm transition-all">
+                  Mettre à jour le mot de passe
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
       </main>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 15. MODALS FORMULAIRES (JURY IA, AJOUT RESP, PROF, ÉTUDIANT)   -->
+  <!-- ============================================================== -->
+
+  <!-- Modal Arbitrage Jury IA (Gemini 2.0 Flash) -->
+  <div id="modal-ai-jury" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-5 border border-purple-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+            <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-sm text-slate-900">Arbitrage IA du Jury Officiel à 4 Membres</h3>
+            <span class="text-[10px] text-purple-700 font-bold font-mono">Google Gemini 2.0 Flash (Free API)</span>
+          </div>
+        </div>
+        <button onclick="fermerModalJury()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="ai-modal-content" class="space-y-4"></div>
     </div>
   </div>
 
@@ -813,6 +1210,7 @@
         nom: 'Moad Moussaoui',
         role: 'SUPER_ADMIN',
         roleLabel: 'Super Admin',
+        campus: 'Targa (Gouvernance)',
         avatar: 'MM',
         email: 'admin@emsi-edu.ma'
       },
@@ -820,6 +1218,7 @@
         nom: 'Pr. M. Sassoui',
         role: 'CHEF_FILIERE',
         roleLabel: 'Chef de Filière IIR',
+        campus: 'Targa & Centre',
         avatar: 'MS',
         email: 'm.sassoui@emsi-edu.ma'
       },
@@ -827,6 +1226,7 @@
         nom: 'Mme Kenza Tazi',
         role: 'RESP_PLANNING',
         roleLabel: 'Resp. Planning EDT',
+        campus: 'Targa (Scolarité)',
         avatar: 'KT',
         email: 'kenza.tazi@emsi-edu.ma'
       },
@@ -834,6 +1234,7 @@
         nom: 'Pr. Brahim Abod',
         role: 'RESP_PFE',
         roleLabel: 'Resp. PFE & Jurys',
+        campus: 'Targa & Guéliz',
         avatar: 'BA',
         email: 'brahim.abod@emsi-edu.ma'
       },
@@ -841,13 +1242,23 @@
         nom: 'Pr. Noussair Benassou',
         role: 'ENSEIGNANT_PERMANENT',
         roleLabel: 'Enseignant Permanent',
+        campus: 'Targa (18h/semaine)',
         avatar: 'NB',
         email: 'noussair.benassou@emsi-edu.ma'
+      },
+      ENSEIGNANT_VACATAIRE: {
+        nom: 'Dr. Karim Alami',
+        role: 'ENSEIGNANT_VACATAIRE',
+        roleLabel: 'Enseignant Vacataire',
+        campus: 'Targa (Mardi/Jeudi matin)',
+        avatar: 'KA',
+        email: 'karim.alami@emsi-edu.ma'
       },
       ETUDIANT: {
         nom: 'Ilyass Ait Ouahman',
         role: 'ETUDIANT',
         roleLabel: 'Étudiant 5A-IIR',
+        campus: 'Targa Fixe (2DSI G3)',
         avatar: 'IA',
         email: 'ilyass.aitouahman@emsi-edu.ma'
       }
@@ -855,22 +1266,22 @@
 
     let currentUser = comptes.SUPER_ADMIN;
 
-    // Métriques selon le rôle pour reproduire la rangée de cartes style Acadex
+    // Métriques selon le rôle pour reproduire la rangée de 4 cartes style Acadex
     const roleMetrics = {
       SUPER_ADMIN: [
         { label: 'Students', value: '5,699', sub: '+12% ce semestre', icon: 'fa-user-graduate', color: 'blue' },
-        { label: 'Lecturers', value: '297', sub: '48 Perm. / 36 Vac.', icon: 'fa-chalkboard-user', color: 'indigo' },
+        { label: 'Lecturers', value: '297', sub: '48 Perm. (18h) / 36 Vac. P1', icon: 'fa-chalkboard-user', color: 'indigo' },
         { label: 'Awards & Jurys', value: '368', sub: '100% Validés IA', icon: 'fa-award', color: 'purple' },
         { label: 'Revenue & Budget', value: '$87,395', sub: 'Campus Targa/Centre', icon: 'fa-wallet', color: 'emerald' }
       ],
       CHEF_FILIERE: [
         { label: 'Filières Gérées', value: '4', sub: 'IIR, GI, IFA, GC', icon: 'fa-folder-tree', color: 'blue' },
-        { label: 'Groupes Actifs', value: '18', sub: 'Labos LI & LR assignés', icon: 'fa-users-viewfinder', color: 'indigo' },
+        { label: 'Groupes Actifs', value: '18', sub: '1 groupe = 1 campus fixe', icon: 'fa-users-viewfinder', color: 'indigo' },
         { label: 'Fiches PFE', value: '24', sub: '2 en attente validation', icon: 'fa-file-signature', color: 'amber' },
         { label: 'CV Matching IA', value: 'Top 3', sub: 'Gemini 2.0 Flash', icon: 'fa-wand-magic-sparkles', color: 'cyan' }
       ],
       RESP_PLANNING: [
-        { label: 'Séances Hebdo', value: '142', sub: '0 conflit détecté', icon: 'fa-calendar-check', color: 'emerald' },
+        { label: 'Séances Hebdo', value: '142', sub: '0 conflit CP-SAT', icon: 'fa-calendar-check', color: 'emerald' },
         { label: 'Salles LI (PC)', value: '8 Salles', sub: 'Occupation 82%', icon: 'fa-desktop', color: 'blue' },
         { label: 'Salles LR (Réseaux)', value: '6 Salles', sub: 'Occupation 74%', icon: 'fa-network-wired', color: 'purple' },
         { label: 'Vacataires Protégés', value: '100%', sub: 'Sanctuarisation P1', icon: 'fa-lock', color: 'amber' }
@@ -885,72 +1296,136 @@
         { label: 'Quota Contractuel', value: '18h / 18h', sub: '100% Planifié', icon: 'fa-clock', color: 'teal' },
         { label: 'Séance Active', value: 'LI 8 Targa', sub: 'Mardi 13h45 (JEE)', icon: 'fa-chalkboard-user', color: 'rose' },
         { label: 'Étudiants PFE', value: '4 Binômes', sub: 'Suivi 30 min hebdo', icon: 'fa-graduation-cap', color: 'purple' },
-        { label: 'Jurys de Soutenance', value: '3 Jurys', sub: 'Président HDR', icon: 'fa-award', color: 'amber' }
+        { label: 'Jurys Soutenance', value: '3 Jurys', sub: 'Président HDR', icon: 'fa-award', color: 'amber' }
+      ],
+      ENSEIGNANT_VACATAIRE: [
+        { label: 'Créneaux Bloqués', value: '100%', sub: 'Mardi & Jeudi matin', icon: 'fa-lock', color: 'amber' },
+        { label: 'Heures ce Mois', value: '24h / 48h', sub: '50% Effectué', icon: 'fa-clock', color: 'blue' },
+        { label: 'Modules Enseignés', value: '2', sub: 'Deep Learning & Data', icon: 'fa-brain', color: 'purple' },
+        { label: 'Jurys IA', value: '2 Jurys', sub: 'Examinateur Expert', icon: 'fa-award', color: 'emerald' }
       ],
       ETUDIANT: [
-        { label: 'Ma Promotion', value: '5A-IIR', sub: 'Option 2DSI G3', icon: 'fa-user-graduate', color: 'indigo' },
+        { label: 'Mon Groupe', value: '2DSI G3', sub: 'Campus Targa Fixe', icon: 'fa-user-graduate', color: 'indigo' },
         { label: 'Mon Assiduité', value: '8.8%', sub: 'Seuil 20% (10h de marge)', icon: 'fa-shield-halved', color: 'emerald' },
         { label: 'Mon Projet PFE', value: 'Jury Affecté', sub: 'Soutenance 20 Déc', icon: 'fa-award', color: 'purple' },
         { label: 'Prochain Cours', value: 'JEE LI 8', sub: 'Mardi 13h45 Targa', icon: 'fa-clock', color: 'blue' }
       ]
     };
 
-    // Données EDT de la photo officielle
+    // Données EDT conformes à la photo
     const edtDataPhoto = [
       {
         jour: 'Lundi',
-        s1: { cours: '', salle: '', vide: true },
-        s2: { cours: '', salle: '', vide: true },
-        s3: { cours: 'Développement multiplateforme : Flutter (Targa LR)', prof: 'Pr. Alami' },
-        s4: { cours: 'Compétences d\'employabilité (Targa Salle R)', prof: 'Mme Bensaid' },
-        s5: { cours: 'Gouvernance des SI (Targa Salle S)', prof: 'Pr. Sassoui' },
-        s6: { cours: '', salle: '', vide: true }
+        s1: { cours: '' },
+        s2: { cours: '' },
+        s3: { cours: 'Développement multiplateforme : Flutter (Targa LR)' },
+        s4: { cours: 'Compétences d\'employabilité (Targa Salle R)' },
+        s5: { cours: 'Gouvernance des SI (Targa Salle S)' },
+        s6: { cours: '' }
       },
       {
         jour: 'Mardi',
-        s1: { cours: 'DEVOPS (Targa LR)', prof: 'Pr. Benassou' },
-        s2: { cours: 'Datamining (Targa LR)', prof: 'Dr. Karim Alami' },
-        s3: { cours: '', salle: '', vide: true },
-        s4: { cours: 'Fram Works JEE & micro services (Targa LI 8)', prof: 'Pr. Benassou', span: 2 },
-        s5: { cours: 'Fram Works JEE & micro services (Targa LI 8)', prof: 'Pr. Benassou', spanChild: true },
-        s6: { cours: '', salle: '', vide: true }
+        s1: { cours: 'DEVOPS (Targa LR)' },
+        s2: { cours: 'Datamining (Targa LR)' },
+        s3: { cours: '' },
+        s4: { cours: 'Fram Works JEE & micro services (Targa LI 8)', span: 2 },
+        s5: { cours: '', spanChild: true },
+        s6: { cours: '' }
       },
       {
         jour: 'Mercredi',
-        s1: { cours: '', salle: '', vide: true },
-        s2: { cours: 'Business English (Targa Salle H1)', prof: 'Mr. Smith' },
-        s3: { cours: '', salle: '', vide: true },
-        s4: { cours: 'Projet Collaboratif - Devops (Targa I1)', prof: 'Pr. Benassou' },
-        s5: { cours: 'Communication Professionnelle (Targa M)', prof: 'Mme Chami' },
-        s6: { cours: '', salle: '', vide: true }
+        s1: { cours: '' },
+        s2: { cours: 'Business English (Targa Salle H1)' },
+        s3: { cours: '' },
+        s4: { cours: 'Projet Collaboratif - Devops (Targa I1)' },
+        s5: { cours: 'Communication Professionnelle (Targa M)' },
+        s6: { cours: '' }
       },
       {
         jour: 'Jeudi',
-        s1: { cours: 'Deep Learning (Targa LI 3)', prof: 'Dr. Karim Alami', span: 2 },
-        s2: { cours: 'Deep Learning (Targa LI 3)', prof: 'Dr. Karim Alami', spanChild: true },
-        s3: { cours: '', salle: '', vide: true },
-        s4: { cours: 'ERP (Targa Salle F1)', prof: 'Pr. Daoudi' },
-        s5: { cours: '', salle: '', vide: true },
-        s6: { cours: '', salle: '', vide: true }
+        s1: { cours: 'Deep Learning (Targa LI 3)', span: 2 },
+        s2: { cours: '', spanChild: true },
+        s3: { cours: '' },
+        s4: { cours: 'ERP (Targa Salle F1)' },
+        s5: { cours: '' },
+        s6: { cours: '' }
       },
       {
         jour: 'Vendredi',
-        s1: { cours: 'Ecosystème Big Data (Centre LR)', prof: 'Pr. Bennani', span: 2 },
-        s2: { cours: 'Ecosystème Big Data (Centre LR)', prof: 'Pr. Bennani', spanChild: true },
-        s3: { cours: '', salle: '', vide: true },
-        s4: { cours: 'Optimisation Bases de données (Centre LI 4)', prof: 'Pr. Mansour' },
-        s5: { cours: '', salle: '', vide: true },
-        s6: { cours: '', salle: '', vide: true }
+        s1: { cours: 'Ecosystème Big Data (Targa LR)', span: 2 },
+        s2: { cours: '', spanChild: true },
+        s3: { cours: '' },
+        s4: { cours: 'Optimisation Bases de données (Targa LI 4)' },
+        s5: { cours: '' },
+        s6: { cours: '' }
       }
+    ];
+
+    // Données PFE avec Jurys à 4 Membres
+    let pfeList = [
+      {
+        id: 101,
+        titre: 'Plateforme Microservices & Orchestration Kubernetes pour l\'EMSI',
+        etudiant: 'Amine Bella & Ilyass Ait Ouahman',
+        filiere: '5A-IIR (Campus Targa)',
+        encadrant: 'Pr. Ait Ounejjar Lahoussaine',
+        tech: 'Java 21, Spring Cloud, Docker, Kubernetes, Angular 18',
+        desc: 'Architecture distribuée avec solveur CP-SAT OR-Tools et Gemini AI.',
+        statut: 'JURY_AFFECTE',
+        president: 'Pr. Noussair Benassou (Docteur / HDR)',
+        rapporteur: 'Dr. Karim Alami (Spécialiste Cloud)',
+        examinateur: 'Mme Kenza Tazi (Expert CP-SAT)',
+        salle: 'Targa Salle M',
+        date: 'Samedi 20 Décembre 2026 à 10:00'
+      },
+      {
+        id: 102,
+        titre: 'Détection d\'Anomalies Vidéo par Vision Artificielle en Temps Réel',
+        etudiant: 'Yassine Mansouri',
+        filiere: '5A-IIR (Campus Targa)',
+        encadrant: 'Pr. Zgandri Mohammed',
+        tech: 'Python, PyTorch, YOLOv10, OpenCV, FastAPI',
+        desc: 'Surveillance intelligente des flux vidéo pour la sécurité du campus.',
+        statut: 'EN_ATTENTE_JURY',
+        president: 'À affecter (Docteur HDR)',
+        rapporteur: 'À affecter',
+        examinateur: 'À recommander par l\'IA Gemini'
+      },
+      {
+        id: 103,
+        titre: 'Jumeau Numérique & Supervision SCADA Industrielle avec Three.js',
+        etudiant: 'Ikram Mellakh',
+        filiere: '5A-GI (Campus Centre)',
+        encadrant: 'Mme Kenza Tazi',
+        tech: 'Three.js, Siemens TIA Portal, MQTT, Docker, React',
+        desc: 'Modélisation 3D temps réel d\'une ligne automatisée avec maintenance prédictive.',
+        statut: 'JURY_AFFECTE',
+        president: 'Pr. Brahim Abod (Docteur / HDR)',
+        rapporteur: 'Pr. M. Sassoui (Chef Filière)',
+        examinateur: 'Dr. Karim Alami (Expert IA)',
+        salle: 'Centre Salle V1',
+        date: 'Lundi 22 Décembre 2026 à 14:30'
+      }
+    ];
+
+    // Données d'Appel des Absences
+    let etudiantsAppel = [
+      { mat: '2026-IIR-01', nom: 'Ait Ouahman Ilyass', totalHeures: 90, absHeures: 8, statut: 'PRESENT' },
+      { mat: '2026-IIR-02', nom: 'Bella Amine', totalHeures: 90, absHeures: 4, statut: 'PRESENT' },
+      { mat: '2026-IIR-03', nom: 'Chraibi Hamza', totalHeures: 90, absHeures: 19.5, statut: 'ABSENT' }, // > 20%
+      { mat: '2026-IIR-04', nom: 'El Mansouri Sara', totalHeures: 90, absHeures: 12, statut: 'PRESENT' },
+      { mat: '2026-IIR-05', nom: 'Mellakh Ikram', totalHeures: 90, absHeures: 6, statut: 'PRESENT' },
+      { mat: '2026-IIR-06', nom: 'Naciri Oualid', totalHeures: 90, absHeures: 14, statut: 'PRESENT' }
     ];
 
     window.onload = function() {
       applyAcadexRole();
       renderEdtGrid();
+      renderPfe();
       renderGroupes();
       renderAllocations();
-      renderEtudiantAbsencesTable();
       renderProfBinomes();
+      renderAppel();
       renderUsers();
     };
 
@@ -970,8 +1445,14 @@
       document.getElementById('sidebar-user-role').innerText = currentUser.roleLabel;
       document.getElementById('sidebar-user-avatar').innerText = currentUser.avatar;
       document.getElementById('top-title').innerText = `Dashboard • ${currentUser.roleLabel}`;
+      document.getElementById('top-campus-badge').innerText = `Campus Fixe : ${currentUser.campus}`;
 
-      // Update Header pills
+      // Met à jour profil dans "Mon Compte"
+      document.getElementById('account-name-preview').innerText = currentUser.nom;
+      document.getElementById('account-role-preview').innerText = `${currentUser.roleLabel} • ${currentUser.email}`;
+      document.getElementById('account-avatar-preview').innerText = currentUser.avatar;
+
+      // Met à jour les boutons pills en haut
       document.querySelectorAll('.pill-btn').forEach(p => {
         p.classList.remove('bg-brand-600', 'text-white');
         p.classList.add('text-slate-600');
@@ -982,45 +1463,8 @@
         activePill.classList.add('bg-brand-600', 'text-white');
       }
 
-      buildAcadexNav();
       renderAcadexMetrics();
       navigateTo('dashboard');
-    }
-
-    function buildAcadexNav() {
-      const container = document.getElementById('dynamic-nav-container');
-      const r = currentUser.role;
-
-      let navs = [
-        { id: 'dashboard', label: 'Dashboard', icon: 'fa-table-cells-large' }
-      ];
-
-      if (r === 'SUPER_ADMIN') {
-        navs.push({ id: 'rbac', label: 'Administration RBAC', icon: 'fa-users' });
-        navs.push({ id: 'edt', label: 'Time Table (EDT)', icon: 'fa-calendar-days' });
-        navs.push({ id: 'affectation-ia', label: 'Affectation IA', icon: 'fa-wand-magic-sparkles' });
-        navs.push({ id: 'filieres-groupes', label: 'Filières & Groupes', icon: 'fa-folder' });
-      } else if (r === 'CHEF_FILIERE') {
-        navs.push({ id: 'filieres-groupes', label: 'Filières & Groupes', icon: 'fa-folder' });
-        navs.push({ id: 'edt', label: 'Time Table Filière', icon: 'fa-calendar-days' });
-        navs.push({ id: 'affectation-ia', label: 'Affectation Salles', icon: 'fa-wand-magic-sparkles' });
-      } else if (r === 'RESP_PLANNING') {
-        navs.push({ id: 'affectation-ia', label: 'Affectation IA Salles', icon: 'fa-wand-magic-sparkles' });
-        navs.push({ id: 'edt', label: 'Time Table (6 séances)', icon: 'fa-calendar-days' });
-      } else if (r === 'ENSEIGNANT_PERMANENT') {
-        navs.push({ id: 'edt', label: 'Mon Time Table (18h)', icon: 'fa-calendar-days' });
-        navs.push({ id: 'prof-encadrement', label: 'Encadrement PFE (30m)', icon: 'fa-clock' });
-      } else if (r === 'ETUDIANT') {
-        navs.push({ id: 'edt', label: 'Mon Time Table (2DSI)', icon: 'fa-calendar-days' });
-        navs.push({ id: 'etudiant-absences', label: 'Mes Absences vs 20%', icon: 'fa-chart-pie' });
-      }
-
-      container.innerHTML = navs.map((n, i) => `
-        <button onclick="navigateTo('${n.id}')" id="nav-${n.id}" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all ${i === 0 ? 'bg-brand-50 text-brand-600 font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}">
-          <i class="fa-solid ${n.icon} w-4 text-center"></i>
-          <span>${n.label}</span>
-        </button>
-      `).join('');
     }
 
     function renderAcadexMetrics() {
@@ -1042,7 +1486,12 @@
     }
 
     function navigateTo(pageId) {
-      const pages = ['dashboard', 'edt', 'filieres-groupes', 'affectation-ia', 'etudiant-absences', 'prof-encadrement', 'rbac'];
+      const pages = [
+        'dashboard', 'edt', 'affectation-ia', 'pfe', 'soutenances', 
+        'cahier-encadrement', 'stages-ete', 'filieres-groupes', 
+        'absences', 'rh', 'rbac', 'account'
+      ];
+      
       pages.forEach(p => {
         const el = document.getElementById('page-' + p);
         const nav = document.getElementById('nav-' + p);
@@ -1084,18 +1533,127 @@
       `).join('');
     }
 
+    function renderPfe() {
+      const container = document.getElementById('pfe-cards-container');
+      if (!container) return;
+
+      container.innerHTML = pfeList.map(pfe => `
+        <div class="acadex-card p-5 space-y-3 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">PFE-#${pfe.id}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${pfe.statut === 'JURY_AFFECTE' ? 'bg-purple-100 text-purple-800' : 'bg-amber-100 text-amber-800'}">
+                ${pfe.statut === 'JURY_AFFECTE' ? 'Jury IA 4 Membres OK' : 'En attente arbitrage'}
+              </span>
+            </div>
+            <h3 class="font-extrabold text-xs text-slate-900 leading-snug">${pfe.titre}</h3>
+            <p class="text-[11px] text-slate-500">${pfe.desc}</p>
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] space-y-0.5">
+              <div><strong class="text-slate-700">Binôme :</strong> ${pfe.etudiant}</div>
+              <div><strong class="text-slate-700">Encadrant :</strong> ${pfe.encadrant}</div>
+            </div>
+
+            ${pfe.statut === 'JURY_AFFECTE' ? `
+              <div class="p-2.5 bg-purple-50/70 rounded-xl border border-purple-200 text-[11px] space-y-0.5 text-purple-950">
+                <div class="font-bold">Jury Officiel 4 Membres :</div>
+                <div>1. <strong>Encadrant :</strong> ${pfe.encadrant}</div>
+                <div>2. <strong>Rapporteur :</strong> ${pfe.rapporteur}</div>
+                <div>3. <strong>Examinateur IA :</strong> ${pfe.examinateur}</div>
+                <div>4. <strong>Président HDR :</strong> ${pfe.president}</div>
+                <div class="pt-1 font-mono text-[10px] text-purple-900">📅 ${pfe.date} • 📍 ${pfe.salle}</div>
+              </div>
+            ` : `
+              <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-800">
+                Examinateur à recommander par l'IA Gemini 2.0 selon les mots-clés.
+              </div>
+            `}
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400 font-mono">${pfe.filiere}</span>
+            <button onclick="lancerArbitrageIaJury(${pfe.id})" class="px-3 py-1.5 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
+              <span>${pfe.statut === 'JURY_AFFECTE' ? 'Réarbitrer IA' : 'Générer Jury IA'}</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function lancerArbitrageIaJury(pfeId) {
+      const pfe = pfeList.find(p => p.id === pfeId);
+      if (!pfe) return;
+
+      const modal = document.getElementById('modal-ai-jury');
+      const content = document.getElementById('ai-modal-content');
+      modal.classList.remove('hidden');
+
+      content.innerHTML = `
+        <div class="text-center py-6 space-y-3">
+          <div class="inline-block w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center animate-spin">
+            <i class="fa-solid fa-gear text-lg"></i>
+          </div>
+          <h4 class="font-black text-xs text-slate-900">Interrogation de Google Gemini 2.0 Flash...</h4>
+          <p class="text-[11px] text-slate-500 max-w-sm mx-auto">
+            Matching sémantique des compétences de l'examinateur avec le sujet & vérification stricte du Président Docteur HDR.
+          </p>
+        </div>
+      `;
+
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="space-y-3 text-xs">
+            <div class="p-3 bg-purple-50 rounded-xl border border-purple-200 text-purple-950">
+              <span class="font-bold block">Jury Recommandé par l'IA (Score : 96.4% match) :</span>
+              <p class="text-[11px] text-purple-800">Aucun chevauchement d'horaire ni conflit de salle détecté.</p>
+            </div>
+            <div class="space-y-1.5">
+              <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">1. Encadrant : <strong>${pfe.encadrant}</strong></div>
+              <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">2. Rapporteur : <strong>Dr. Karim Alami</strong></div>
+              <div class="p-2 bg-purple-50 rounded-lg border border-purple-200 text-purple-900 font-bold">3. Examinateur IA : Mme Kenza Tazi (Expert CP-SAT)</div>
+              <div class="p-2 bg-blue-50 rounded-lg border border-blue-200 text-blue-900 font-bold">4. Président HDR : Pr. Noussair Benassou (Docteur HDR)</div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <button onclick="fermerModalJury()" class="px-3 py-1.5 bg-slate-100 rounded-lg font-bold">Annuler</button>
+              <button onclick="validerJuryIa(${pfe.id})" class="px-4 py-1.5 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700">Valider ce Jury</button>
+            </div>
+          </div>
+        `;
+      }, 800);
+    }
+
+    function validerJuryIa(pfeId) {
+      const pfe = pfeList.find(p => p.id === pfeId);
+      if (pfe) {
+        pfe.statut = 'JURY_AFFECTE';
+        pfe.president = 'Pr. Noussair Benassou (Docteur / HDR)';
+        pfe.rapporteur = 'Dr. Karim Alami (Spécialiste Cloud)';
+        pfe.examinateur = 'Mme Kenza Tazi (Expert CP-SAT)';
+        pfe.salle = 'Targa Salle M';
+        pfe.date = 'Samedi 20 Décembre 2026 à 10:00';
+      }
+      fermerModalJury();
+      renderPfe();
+      showToast('Jury officiel à 4 membres validé et notifié par email', 'success');
+    }
+
+    function fermerModalJury() {
+      document.getElementById('modal-ai-jury').classList.add('hidden');
+    }
+
     function renderGroupes() {
       const tbody = document.getElementById('groupes-table-body');
       if (!tbody) return;
       const grps = [
-        { code: '2DSI G3', filiere: '5A-IIR', option: 'Développement Digital & SI', effectif: 28, labos: 'LI / LR', delegue: 'Ilyass Ait Ouahman' },
-        { code: '5A-IIR G1', filiere: '5A-IIR', option: 'Cloud & Virtualisation', effectif: 30, labos: 'LR (Réseaux)', delegue: 'Amine Bella' },
-        { code: '5A-GI G1', filiere: '5A-GI', option: 'Supply Chain 4.0', effectif: 27, labos: 'LI (PC)', delegue: 'Ikram Mellakh' }
+        { code: '2DSI G3', filiere: '5A-IIR', campus: 'Campus Targa Fixe', option: 'Développement Digital & SI', effectif: 28, labos: 'LI / LR', delegue: 'Ilyass Ait Ouahman' },
+        { code: '5A-IIR G1', filiere: '5A-IIR', campus: 'Campus Guéliz Fixe', option: 'Cloud & Virtualisation', effectif: 30, labos: 'LR (Réseaux)', delegue: 'Amine Bella' },
+        { code: '5A-GI G1', filiere: '5A-GI', campus: 'Campus Centre Fixe', option: 'Supply Chain 4.0', effectif: 27, labos: 'LI (PC)', delegue: 'Ikram Mellakh' }
       ];
       tbody.innerHTML = grps.map(g => `
         <tr class="hover:bg-slate-50">
           <td class="p-3 font-mono font-bold text-brand-600">${g.code}</td>
           <td class="p-3 font-bold text-slate-800">${g.filiere}</td>
+          <td class="p-3 font-bold text-emerald-800 bg-emerald-50/50">${g.campus}</td>
           <td class="p-3 text-slate-600">${g.option}</td>
           <td class="p-3 font-bold text-slate-900">${g.effectif} étu.</td>
           <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">${g.labos}</span></td>
@@ -1108,9 +1666,9 @@
       const tbody = document.getElementById('allocation-table-body');
       if (!tbody) return;
       const allocs = [
-        { grp: '2DSI G3', cours: 'JEE Microservices', heure: 'Mardi 13h45', salle: 'Targa LI 8', type: 'LI (PC)', prof: 'Pr. Benassou' },
-        { grp: '2DSI G3', cours: 'Deep Learning', heure: 'Jeudi 08h30', salle: 'Targa LI 3', type: 'LI (GPU)', prof: 'Dr. Alami' },
-        { grp: '5A-GI G1', cours: 'Jumeau Numérique', heure: 'Lundi 10h15', salle: 'Centre LI 2', type: 'LI (PC)', prof: 'Mme Kenza Tazi' }
+        { grp: '2DSI G3 (Campus Targa)', cours: 'JEE Microservices', heure: 'Mardi 13h45 - 17h00', salle: 'Targa LI 8', type: 'LI (PC)', prof: 'Pr. Benassou (Permanent 18h)', statut: 'Optimal' },
+        { grp: '2DSI G3 (Campus Targa)', cours: 'Deep Learning', heure: 'Jeudi 08h30 - 11h45', salle: 'Targa LI 3', type: 'LI (GPU)', prof: 'Dr. Alami (Vacataire P1)', statut: 'Sanctuarisé P1' },
+        { grp: '5A-GI G1 (Campus Centre)', cours: 'Jumeau Numérique', heure: 'Lundi 10h15 - 11h45', salle: 'Centre LI 2', type: 'LI (PC)', prof: 'Mme Kenza Tazi', statut: 'Optimal' }
       ];
       tbody.innerHTML = allocs.map(a => `
         <tr class="hover:bg-slate-50">
@@ -1119,35 +1677,14 @@
           <td class="p-3 font-mono text-slate-500">${a.heure}</td>
           <td class="p-3 font-bold text-emerald-700">${a.salle}</td>
           <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-100 font-bold text-[10px]">${a.type}</span></td>
-          <td class="p-3 text-slate-700">${a.prof}</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Optimal</span></td>
+          <td class="p-3 text-slate-700 font-medium">${a.prof}</td>
+          <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">${a.statut}</span></td>
         </tr>
       `).join('');
     }
 
     function lancerAffectationIaComplete() {
-      showToast('Solveur CP-SAT OR-Tools exécuté en 420 ms : 0 conflit de salle ou groupe.', 'success');
-    }
-
-    function renderEtudiantAbsencesTable() {
-      const tbody = document.getElementById('etudiant-absences-table');
-      if (!tbody) return;
-      const abs = [
-        { module: 'Fram Works JEE & micro services', prof: 'Pr. Benassou', total: 30, abs: 1.5, pct: 5.0 },
-        { module: 'Deep Learning', prof: 'Dr. Alami', total: 30, abs: 3.0, pct: 10.0 },
-        { module: 'DEVOPS', prof: 'Pr. Benassou', total: 20, abs: 0.0, pct: 0.0 },
-        { module: 'Datamining', prof: 'Dr. Alami', total: 15, abs: 1.5, pct: 10.0 }
-      ];
-      tbody.innerHTML = abs.map(m => `
-        <tr class="hover:bg-slate-50">
-          <td class="p-3 font-bold text-slate-900">${m.module}</td>
-          <td class="p-3 text-slate-600">${m.prof}</td>
-          <td class="p-3 font-mono text-slate-500">${m.total}h</td>
-          <td class="p-3 font-black text-slate-800">${m.abs}h</td>
-          <td class="p-3 font-black text-emerald-600">${m.pct.toFixed(1)}%</td>
-          <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Admissible</span></td>
-        </tr>
-      `).join('');
+      showToast('Solveur CP-SAT OR-Tools exécuté : 0 conflit de salle ou transit. Contrainte 1 groupe = 1 campus vérifiée.', 'success');
     }
 
     function renderProfBinomes() {
@@ -1156,7 +1693,7 @@
       container.innerHTML = `
         <div class="p-4 rounded-2xl border border-slate-200 bg-white space-y-2">
           <div class="flex justify-between items-center">
-            <span class="font-bold text-xs text-brand-600">5A-IIR 2DSI G3</span>
+            <span class="font-bold text-xs text-brand-600">5A-IIR 2DSI G3 (Campus Targa)</span>
             <span class="text-[10px] font-bold bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">4 séances (30 min)</span>
           </div>
           <h4 class="font-black text-sm text-slate-900">Amine Bella & Ilyass Ait Ouahman</h4>
@@ -1169,15 +1706,70 @@
       `;
     }
 
+    function renderAppel() {
+      const tbody = document.getElementById('appel-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = etudiantsAppel.map(e => {
+        const pct = ((e.absHeures / e.totalHeures) * 100).toFixed(1);
+        const depasse = pct >= 20.0;
+        return `
+          <tr class="hover:bg-slate-50 ${depasse ? 'bg-rose-50/50' : ''}">
+            <td class="p-3 font-mono font-bold text-slate-600">${e.mat}</td>
+            <td class="p-3 font-black text-slate-900">${e.nom}</td>
+            <td class="p-3 font-bold text-slate-700">${e.absHeures}h / ${e.totalHeures}h</td>
+            <td class="p-3 font-bold ${depasse ? 'text-rose-600' : 'text-emerald-700'}">${pct}%</td>
+            <td class="p-3">
+              ${depasse ? `
+                <span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-extrabold text-[10px] border border-rose-300">
+                  RADIÉ DE L'EXAMEN
+                </span>
+              ` : `
+                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                  Admissible
+                </span>
+              `}
+            </td>
+            <td class="p-3 text-center">
+              <div class="inline-flex rounded-xl p-0.5 bg-slate-100">
+                <button onclick="changerStatutPresence('${e.mat}', 'PRESENT')" class="px-2 py-1 rounded-lg text-xs font-bold ${e.statut === 'PRESENT' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600'}">Présent</button>
+                <button onclick="changerStatutPresence('${e.mat}', 'ABSENT')" class="px-2 py-1 rounded-lg text-xs font-bold ${e.statut === 'ABSENT' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-600'}">Absent</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function changerStatutPresence(mat, statut) {
+      const etu = etudiantsAppel.find(e => e.mat === mat);
+      if (etu) {
+        etu.statut = statut;
+        if (statut === 'ABSENT') {
+          etu.absHeures += 1.5;
+        } else {
+          etu.absHeures = Math.max(0, etu.absHeures - 1.5);
+        }
+        renderAppel();
+        showToast(`Présence mise à jour pour ${etu.nom}`, 'info');
+      }
+    }
+
+    function validerAppelComplet() {
+      showToast('Feuille d\'émargement signée numériquement et enregistrée dans PostgreSQL', 'success');
+    }
+
     function renderUsers() {
       const tbody = document.getElementById('users-table-body');
       if (!tbody) return;
       const uList = [
-        { mat: 'EMSI-ADM-01', nom: 'Moad Moussaoui', role: 'SUPER_ADMIN', email: 'admin@emsi-edu.ma', dept: 'Direction SI' },
-        { mat: 'EMSI-DIR-02', nom: 'Pr. M. Sassoui', role: 'CHEF_FILIERE', email: 'm.sassoui@emsi-edu.ma', dept: 'Filière IIR' },
-        { mat: 'EMSI-PLN-04', nom: 'Mme Kenza Tazi', role: 'RESP_PLANNING', email: 'kenza.tazi@emsi-edu.ma', dept: 'Planning Scolarité' },
-        { mat: 'EMSI-ENS-05', nom: 'Pr. Noussair Benassou', role: 'ENSEIGNANT_PERMANENT', email: 'noussair.benassou@emsi-edu.ma', dept: 'Permanent (18h)' },
-        { mat: 'EMSI-ETU-07', nom: 'Ilyass Ait Ouahman', role: 'ETUDIANT', email: 'ilyass.aitouahman@emsi-edu.ma', dept: '5A-IIR 2DSI G3' }
+        { mat: 'EMSI-ADM-01', nom: 'Moad Moussaoui', role: 'SUPER_ADMIN', email: 'admin@emsi-edu.ma', statut: 'Permanent (Admin)' },
+        { mat: 'EMSI-DIR-02', nom: 'Pr. M. Sassoui', role: 'CHEF_FILIERE', email: 'm.sassoui@emsi-edu.ma', statut: 'Permanent (18h)' },
+        { mat: 'EMSI-PLN-04', nom: 'Mme Kenza Tazi', role: 'RESP_PLANNING', email: 'kenza.tazi@emsi-edu.ma', statut: 'Permanent (Scolarité)' },
+        { mat: 'EMSI-PFE-03', nom: 'Pr. Brahim Abod', role: 'RESP_PFE', email: 'brahim.abod@emsi-edu.ma', statut: 'Permanent (18h)' },
+        { mat: 'EMSI-ENS-05', nom: 'Pr. Noussair Benassou', role: 'ENSEIGNANT_PERMANENT', email: 'noussair.benassou@emsi-edu.ma', statut: 'Permanent (18h contractuelles)' },
+        { mat: 'EMSI-ENS-06', nom: 'Dr. Karim Alami', role: 'ENSEIGNANT_VACATAIRE', email: 'karim.alami@emsi-edu.ma', statut: 'Vacataire (Priorité 1 sanctuarisée)' },
+        { mat: 'EMSI-ETU-07', nom: 'Ilyass Ait Ouahman', role: 'ETUDIANT', email: 'ilyass.aitouahman@emsi-edu.ma', statut: 'Étudiant 5A (2DSI G3 Targa)' }
       ];
       tbody.innerHTML = uList.map(u => `
         <tr class="hover:bg-slate-50">
@@ -1185,12 +1777,26 @@
           <td class="p-3 font-bold text-slate-900">${u.nom}</td>
           <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-100 font-bold text-[10px]">${u.role}</span></td>
           <td class="p-3 font-mono text-slate-500">${u.email}</td>
-          <td class="p-3 text-slate-600">${u.dept}</td>
+          <td class="p-3 text-slate-700">${u.statut}</td>
           <td class="p-3 text-right">
             <button onclick="loginAs('${u.role}')" class="px-2.5 py-1 bg-brand-50 text-brand-600 rounded-lg font-bold hover:bg-brand-100">Activer</button>
           </td>
         </tr>
       `).join('');
+    }
+
+    function handleChangerPassword(e) {
+      e.preventDefault();
+      const n = document.getElementById('new-pass').value;
+      const c = document.getElementById('confirm-pass').value;
+      if (n !== c) {
+        showToast('Les mots de passe ne correspondent pas !', 'error');
+        return;
+      }
+      showToast('Mot de passe mis à jour avec succès dans Spring Security 6 (BCrypt)', 'success');
+      document.getElementById('old-pass').value = '';
+      document.getElementById('new-pass').value = '';
+      document.getElementById('confirm-pass').value = '';
     }
 
     function ouvrirModalAjoutFiliere() {
@@ -1200,7 +1806,7 @@
 
     function ouvrirModalAjoutGroupe() {
       const g = prompt('Code du groupe (ex: 5A-IIR G4) :');
-      if (g) showToast(`Groupe ${g} créé avec succès`, 'success');
+      if (g) showToast(`Groupe ${g} créé avec campus Targa affecté`, 'success');
     }
 
     function ouvrirModalNouveauResponsable() {
@@ -1210,12 +1816,16 @@
 
     function ouvrirModalNouveauProf() {
       const p = prompt('Nom de l\'Enseignant :');
-      if (p) showToast(`Enseignant ${p} enregistré (quota 18h)`, 'success');
+      if (p) showToast(`Enseignant ${p} enregistré (Permanent 18h ou Vacataire P1)`, 'success');
     }
 
     function ouvrirModalAjoutEtudiant() {
       const e = prompt('Nom de l\'étudiant :');
-      if (e) showToast(`Étudiant ${e} inscrit avec succès`, 'success');
+      if (e) showToast(`Étudiant ${e} inscrit avec campus fixe`, 'success');
+    }
+
+    function ouvrirModalNouveauPfe() {
+      showToast('Formulaire de nouveau projet PFE prêt', 'info');
     }
 
     function ouvrirModalAjoutSeanceEncadrement() {
@@ -1228,6 +1838,7 @@
       
       const colors = {
         success: 'bg-slate-900 text-white border-emerald-500',
+        warning: 'bg-amber-900 text-white border-amber-500',
         error: 'bg-rose-900 text-white border-rose-700',
         info: 'bg-slate-900 text-white border-brand-500'
       };
@@ -1240,7 +1851,7 @@
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 300);
-      }, 3500);
+      }, 4000);
     }
   </script>
 </body>
