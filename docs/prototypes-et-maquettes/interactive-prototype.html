@@ -1,0 +1,2768 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-100 antialiased scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EMSI Univora • Plateforme Académique & Décisionnelle 2026 (Version Finale)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6.5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Fonts Google : Plus Jakarta Sans & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            },
+            emsi: {
+              primary: '#00843D',
+              dark: '#004D26',
+              deep: '#003319',
+              light: '#E6F4EA',
+              gold: '#C5A572',
+              goldDark: '#9E8047',
+              accent: '#0A5C2F'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F4F6F9;
+    }
+    .acadex-card {
+      background: #FFFFFF;
+      border: 1px solid #EEF2F6;
+      border-radius: 1.25rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s ease-in-out;
+    }
+    .acadex-card:hover {
+      box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    }
+    .acadex-stat-card {
+      background: #FFFFFF;
+      border: 1px solid #EEF2F6;
+      border-radius: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s;
+    }
+    .acadex-stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.05);
+    }
+    .acadex-btn-circle {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #EFF6FF;
+      color: #2563EB;
+      transition: all 0.2s;
+    }
+    .acadex-btn-circle:hover {
+      background-color: #2563EB;
+      color: #FFFFFF;
+      transform: translateX(2px);
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #f8fafc; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 bg-[#F4F6F9] selection:bg-brand-600 selection:text-white">
+
+  <!-- ============================================================== -->
+  <!-- 1. MODAL SÉLECTEUR DE PERSONAS (7 RÔLES AVEC LOGO EMSI)        -->
+  <!-- ============================================================== -->
+  <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm overflow-y-auto">
+    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 border border-slate-200">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div class="flex items-center gap-3.5">
+          <!-- Logo Officiel EMSI -->
+          <img src="assets/emsi_logo.png" alt="Logo EMSI" class="w-12 h-12 object-contain rounded-xl border border-slate-100 p-0.5 bg-white shadow-sm" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_EMSI.png';">
+          <div>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+              EMSI Univora <span class="text-xs px-2 py-0.5 rounded-full bg-emsi-light text-emsi-dark font-bold uppercase">Honoris United Universities</span>
+            </h2>
+            <p class="text-xs text-slate-500">Plateforme Décisionnelle & Académique 2026 • Sélectionnez votre espace</p>
+          </div>
+        </div>
+        <span class="text-[10px] font-bold px-2 py-1 rounded bg-brand-50 text-brand-700 font-mono">RBAC STRICT</span>
+      </div>
+
+      <!-- Grille des Rôles -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        
+        <!-- Super Admin -->
+        <button onclick="loginAs('SUPER_ADMIN')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-crown text-amber-400"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Moad Moussaoui</span>
+            <span class="text-[11px] text-slate-500 block">Super Administrateur</span>
+            <span class="text-[10px] text-brand-600 font-bold mt-1 inline-block">Création Comptes & Droits</span>
+          </div>
+        </button>
+
+        <!-- Chef de Filière -->
+        <button onclick="loginAs('CHEF_FILIERE')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Pr. M. Sassoui</span>
+            <span class="text-[11px] text-slate-500 block">Chef de Filière IIR</span>
+            <span class="text-[10px] text-brand-600 font-bold mt-1 inline-block">Filières, Groupes & CV IA</span>
+          </div>
+        </button>
+
+        <!-- Responsable Planning -->
+        <button onclick="loginAs('RESP_PLANNING')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Mme Kenza Tazi</span>
+            <span class="text-[11px] text-slate-500 block">Resp. Planification EDT</span>
+            <span class="text-[10px] text-emerald-600 font-bold mt-1 inline-block">Affectation IA Salles & Groupes</span>
+          </div>
+        </button>
+
+        <!-- Responsable PFE -->
+        <button onclick="loginAs('RESP_PFE')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Pr. Brahim Abod</span>
+            <span class="text-[11px] text-slate-500 block">Resp. Commission PFE</span>
+            <span class="text-[10px] text-purple-600 font-bold mt-1 inline-block">Jurys 4 membres & Stages d'été</span>
+          </div>
+        </button>
+
+        <!-- Professeur Permanent -->
+        <button onclick="loginAs('ENSEIGNANT_PERMANENT')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Pr. Noussair Benassou</span>
+            <span class="text-[11px] text-slate-500 block">Enseignant Permanent (18h)</span>
+            <span class="text-[10px] text-teal-600 font-bold mt-1 inline-block">Appel Manuel & Suivi PFE 30m</span>
+          </div>
+        </button>
+
+        <!-- Professeur Vacataire -->
+        <button onclick="loginAs('ENSEIGNANT_VACATAIRE')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-briefcase"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Dr. Karim Alami</span>
+            <span class="text-[11px] text-slate-500 block">Enseignant Vacataire</span>
+            <span class="text-[10px] text-amber-600 font-bold mt-1 inline-block">Créneaux Sanctuarisés P1</span>
+          </div>
+        </button>
+
+        <!-- Étudiant -->
+        <button onclick="loginAs('ETUDIANT')" class="p-4 rounded-2xl border border-slate-200 hover:border-brand-600 hover:bg-brand-50/30 text-left transition-all flex items-start gap-3 sm:col-span-2 lg:col-span-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+            <i class="fa-solid fa-user-graduate"></i>
+          </div>
+          <div>
+            <span class="font-bold text-xs text-slate-900 block">Ilyass Ait Ouahman</span>
+            <span class="text-[11px] text-slate-500 block">Étudiant 5A-IIR • Option 2DSI G3 (Campus Targa Fixe)</span>
+            <span class="text-[10px] text-indigo-600 font-bold mt-1 inline-block">Mon EDT Officiel & Jauge Absences vs 20%</span>
+          </div>
+        </button>
+
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span>Contraintes : 1 groupe = 1 campus • Vacataires prioritaires • Jurys 4 membres</span>
+        <button onclick="loginAs('SUPER_ADMIN')" class="font-bold text-brand-600 hover:underline">
+          Accéder avec Super Admin ➔
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 2. APPLICATION LAYOUT (SIDEBAR BLANCHE STYLE ACADEX + MAIN)    -->
+  <!-- ============================================================== -->
+  <div class="h-full flex overflow-hidden">
+    
+    <!-- SIDEBAR STYLE ACADEX (BLANCHE ÉLÉGANTE AVEC TOUTES LES RUBRIQUES) -->
+    <aside id="main-sidebar" class="w-64 bg-white border-r border-[#EEF2F6] flex flex-col justify-between shrink-0 transition-all duration-300 z-20">
+      
+      <div class="p-5 space-y-5 overflow-y-auto">
+        
+        <!-- Logo Officiel EMSI + Nom Brand -->
+        <div class="flex items-center gap-3">
+          <img src="assets/emsi_logo.png" alt="Logo EMSI" class="w-9 h-9 object-contain rounded-xl border border-slate-100 bg-white p-0.5 shadow-sm" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_EMSI.png';">
+          <div>
+            <span class="font-black text-base tracking-tight text-slate-900 block leading-none">EMSI Univora</span>
+            <span class="text-[9px] font-bold text-emsi-primary tracking-wider uppercase block mt-1">Honoris United Universities</span>
+          </div>
+        </div>
+
+        <!-- Profil Utilisateur Card Style Acadex -->
+        <div class="p-2.5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <div id="sidebar-user-avatar" class="w-9 h-9 rounded-full bg-brand-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+              MM
+            </div>
+            <div class="overflow-hidden">
+              <span id="sidebar-user-name" class="font-extrabold text-xs text-slate-900 block truncate">Moad Moussaoui</span>
+              <span id="sidebar-user-role" class="text-[10px] text-slate-400 font-semibold block truncate">Super Admin</span>
+            </div>
+          </div>
+          <button onclick="deconnecter()" title="Changer d'espace acteur" class="text-slate-400 hover:text-slate-700 p-1">
+            <i class="fa-solid fa-chevron-down text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Section Navigation Menus Principaux Structurés sans Troncature -->
+        <nav class="space-y-4 text-xs font-semibold">
+          
+          <!-- Groupe 1 : Vue Générale -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Général</span>
+            <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all bg-brand-50 text-brand-600 font-bold">
+              <i class="fa-solid fa-table-cells-large w-4 text-center"></i>
+              <span>Dashboard</span>
+            </button>
+          </div>
+
+          <!-- Groupe 2 : Intelligence Artificielle (IA) -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Modules IA</span>
+            <button onclick="navigateTo('affectation-ia')" id="nav-affectation-ia" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-wand-magic-sparkles w-4 text-center text-emerald-600"></i>
+                <span>Affectation Salles IA</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono">CP-SAT</span>
+            </button>
+            <button onclick="navigateTo('pfe')" id="nav-pfe" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-award w-4 text-center text-purple-600"></i>
+                <span>Jurys PFE à 4 IA</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-100 text-purple-800 font-mono">Gemini</span>
+            </button>
+            <button onclick="navigateTo('rh')" id="nav-rh" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-file-invoice w-4 text-center text-cyan-600"></i>
+                <span>CV Matching RH</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-cyan-100 text-cyan-800 font-mono">Top 3</span>
+            </button>
+          </div>
+
+          <!-- Groupe 3 : Emplois du Temps & Salles -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Emploi & Campus</span>
+            <button onclick="navigateTo('edt')" id="nav-edt" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-calendar-days w-4 text-center text-blue-600"></i>
+              <span>Emploi du Temps Officiel</span>
+            </button>
+            <button onclick="navigateTo('filieres-groupes')" id="nav-filieres-groupes" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-folder-tree w-4 text-center text-indigo-600"></i>
+              <span>Filières & Groupes</span>
+            </button>
+            <button onclick="navigateTo('absences')" id="nav-absences" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-clipboard-user w-4 text-center text-rose-600"></i>
+                <span>Appel & Seuil 20%</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 font-mono">Alerte</span>
+            </button>
+          </div>
+
+          <!-- Groupe 4 : PFE, Soutenances & Stages -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">PFE & Stages</span>
+            <button onclick="navigateTo('soutenances')" id="nav-soutenances" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-calendar-check w-4 text-center text-purple-600"></i>
+              <span>Planning Soutenances</span>
+            </button>
+            <button onclick="navigateTo('cahier-encadrement')" id="nav-cahier-encadrement" class="nav-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <i class="fa-solid fa-book-open-reader w-4 text-center text-teal-600"></i>
+                <span>Suivi PFE (30 min)</span>
+              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-teal-100 text-teal-800 font-mono">Hebdo</span>
+            </button>
+            <button onclick="navigateTo('stages-ete')" id="nav-stages-ete" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-briefcase w-4 text-center text-teal-600"></i>
+              <span>Stages d'Été (3A/4A)</span>
+            </button>
+          </div>
+
+          <!-- Groupe 5 : Administration & Sécurité -->
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase font-extrabold text-slate-400 px-3 tracking-wider block">Gouvernance</span>
+            <button onclick="navigateTo('rbac')" id="nav-rbac" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-users-gear w-4 text-center text-slate-600"></i>
+              <span>Comptes Utilisateurs</span>
+            </button>
+            <button onclick="navigateTo('account')" id="nav-account" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all">
+              <i class="fa-solid fa-key w-4 text-center text-amber-600"></i>
+              <span>Mon Compte & Password</span>
+            </button>
+          </div>
+
+        </nav>
+
+        <!-- Section Navigation Secondaire (Déconnexion Propre) -->
+        <div class="pt-3 border-t border-slate-100 space-y-1 text-xs font-semibold text-slate-400">
+          <button onclick="deconnecter()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:text-rose-600 hover:bg-rose-50 transition-all">
+            <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
+            <span>Se déconnecter</span>
+          </button>
+        </div>
+
+      </div>
+
+    </aside>
+
+    <!-- ZONE PRINCIPALE DE CONTENU STYLE ACADEX -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      
+      <!-- Top Header Style Acadex (Clean, Minimal, Search & Notifs) -->
+      <header class="h-18 px-8 py-4 flex items-center justify-between bg-[#F4F6F9] shrink-0 border-b border-slate-200/50">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 id="top-title" class="text-xl font-black text-slate-900 tracking-tight">Dashboard • Moad Moussaoui</h1>
+            <span id="top-campus-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 font-mono">
+              Campus Fixe : Targa
+            </span>
+          </div>
+          <p id="top-subtitle" class="text-xs text-slate-400 font-medium">Lundi 09 Novembre 2026 • 1 groupe = 1 campus • Vacataires prioritaires</p>
+        </div>
+
+        <!-- Actions Droite : Switcher Rôles Rapide + Impression A4 + Notifs -->
+        <div class="flex items-center gap-3">
+          
+          <!-- Pills de Changement de Rôle Immédiat -->
+          <div class="hidden xl:flex items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200/80 shadow-sm">
+            <button onclick="loginAs('SUPER_ADMIN')" id="pill-SUPER_ADMIN" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Admin</button>
+            <button onclick="loginAs('CHEF_FILIERE')" id="pill-CHEF_FILIERE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Chef Filière</button>
+            <button onclick="loginAs('RESP_PLANNING')" id="pill-RESP_PLANNING" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Planning</button>
+            <button onclick="loginAs('RESP_PFE')" id="pill-RESP_PFE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Resp. PFE</button>
+            <button onclick="loginAs('ENSEIGNANT_PERMANENT')" id="pill-ENSEIGNANT_PERMANENT" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Permanent (18h)</button>
+            <button onclick="loginAs('ENSEIGNANT_VACATAIRE')" id="pill-ENSEIGNANT_VACATAIRE" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Vacataire</button>
+            <button onclick="loginAs('ETUDIANT')" id="pill-ETUDIANT" class="pill-btn px-2.5 py-1 rounded-xl text-[11px] font-bold text-slate-600 hover:text-slate-900">Étudiant 5A</button>
+          </div>
+
+          <!-- Lien Emploi A4 Officiel Direct -->
+          <a href="emploi_du_temps_officiel_emsi.html" target="_blank" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-brand-600 font-bold text-xs flex items-center gap-2 shadow-sm transition-all">
+            <i class="fa-solid fa-print text-emsi-primary"></i>
+            <span>EDT Imprimable A4</span>
+          </a>
+
+          <!-- Bouton Gestion de Compte & Mot de Passe -->
+          <button onclick="navigateTo('account')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 text-slate-500 hover:text-brand-600 flex items-center justify-center shadow-sm" title="Mon Compte & Sécurité">
+            <i class="fa-solid fa-shield-halved text-sm"></i>
+          </button>
+
+          <!-- Bouton Notification Icon Style Acadex -->
+          <button onclick="showToast('Alerte : Seuil 20% franchi par Hamza Chraibi (19.5h d\'absence)', 'warning')" class="w-10 h-10 rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center relative shadow-sm">
+            <i class="fa-regular fa-bell text-sm"></i>
+            <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Main View Container -->
+      <main class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+        
+        <!-- ============================================================ -->
+        <!-- 3. PAGE DASHBOARD : ACADEX REPRODUCTION FIDÈLE               -->
+        <!-- ============================================================ -->
+        <div id="page-dashboard" class="space-y-6">
+          
+          <!-- RANGÉE 1 : 4 CARTES MÉTRIQUES AVEC BOUTON FLÈCHE (->) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="acadex-metrics-row">
+            <!-- Rendu par renderAcadexMetrics() -->
+          </div>
+
+          <!-- PANNEAU DES CONTRAINTES MÉTIERS STRICTES SANCTUARISÉES -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-teal-950 text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emsi-gold bg-white/10 px-2 py-0.5 rounded-full">
+                Contraintes Académiques EMSI Satisfaites à 100%
+              </span>
+              <h3 class="font-extrabold text-sm text-white">Règles d'Affectation & de Gestion Validées par le Solveur CP-SAT :</h3>
+              <p class="text-xs text-emerald-100/80">
+                1. <strong>Un Groupe = Un Campus Fixe</strong> (pas de déplacement inter-campus) • 2. <strong>Vacataires Sanctuarisés P1</strong> puis Permanents (18h) • 3. <strong>Salles LI (PC Informatique) vs LR (Réseaux)</strong> • 4. <strong>Pause 15 min obligatoire</strong>.
+              </p>
+            </div>
+            <button onclick="navigateTo('affectation-ia')" class="px-3.5 py-2 rounded-xl bg-white text-slate-900 hover:bg-emerald-50 font-black text-xs shrink-0 transition-all shadow-sm">
+              Consulter Solveur IA ➔
+            </button>
+          </div>
+
+          <!-- RANGÉE 2 : LES 2 GRANDS GRAPHIQUES (Spline Dégradé + Bar Chart Groupé) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Graphique 1 : Courbe Spline Dégradé (Academic Performance) -->
+            <div class="lg:col-span-7 acadex-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-extrabold text-sm text-slate-900">Academic Performance & Assiduité</h3>
+                  <p class="text-xs text-slate-400 font-medium">Taux moyen de présence aux séances et respect du seuil de 20%</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <select class="text-xs font-bold text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1">
+                    <option>Semestre 1 (2026)</option>
+                    <option>Année 2025-2026</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- SVG Spline Area Chart avec Dégradé Vert/Bleu et Tooltip "91%" comme dans Acadex -->
+              <div class="relative pt-2">
+                <svg viewBox="0 0 500 180" class="w-full h-44 overflow-visible">
+                  <defs>
+                    <linearGradient id="acadexGreenGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#10B981" stop-opacity="0.35"/>
+                      <stop offset="100%" stop-color="#10B981" stop-opacity="0.0"/>
+                    </linearGradient>
+                  </defs>
+                  
+                  <line x1="20" y1="30" x2="480" y2="30" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
+                  <line x1="20" y1="80" x2="480" y2="80" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
+                  <line x1="20" y1="130" x2="480" y2="130" stroke="#F1F5F9" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+                  <line x1="320" y1="40" x2="320" y2="160" stroke="#10B981" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+                  <path d="M 30,140 Q 90,120 150,135 T 270,105 T 320,50 T 400,65 T 470,80 L 470,160 L 30,160 Z" fill="url(#acadexGreenGrad)"/>
+                  <path d="M 30,140 Q 90,120 150,135 T 270,105 T 320,50 T 400,65 T 470,80" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+
+                  <circle cx="30" cy="140" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
+                  <circle cx="150" cy="135" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
+                  <circle cx="210" cy="120" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
+                  <circle cx="270" cy="105" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
+                  <circle cx="320" cy="50" r="5" fill="#10B981" stroke="#FFFFFF" stroke-width="2"/>
+                  <circle cx="400" cy="65" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
+                  <circle cx="470" cy="80" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="2.5"/>
+
+                  <g transform="translate(300, 18)">
+                    <rect x="0" y="0" width="40" height="22" rx="6" fill="#0F172A"/>
+                    <text x="20" y="15" fill="#FFFFFF" font-size="10" font-weight="bold" text-anchor="middle" font-family="'Plus Jakarta Sans'">91%</text>
+                  </g>
+
+                  <text x="30" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sept</text>
+                  <text x="150" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Oct</text>
+                  <text x="270" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Nov</text>
+                  <text x="320" y="175" fill="#0F172A" font-size="9" font-weight="800" text-anchor="middle">Actuel</text>
+                  <text x="400" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Déc</text>
+                  <text x="470" y="175" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Janv</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Graphique 2 : Histogramme Groupé Bleu & Vert (Quotas Enseignants) -->
+            <div class="lg:col-span-5 acadex-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-extrabold text-sm text-slate-900">Quotas & Heures Enseignées</h3>
+                  <div class="flex items-center gap-3 text-[11px] font-bold mt-0.5">
+                    <span class="flex items-center gap-1.5 text-brand-600"><span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span> Permanents (18h)</span>
+                    <span class="flex items-center gap-1.5 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Vacataires P1</span>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-400">Semestre 1</span>
+              </div>
+
+              <div class="pt-2">
+                <svg viewBox="0 0 350 180" class="w-full h-44">
+                  <line x1="20" y1="30" x2="330" y2="30" stroke="#F1F5F9" stroke-width="1.5"/>
+                  <line x1="20" y1="80" x2="330" y2="80" stroke="#F1F5F9" stroke-width="1.5"/>
+                  <line x1="20" y1="130" x2="330" y2="130" stroke="#F1F5F9" stroke-width="1.5"/>
+
+                  <!-- S1 -->
+                  <rect x="40" y="70" width="10" height="70" rx="3" fill="#2563EB"/>
+                  <rect x="54" y="90" width="10" height="50" rx="3" fill="#10B981"/>
+                  <text x="52" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 1</text>
+
+                  <!-- S2 -->
+                  <rect x="95" y="45" width="10" height="95" rx="3" fill="#2563EB"/>
+                  <rect x="109" y="80" width="10" height="60" rx="3" fill="#10B981"/>
+                  <text x="107" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 2</text>
+
+                  <!-- S3 -->
+                  <rect x="150" y="35" width="10" height="105" rx="3" fill="#2563EB"/>
+                  <rect x="164" y="60" width="10" height="80" rx="3" fill="#10B981"/>
+                  <text x="162" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 3</text>
+
+                  <!-- S4 -->
+                  <rect x="205" y="50" width="10" height="90" rx="3" fill="#2563EB"/>
+                  <rect x="219" y="75" width="10" height="65" rx="3" fill="#10B981"/>
+                  <text x="217" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 4</text>
+
+                  <!-- S5 -->
+                  <rect x="260" y="30" width="10" height="110" rx="3" fill="#2563EB"/>
+                  <rect x="274" y="55" width="10" height="85" rx="3" fill="#10B981"/>
+                  <text x="272" y="155" fill="#94A3B8" font-size="9" font-weight="600" text-anchor="middle">Sem 5</text>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RANGÉE 3 : LES 3 COLONNES INFÉRIEURES (Messages + Donut Students + Recent Activity) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Colonne 1 : Messages / Notifications Récentes -->
+            <div class="acadex-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-sm text-slate-900">Messages & Alertes</h3>
+                <button onclick="showToast('Toutes les alertes sont à jour', 'info')" class="text-xs font-bold text-brand-600 hover:underline">View All</button>
+              </div>
+
+              <div class="divide-y divide-slate-100 text-xs space-y-3 pt-1">
+                <div class="pt-2 flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center shrink-0 text-xs">
+                    MS
+                  </div>
+                  <div class="flex-1 overflow-hidden">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-slate-900">Pr. M. Sassoui</span>
+                      <span class="text-[10px] text-slate-400">3:00 PM</span>
+                    </div>
+                    <p class="text-slate-500 truncate text-[11px] mt-0.5">2 fiches PFE en attente de votre avis de commission.</p>
+                  </div>
+                </div>
+
+                <div class="pt-3 flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-xs">
+                    KT
+                  </div>
+                  <div class="flex-1 overflow-hidden">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-slate-900">Mme Kenza Tazi</span>
+                      <span class="text-[10px] text-slate-400">11:15 AM</span>
+                    </div>
+                    <p class="text-slate-500 truncate text-[11px] mt-0.5">Affectation des salles LI 8 et LI 3 validée par OR-Tools.</p>
+                  </div>
+                </div>
+
+                <div class="pt-3 flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 font-bold flex items-center justify-center shrink-0 text-xs">
+                    SC
+                  </div>
+                  <div class="flex-1 overflow-hidden">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-slate-900">Alerte Scolarité</span>
+                      <span class="text-[10px] text-slate-400">09:40 AM</span>
+                    </div>
+                    <p class="text-rose-600 font-semibold truncate text-[11px] mt-0.5">Seuil 20% franchi : Hamza Chraibi radié d'examen.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Colonne 2 : Donut Ring Students Répartition -->
+            <div class="acadex-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-sm text-slate-900">Students Distribution</h3>
+                <span class="text-xs text-slate-400">Campus EMSI</span>
+              </div>
+
+              <div class="flex flex-col items-center justify-center py-2">
+                <div class="relative w-36 h-36">
+                  <svg viewBox="0 0 100 100" class="w-full h-full -rotate-90">
+                    <circle cx="50" cy="50" r="38" stroke="#F1F5F9" stroke-width="12" fill="none"/>
+                    <circle cx="50" cy="50" r="38" stroke="#2563EB" stroke-width="12" stroke-dasharray="124 238" fill="none" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="38" stroke="#10B981" stroke-width="12" stroke-dasharray="66 238" stroke-dashoffset="-128" fill="none" stroke-linecap="round"/>
+                    <circle cx="50" cy="50" r="38" stroke="#F59E0B" stroke-width="12" stroke-dasharray="48 238" stroke-dashoffset="-198" fill="none" stroke-linecap="round"/>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span class="text-xl font-black text-slate-900 leading-none">1,420</span>
+                    <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider mt-0.5">Students</span>
+                  </div>
+                </div>
+
+                <div class="w-full pt-4 space-y-1.5 text-xs">
+                  <div class="flex items-center justify-between">
+                    <span class="flex items-center gap-2 text-slate-600"><span class="w-2.5 h-2.5 rounded bg-brand-600"></span> 5A-IIR (Ingénierie Info)</span>
+                    <span class="font-bold text-slate-900">738 (52%)</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="flex items-center gap-2 text-slate-600"><span class="w-2.5 h-2.5 rounded bg-emerald-500"></span> 5A-GI (Génie Industriel)</span>
+                    <span class="font-bold text-slate-900">398 (28%)</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="flex items-center gap-2 text-slate-600"><span class="w-2.5 h-2.5 rounded bg-amber-500"></span> IFA (Financière & Audit)</span>
+                    <span class="font-bold text-slate-900">284 (20%)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Colonne 3 : Student Activity / Événements Récents -->
+            <div class="acadex-card p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-sm text-slate-900">Recent Activity</h3>
+                <span class="text-xs text-slate-400 font-medium">Temps réel</span>
+              </div>
+
+              <div class="space-y-3 text-xs">
+                
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-award"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-slate-900">Jury PFE IA Composé</span>
+                      <span class="text-[10px] text-slate-400">Il y a 10m</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500">Jury à 4 membres validé pour Amine Bella & Ilyass Ait Ouahman.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-calendar-check"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-slate-900">CP-SAT Solveur Validé</span>
+                      <span class="text-[10px] text-slate-400">Il y a 1h</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500">Contrainte 1 groupe = 1 campus vérifiée sans conflit.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-clock"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-slate-900">Séance PFE 30m Validée</span>
+                      <span class="text-[10px] text-slate-400">Hier</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500">Visa numérique signé par Pr. Ait Ounejjar.</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 4. SUB-PAGE : EMPLOI DU TEMPS (CONFORME PHOTO EMSI)          -->
+        <!-- ============================================================ -->
+        <div id="page-edt" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-lg font-black text-slate-900">Emploi du Temps Hebdomadaire • Grille Officielle 6 Séances</h2>
+                  <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] font-mono">0 CONFLIT CP-SAT</span>
+                </div>
+                <p class="text-xs text-slate-500">Règle de Campus Unique : Le groupe étudie à 100% sur le Campus Targa • Pauses obligatoires de 15 min</p>
+              </div>
+              <a href="emploi_du_temps_officiel_emsi.html" target="_blank" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs flex items-center gap-2 hover:bg-brand-700 transition-all shadow-sm">
+                <i class="fa-solid fa-print"></i>
+                <span>Imprimer Format A4 Paysage Officiel (avec Tampon)</span>
+              </a>
+            </div>
+
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i class="fa-solid fa-lock text-amber-700"></i>
+                <span><strong>Priorisation Contractuelle :</strong> Les créneaux du Dr. Karim Alami (Vacataire) sont sanctuarisés en priorité 1 (Mardi & Jeudi matin). Les permanents (18h) complètent la grille.</span>
+              </span>
+              <span class="font-mono font-bold bg-white px-2 py-0.5 rounded border border-amber-300">P1 SANCTUARISÉE</span>
+            </div>
+            
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-center text-xs">
+                <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                  <tr>
+                    <th class="p-3 w-20 uppercase">Jours</th>
+                    <th class="p-3">Séance 1 (08:30 - 10:00)</th>
+                    <th class="p-1 w-3 bg-amber-50 text-[9px] text-amber-700">15m</th>
+                    <th class="p-3">Séance 2 (10:15 - 11:45)</th>
+                    <th class="p-1 w-3 bg-amber-50 text-[9px] text-amber-700">15m</th>
+                    <th class="p-3">Séance 3 (12:00 - 13:30)</th>
+                    <th class="p-1 w-3 bg-amber-50 text-[9px] text-amber-700">15m</th>
+                    <th class="p-3">Séance 4 (13:45 - 15:15)</th>
+                    <th class="p-1 w-3 bg-amber-50 text-[9px] text-amber-700">15m</th>
+                    <th class="p-3">Séance 5 (15:30 - 17:00)</th>
+                    <th class="p-1 w-3 bg-amber-50 text-[9px] text-amber-700">15m</th>
+                    <th class="p-3">Séance 6 (17:15 - 18:45)</th>
+                  </tr>
+                </thead>
+                <tbody id="edt-table-body" class="divide-y divide-slate-100">
+                  <!-- Rempli par renderEdtGrid() -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+              <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-100 border border-blue-300"></span> <strong>LI</strong> = Laboratoire Informatique (PC dédiés)</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-purple-100 border border-purple-300"></span> <strong>LR</strong> = Laboratoire Réseaux (Cisco & Baies)</span>
+              </div>
+              <span class="font-bold text-slate-700">Campus Fixe : Targa (Aucun transit)</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ============================================================ -->
+        <!-- 5. SUB-PAGE : AFFECTATION IA DES SALLES (CP-SAT OR-TOOLS)    -->
+        <!-- ============================================================ -->
+        <div id="page-affectation-ia" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-6">
+            
+            <!-- En-tête avec Titre & Sélecteur de sous-onglets IA -->
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-lg font-black text-slate-900">Affectation Intelligente des Salles & Emplois du Temps</h2>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 font-mono">Solveur CP-SAT OR-Tools</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">Saisie des salles, équipements TP PC, sélection du campus fixe, paramétrage des effectifs par groupe et génération de l'emploi du temps optimisé.</p>
+              </div>
+
+              <!-- Onglets de travail de la page IA -->
+              <div class="inline-flex rounded-2xl bg-slate-100 p-1 text-xs font-bold shrink-0 self-start lg:self-auto">
+                <button onclick="switchIaTab('solveur')" id="tab-btn-solveur" class="ia-tab-btn px-3.5 py-2 rounded-xl bg-white text-brand-600 shadow-sm transition-all flex items-center gap-2">
+                  <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i>
+                  <span>1. Solveur IA & EDT</span>
+                </button>
+                <button onclick="switchIaTab('salles')" id="tab-btn-salles" class="ia-tab-btn px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2">
+                  <i class="fa-solid fa-desktop text-blue-600"></i>
+                  <span>2. Salles & TP PC (Upload Excel)</span>
+                </button>
+                <button onclick="switchIaTab('groupes')" id="tab-btn-groupes" class="ia-tab-btn px-3.5 py-2 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2">
+                  <i class="fa-solid fa-users text-indigo-600"></i>
+                  <span>3. Filières, Groupes & Effectifs</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- ONGLET 1 : SOLVEUR IA & GENERATION EDT PAR CAMPUS        -->
+            <!-- ======================================================== -->
+            <div id="ia-panel-solveur" class="ia-panel space-y-6">
+              
+              <!-- Panneau de sélection des paramètres d'affectation IA -->
+              <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                  
+                  <!-- 1. Sélection du Campus Fixe -->
+                  <div class="md:col-span-4 space-y-1.5">
+                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center justify-between">
+                      <span>1. Choisir le Campus Fixe</span>
+                      <span class="text-[10px] text-emerald-700 font-bold font-mono">100% sur ce site</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button type="button" onclick="selectionnerCampusCible('Campus Targa')" id="btn-campus-targa" class="campus-select-btn px-3 py-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all">
+                        <i class="fa-solid fa-school-flag"></i>
+                        <span>Campus Targa</span>
+                      </button>
+                      <button type="button" onclick="selectionnerCampusCible('Campus Centre')" id="btn-campus-centre" class="campus-select-btn px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-all">
+                        <i class="fa-solid fa-building"></i>
+                        <span>Campus Centre</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- 2. Sélection de la Filière & Groupe -->
+                  <div class="md:col-span-4 space-y-1.5">
+                    <label class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center justify-between">
+                      <span>2. Filière & Groupe</span>
+                      <span id="badge-effectif-info" class="text-[10px] text-brand-700 font-bold font-mono">32 étudiants inscrits</span>
+                    </label>
+                    <select id="select-groupe-cible" onchange="changerGroupeSelectionne()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                      <!-- Rempli dynamiquement -->
+                    </select>
+                  </div>
+
+                  <!-- 3. Bouton d'Exécution du Solveur CP-SAT -->
+                  <div class="md:col-span-4">
+                    <button type="button" onclick="executerSolveurCpSat()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold text-xs shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                      <i class="fa-solid fa-wand-magic-sparkles text-amber-300 animate-pulse text-sm"></i>
+                      <span>Lancer l'Affectation IA (CP-SAT)</span>
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- 4 Contraintes vérifiées mathématiquement par CP-SAT -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-2 text-[11px]">
+                  <div class="p-2.5 rounded-xl bg-white border border-slate-200 flex items-start gap-2">
+                    <i class="fa-solid fa-location-dot text-emerald-600 mt-0.5"></i>
+                    <div>
+                      <strong class="text-slate-900 block">Campus Fixe Sanctuarisé</strong>
+                      <span class="text-slate-500 text-[10px]">Toutes les séances du groupe restent sur le campus choisi. Aucun déplacement en cours de journée.</span>
+                    </div>
+                  </div>
+
+                  <div class="p-2.5 rounded-xl bg-white border border-slate-200 flex items-start gap-2">
+                    <i class="fa-solid fa-lock text-amber-600 mt-0.5"></i>
+                    <div>
+                      <strong class="text-slate-900 block">Priorité 1 Vacataires</strong>
+                      <span class="text-slate-500 text-[10px]">Créneaux rigides des vacataires bloqués en priorité (Dr. Alami mardi/jeudi matin). Permanents comblent à 18h.</span>
+                    </div>
+                  </div>
+
+                  <div class="p-2.5 rounded-xl bg-white border border-slate-200 flex items-start gap-2">
+                    <i class="fa-solid fa-desktop text-blue-600 mt-0.5"></i>
+                    <div>
+                      <strong class="text-slate-900 block">Adéquation TP PC (LI / LR)</strong>
+                      <span class="text-slate-500 text-[10px]">Cours de Dev/IA affectés en salle LI (PC performants) et Réseaux en salle LR (Cisco & switchs).</span>
+                    </div>
+                  </div>
+
+                  <div class="p-2.5 rounded-xl bg-white border border-slate-200 flex items-start gap-2">
+                    <i class="fa-solid fa-chair text-purple-600 mt-0.5"></i>
+                    <div>
+                      <strong class="text-slate-900 block">Capacité Salles >= Effectif</strong>
+                      <span class="text-slate-500 text-[10px]">Capacité des salles affectées (35 à 38 places) supérieure ou égale au nombre d'étudiants du groupe.</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Rapport d'Exécution & Métriques CP-SAT -->
+              <div id="solver-results-banner" class="p-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-teal-900 text-white flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-black text-base border border-emerald-400/30">
+                    <i class="fa-solid fa-check-double"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h4 class="font-black text-sm">Affectation Optimale Trouvée (CP-SAT OR-Tools)</h4>
+                      <span class="px-2 py-0.2 rounded-full text-[9px] font-bold bg-emerald-400 text-emerald-950 font-mono">0 CONFLIT</span>
+                    </div>
+                    <p class="text-xs text-emerald-100/80">Campus : <strong id="metric-campus-name" class="text-white">Campus Targa</strong> • Groupe : <strong id="metric-groupe-name" class="text-white">2DSI G3 (32 étudiants)</strong> • 14 séances hebdomadaires affectées.</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 self-end md:self-center">
+                  <button onclick="imprimerEdtOfficielA4()" class="px-3.5 py-2 rounded-xl bg-white text-emerald-950 font-bold text-xs hover:bg-emerald-50 shadow-sm flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-print text-emerald-700"></i>
+                    <span>Imprimer l'EDT A4 Généré</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tableau Détaillé des Séances Affectées par l'IA -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-black uppercase tracking-wider text-slate-700">Détail des Séances & Salles Allouées par le Moteur IA</h3>
+                  <span class="text-[11px] text-slate-400 font-mono">Respect strict des types de TP et des créneaux enseignants</span>
+                </div>
+                
+                <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+                  <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px]">
+                      <tr>
+                        <th class="p-3">Jour & Séance</th>
+                        <th class="p-3">Matière & Code</th>
+                        <th class="p-3">Type TP Requis</th>
+                        <th class="p-3">Salle Affectée par IA</th>
+                        <th class="p-3">Capacité vs Effectif</th>
+                        <th class="p-3">Enseignant Assigné</th>
+                        <th class="p-3">Statut Contrainte</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="allocation-table-body">
+                      <!-- Rempli par renderAllocations() -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Aperçu Interactif de l'Emploi du Temps Hebdomadaire Généré -->
+              <div class="p-5 rounded-2xl bg-white border border-slate-200 space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-table-cells text-brand-600"></i>
+                    <h3 class="font-extrabold text-sm text-slate-900">Emploi du Temps Hebdomadaire Généré pour le Groupe</h3>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-mono font-bold text-slate-500">Format Grille Officielle 6 Séances EMSI</span>
+                    <button onclick="navigateTo('edt')" class="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 font-bold text-xs hover:bg-brand-100">
+                      Ouvrir la vue complète EDT ➔
+                    </button>
+                  </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full border-collapse text-center text-xs">
+                    <thead>
+                      <tr class="bg-slate-100 text-slate-700 font-bold text-[11px]">
+                        <th class="p-2 border border-slate-200 w-24">Jours / Séances</th>
+                        <th class="p-2 border border-slate-200">S1 (08h30-10h00)</th>
+                        <th class="p-2 border border-slate-200">S2 (10h15-11h45)</th>
+                        <th class="p-2 border border-slate-200">S3 (12h00-13h30)</th>
+                        <th class="p-2 border border-slate-200">S4 (13h45-15h15)</th>
+                        <th class="p-2 border border-slate-200">S5 (15h30-17h00)</th>
+                        <th class="p-2 border border-slate-200">S6 (17h15-18h45)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ia-edt-preview-body" class="divide-y divide-slate-200">
+                      <!-- Rempli dynamiquement -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- ONGLET 2 : INVENTAIRE DES SALLES & EQUIPEMENTS TP PC      -->
+            <!-- ======================================================== -->
+            <div id="ia-panel-salles" class="ia-panel hidden space-y-6">
+              
+              <!-- Zone d'Importation Excel / CSV des Salles -->
+              <div class="p-5 rounded-2xl bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-slate-50 border-2 border-dashed border-blue-300 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                      <i class="fa-solid fa-file-excel text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-black text-sm text-slate-900">Importer l'Ensemble des Salles depuis un Fichier Excel (.xlsx / .csv)</h3>
+                      <p class="text-xs text-slate-600 mt-0.5">Téléchargez le modèle type ou chargez votre fichier contenant : Code salle, Campus, Type de TP PC, Capacité et Horaires.</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="telechargerTemplateExcelSalles()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs flex items-center gap-2 shadow-sm transition-all">
+                      <i class="fa-solid fa-download text-emerald-600"></i>
+                      <span>Télécharger Modèle Excel (.csv)</span>
+                    </button>
+                    <label class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm cursor-pointer transition-all">
+                      <i class="fa-solid fa-cloud-arrow-up"></i>
+                      <span>Sélectionner Fichier Excel</span>
+                      <input type="file" id="excel-file-input" accept=".csv, .xlsx, .xls" onchange="importerFichierExcelSalles(event)" class="hidden">
+                    </label>
+                  </div>
+                </div>
+
+                <div class="p-3 bg-white/80 rounded-xl border border-blue-100 flex items-center justify-between text-xs text-blue-900 font-medium">
+                  <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-blue-600"></i>
+                    <span>Colonnes supportées : <code>Code_Salle</code>, <code>Campus</code>, <code>Type_Salle</code>, <code>Equipements_TP_PC</code>, <code>Capacite</code>, <code>Horaires</code>.</span>
+                  </div>
+                  <span class="text-[11px] font-mono font-bold text-blue-700">Lecture automatique par le parser IA</span>
+                </div>
+              </div>
+
+              <!-- Barre d'outils et de filtres des Salles existantes -->
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2">
+                  <!-- Filtre Campus -->
+                  <select id="filter-salles-campus" onchange="filtrerTableSalles()" class="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 focus:outline-none">
+                    <option value="ALL">Tous les Campus (Targa & Centre)</option>
+                    <option value="Campus Targa">Campus Targa uniquement</option>
+                    <option value="Campus Centre">Campus Centre uniquement</option>
+                  </select>
+
+                  <!-- Filtre Type TP -->
+                  <select id="filter-salles-type" onchange="filtrerTableSalles()" class="px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 focus:outline-none">
+                    <option value="ALL">Tous les Types de Salles</option>
+                    <option value="LI">LI - Labo Informatique (PC)</option>
+                    <option value="LR">LR - Labo Réseaux (Cisco)</option>
+                    <option value="STANDARD">Salles Standards de Cours</option>
+                    <option value="AMPHI">Amphithéâtres</option>
+                  </select>
+                </div>
+
+                <!-- Bouton Saisir une Salle Manuellement -->
+                <button type="button" onclick="ouvrirModalAjouterSalle()" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all self-start md:self-auto">
+                  <i class="fa-solid fa-plus text-amber-400"></i>
+                  <span>+ Saisir une Salle Manuellement</span>
+                </button>
+              </div>
+
+              <!-- Tableau Interactif des Salles Existantes -->
+              <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px]">
+                    <tr>
+                      <th class="p-3">Code Salle</th>
+                      <th class="p-3">Campus</th>
+                      <th class="p-3">Type de TP / Matériel PC</th>
+                      <th class="p-3">Spécifications Équipements</th>
+                      <th class="p-3">Capacité (Places PC)</th>
+                      <th class="p-3">Horaires d'Ouverture / Jour</th>
+                      <th class="p-3">Taux Occupation CP-SAT</th>
+                      <th class="p-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100" id="salles-table-body">
+                    <!-- Rempli par renderSallesList() -->
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+            <!-- ======================================================== -->
+            <!-- ONGLET 3 : GESTION FILIERES, GROUPES & EFFECTIFS         -->
+            <!-- ======================================================== -->
+            <div id="ia-panel-groupes" class="ia-panel hidden space-y-6">
+              
+              <!-- Cartes Métriques Filières & Groupes -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="p-4 rounded-2xl bg-white border border-slate-200">
+                  <span class="text-slate-400 text-xs font-bold block">Filières Actives</span>
+                  <div class="text-2xl font-black text-slate-900 my-1">5 Filières</div>
+                  <span class="text-[11px] text-brand-600 font-semibold">IIR, GI, IFA, GC, Tronc Commun</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-white border border-slate-200">
+                  <span class="text-slate-400 text-xs font-bold block">Groupes TD / TP</span>
+                  <div class="text-2xl font-black text-slate-900 my-1">19 Groupes</div>
+                  <span class="text-[11px] text-emerald-600 font-semibold">1 groupe = 1 campus fixe</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-white border border-slate-200">
+                  <span class="text-slate-400 text-xs font-bold block">Effectif Global Étudiants</span>
+                  <div class="text-2xl font-black text-slate-900 my-1">620 Étudiants</div>
+                  <span class="text-[11px] text-purple-600 font-semibold">Moyenne 32 étu. / groupe</span>
+                </div>
+              </div>
+
+              <!-- Barre d'action Groupes -->
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 class="font-extrabold text-sm text-slate-900">Effectifs par Groupe & Attribution du Campus Fixe</h3>
+                  <p class="text-xs text-slate-500">Ajustez directement le nombre d'étudiants par groupe pour garantir l'adéquation avec la capacité des salles PC.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="ouvrirModalAjouterGroupe()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all">
+                    <i class="fa-solid fa-users-medical"></i>
+                    <span>+ Ajouter un Groupe & Effectif</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tableau Interactif des Groupes & Effectifs -->
+              <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[10px]">
+                    <tr>
+                      <th class="p-3">Code Groupe</th>
+                      <th class="p-3">Filière</th>
+                      <th class="p-3">Campus Fixe Attribué</th>
+                      <th class="p-3">Option / Spécialité</th>
+                      <th class="p-3">Nombre d'Étudiants (Effectif)</th>
+                      <th class="p-3">Laboratoires TP Requis</th>
+                      <th class="p-3">Délégué</th>
+                      <th class="p-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100" id="groupes-table-body">
+                    <!-- Rempli par renderGroupes() -->
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 6. SUB-PAGE : JURYS PFE À 4 MEMBRES (GEMINI 2.0 FLASH)       -->
+        <!-- ============================================================ -->
+        <div id="page-pfe" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Jurys Officiels PFE à 4 Membres & Arbitrage IA</h2>
+                <p class="text-xs text-slate-500">1. Encadrant • 2. Rapporteur • 3. Examinateur (Recommandé par Gemini 2.0 Flash) • 4. Président Docteur / HDR</p>
+              </div>
+              <button onclick="ouvrirModalNouveauPfe()" class="px-4 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>Nouveau Sujet PFE</span>
+              </button>
+            </div>
+
+            <!-- Liste des Cartes PFE -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="pfe-cards-container">
+              <!-- Rempli par renderPfe() -->
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 7. SUB-PAGE : PLANNING DES SOUTENANCES (SANS CHEVAUCHEMENT)  -->
+        <!-- ============================================================ -->
+        <div id="page-soutenances" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Planning Officiel des Soutenances PFE</h2>
+                <p class="text-xs text-slate-500">Séances de 45 minutes sans chevauchement de salle ni conflit pour les membres du jury</p>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-bold text-xs">
+                Salles Dédiées : Targa Salle M & Centre Salle V1
+              </span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Date & Heure</th>
+                    <th class="p-3">Salle & Campus</th>
+                    <th class="p-3">Étudiants Binôme</th>
+                    <th class="p-3">Intitulé du Sujet</th>
+                    <th class="p-3">Président (Docteur HDR)</th>
+                    <th class="p-3">Jury Complet</th>
+                    <th class="p-3 text-right">Convocation</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-mono font-bold text-purple-700">Samedi 20 Déc à 10:00</td>
+                    <td class="p-3 font-bold text-slate-900">Targa Salle M</td>
+                    <td class="p-3 font-bold">Amine Bella & Ilyass Ait Ouahman</td>
+                    <td class="p-3 text-slate-700">Plateforme Microservices & CP-SAT OR-Tools</td>
+                    <td class="p-3 font-bold text-blue-700">Pr. Noussair Benassou (HDR)</td>
+                    <td class="p-3 text-slate-600">Encadrant: Pr. Ait Ounejjar • Rap: Dr. Alami • Ex: Mme Kenza</td>
+                    <td class="p-3 text-right">
+                      <button onclick="showToast('Convocation officielle téléchargée pour le binôme', 'success')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded">Convocation</button>
+                    </td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-mono font-bold text-purple-700">Lundi 22 Déc à 14:30</td>
+                    <td class="p-3 font-bold text-slate-900">Centre Salle V1</td>
+                    <td class="p-3 font-bold">Ikram Mellakh</td>
+                    <td class="p-3 text-slate-700">Jumeau Numérique SCADA Industrielle</td>
+                    <td class="p-3 font-bold text-blue-700">Pr. Brahim Abod (HDR)</td>
+                    <td class="p-3 text-slate-600">Encadrant: Mme Kenza • Rap: Pr. Sassoui • Ex: Dr. Alami</td>
+                    <td class="p-3 text-right">
+                      <button onclick="showToast('Convocation officielle téléchargée', 'success')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded">Convocation</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 8. SUB-PAGE : CAHIER D'ENCADREMENT NUMÉRIQUE (30 MIN)        -->
+        <!-- ============================================================ -->
+        <div id="page-cahier-encadrement" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Cahier d'Encadrement Numérique PFE (30 min)</h2>
+                <p class="text-xs text-slate-500">Journal hebdomadaire obligatoire de 30 minutes avec visa et directives techniques</p>
+              </div>
+              <button onclick="ouvrirModalAjoutSeanceEncadrement()" class="px-4 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                <span>Consigner Séance 30 min</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="prof-binomes-container">
+              <!-- Rempli par renderProfBinomes() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 9. SUB-PAGE : STAGES D'ÉTÉ (3A & 4A) - MODULE SÉPARÉ         -->
+        <!-- ============================================================ -->
+        <div id="page-stages-ete" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Stages d'Été (3ème & 4ème Année)</h2>
+                <p class="text-xs text-slate-500">Séparation nette du PFE : simple convention d'entreprise, attestation et rapport validé par le tuteur (sans soutenance).</p>
+              </div>
+              <button onclick="showToast('Formulaire de convention de stage 4A ouvert', 'info')" class="px-4 py-2 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 shadow-sm">
+                + Déposer Convention
+              </button>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Étudiant</th>
+                    <th class="p-3">Niveau</th>
+                    <th class="p-3">Entreprise d'Accueil</th>
+                    <th class="p-3">Période</th>
+                    <th class="p-3">Rapport PDF</th>
+                    <th class="p-3">Statut Tuteur</th>
+                    <th class="p-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-slate-900">Ilyass Ait Ouahman</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold">4A-IIR</span></td>
+                    <td class="p-3 text-slate-700">Capgemini Maroc (Casablanca)</td>
+                    <td class="p-3 text-slate-500">01 Juil - 31 Août (2 mois)</td>
+                    <td class="p-3"><span class="text-emerald-700 font-bold"><i class="fa-solid fa-file-pdf mr-1"></i> rapport_4A.pdf</span></td>
+                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">VALIDÉ</span></td>
+                    <td class="p-3 text-right"><button class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded font-bold">Consulter</button></td>
+                  </tr>
+                  <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-bold text-slate-900">Ikram Mellakh</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">4A-GI</span></td>
+                    <td class="p-3 text-slate-700">OCP Group (Safi)</td>
+                    <td class="p-3 text-slate-500">15 Juil - 15 Sept (2 mois)</td>
+                    <td class="p-3"><span class="text-emerald-700 font-bold"><i class="fa-solid fa-file-pdf mr-1"></i> rapport_ocp.pdf</span></td>
+                    <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">VALIDÉ</span></td>
+                    <td class="p-3 text-right"><button class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded font-bold">Consulter</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 10. SUB-PAGE : FILIÈRES & GROUPES (CRUD CHEF DE FILIÈRE)     -->
+        <!-- ============================================================ -->
+        <div id="page-filieres-groupes" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Filières & Groupes d'Ingénierie</h2>
+                <p class="text-xs text-slate-500">Administration des promotions, des groupes TD/TP et attribution du campus fixe</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="ouvrirModalAjoutFiliere()" class="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200">
+                  + Ajouter Filière
+                </button>
+                <button onclick="ouvrirModalAjoutGroupe()" class="px-3.5 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 shadow-sm">
+                  + Ajouter Groupe
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Code Groupe</th>
+                    <th class="p-3">Filière</th>
+                    <th class="p-3">Campus Fixe Attribué</th>
+                    <th class="p-3">Spécialité / Option</th>
+                    <th class="p-3">Effectif</th>
+                    <th class="p-3">Laboratoires Requis</th>
+                    <th class="p-3">Délégué</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100" id="groupes-table-body">
+                  <!-- Rempli par renderGroupes() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 11. SUB-PAGE : ÉMARGEMENT & SEUIL D'ABSENCES 20%             -->
+        <!-- ============================================================ -->
+        <div id="page-absences" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Feuille d'Émargement & Seuil d'Absence 20%</h2>
+                <p class="text-xs text-slate-500">Appel manuel nominatif obligatoire (QR code formellement banni) • 20% = Radiation immédiate</p>
+              </div>
+              <button onclick="validerAppelComplet()" class="px-4 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 shadow-sm">
+                Valider l'Émargement de la Séance
+              </button>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Matricule</th>
+                    <th class="p-3">Étudiant</th>
+                    <th class="p-3">Cumul Absences</th>
+                    <th class="p-3">Taux Actuel</th>
+                    <th class="p-3">Statut Seuil 20%</th>
+                    <th class="p-3 text-center">Émargement Présence</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100" id="appel-table-body">
+                  <!-- Rempli par renderAppel() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 12. SUB-PAGE : CV MATCHING RH IA (TOP 3 MODULES)             -->
+        <!-- ============================================================ -->
+        <div id="page-rh" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Recommandation CV Enseignants (Gemini 2.0 Flash)</h2>
+                <p class="text-xs text-slate-500">Analyse automatique du CV PDF et préconisation du TOP 3 des matières à attribuer</p>
+              </div>
+              <button onclick="showToast('Téléversement CV PDF enseignant prêt (Gemini 2.0 Flash)', 'info')" class="px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold text-xs hover:bg-cyan-700 shadow-sm">
+                + Analyser Nouveau CV
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 space-y-2">
+                <span class="font-bold text-cyan-950 block text-sm">1. Architecture Cloud Native (98%)</span>
+                <p class="text-cyan-800 text-[11px]">5A-IIR • Alignement avec publications Kubernetes et Docker.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 space-y-2">
+                <span class="font-bold text-cyan-950 block text-sm">2. DevOps & CI/CD Pipelines (94%)</span>
+                <p class="text-cyan-800 text-[11px]">4A-IIR • 5 ans d'expérience pratique GitLab CI, Terraform et ArgoCD.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-cyan-50 border border-cyan-200 space-y-2">
+                <span class="font-bold text-cyan-950 block text-sm">3. Programmation Réseau Avancée (89%)</span>
+                <p class="text-cyan-800 text-[11px]">3A-IIR • Maîtrise des sockets, gRPC et protocoles sécurisés.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 13. SUB-PAGE : GESTION DES COMPTES RBAC (SUPER ADMIN)        -->
+        <!-- ============================================================ -->
+        <div id="page-rbac" class="hidden space-y-6">
+          <div class="acadex-card p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h2 class="text-lg font-black text-slate-900">Administration des Comptes & Matrice RBAC</h2>
+                <p class="text-xs text-slate-500">Gestion des Responsables, Enseignants (Permanents 18h & Vacataires P1) et Étudiants</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="ouvrirModalNouveauResponsable()" class="px-3 py-1.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800">
+                  + Responsable
+                </button>
+                <button onclick="ouvrirModalNouveauProf()" class="px-3 py-1.5 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700">
+                  + Enseignant
+                </button>
+                <button onclick="ouvrirModalAjoutEtudiant()" class="px-3 py-1.5 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700">
+                  + Étudiant
+                </button>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 uppercase font-bold">
+                  <tr>
+                    <th class="p-3">Matricule</th>
+                    <th class="p-3">Nom Complet</th>
+                    <th class="p-3">Rôle Assigné</th>
+                    <th class="p-3">Email Institutionnel</th>
+                    <th class="p-3">Statut Contractuel</th>
+                    <th class="p-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100" id="users-table-body">
+                  <!-- Rempli par renderUsers() -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- 14. SUB-PAGE : MON COMPTE & CHANGEMENT DE MOT DE PASSE       -->
+        <!-- ============================================================ -->
+        <div id="page-account" class="hidden space-y-6">
+          <div class="acadex-card p-6 max-w-2xl mx-auto space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-brand-600 text-white font-black text-sm flex items-center justify-center shadow-md">
+                  <span id="account-avatar-preview">MM</span>
+                </div>
+                <div>
+                  <h2 class="text-base font-black text-slate-900" id="account-name-preview">Moad Moussaoui</h2>
+                  <p class="text-xs text-slate-400" id="account-role-preview">Super Administrateur • admin@emsi-edu.ma</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs font-mono">Compte Actif</span>
+            </div>
+
+            <!-- Formulaire Changement de Mot de Passe -->
+            <form onsubmit="handleChangerPassword(event)" class="space-y-4 text-xs">
+              <div class="border-b border-slate-100 pb-2">
+                <h3 class="font-extrabold text-xs text-slate-800 uppercase tracking-wider">Sécurité & Changement de Mot de Passe</h3>
+                <p class="text-slate-400 text-[11px]">Chiffrement BCrypt conforme aux exigences de sécurité EMSI</p>
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Mot de passe actuel</label>
+                <input type="password" id="old-pass" required placeholder="••••••••••••" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-xs focus:ring-2 focus:ring-brand-500">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Nouveau mot de passe</label>
+                  <input type="password" id="new-pass" required placeholder="Minimum 8 caractères" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-xs focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Confirmer le nouveau mot de passe</label>
+                  <input type="password" id="confirm-pass" required placeholder="Répéter le mot de passe" class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 font-mono text-xs focus:ring-2 focus:ring-brand-500">
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1 text-[11px] text-slate-500">
+                <span class="font-bold text-slate-700 block">Exigences de sécurité :</span>
+                <div>✓ Au moins 8 caractères</div>
+                <div>✓ Au moins une lettre majuscule et un chiffre</div>
+                <div>✓ Déconnexion automatique des sessions inactives après 30 minutes</div>
+              </div>
+
+              <div class="flex items-center justify-between pt-2">
+                <button type="button" onclick="deconnecter()" class="px-4 py-2 rounded-xl text-rose-600 hover:bg-rose-50 font-bold text-xs">
+                  Se déconnecter
+                </button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 shadow-sm transition-all">
+                  Mettre à jour le mot de passe
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 15. MODALS FORMULAIRES (JURY IA, AJOUT RESP, PROF, ÉTUDIANT)   -->
+  <!-- ============================================================== -->
+
+  <!-- MODAL : SAISIR NOUVELLE SALLE EXISTANTE & EQUIPEMENTS TP PC -->
+  <div id="modal-ajouter-salle" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+            <i class="fa-solid fa-desktop text-sm"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-sm text-slate-900">Saisie d'une Nouvelle Salle & Équipements TP PC</h3>
+            <span class="text-[10px] text-slate-400 font-bold">Campus Targa ou Campus Centre</span>
+          </div>
+        </div>
+        <button onclick="fermerModalAjouterSalle()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="enregistrerNouvelleSalle(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Code / Nom de la Salle *</label>
+            <input type="text" id="salle-code" required placeholder="ex: LI 9, LR 4, Salle K2" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Campus *</label>
+            <select id="salle-campus" required class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none">
+              <option value="Campus Targa">Campus Targa</option>
+              <option value="Campus Centre">Campus Centre (Guéliz)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Type de Salle / TP PC *</label>
+            <select id="salle-type" required class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none">
+              <option value="LI (PC)">LI - Labo Informatique (PC Dev/IA/BD)</option>
+              <option value="LR (Réseaux)">LR - Labo Réseaux (Cisco & Baies)</option>
+              <option value="STANDARD">Salle de Cours Standard</option>
+              <option value="AMPHI">Amphithéâtre</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Capacité (Places assises PC) *</label>
+            <input type="number" id="salle-capacite" min="15" max="300" required value="36" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Description Équipements Informatiques</label>
+          <input type="text" id="salle-equipements" placeholder="ex: 36 PC Dell i7 32GB RAM + GPU RTX 4080 (Dev / Microservices)" class="w-full p-2.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Horaires d'Ouverture / Plages par Jour</label>
+          <input type="text" id="salle-horaires" value="Séances S1 à S6 (08h30 - 18h45)" class="w-full p-2.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="fermerModalAjouterSalle()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200">Annuler</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold hover:bg-brand-700 shadow-sm">Enregistrer la Salle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : SAISIR NOUVEAU GROUPE & EFFECTIF D'ÉTUDIANTS -->
+  <div id="modal-ajouter-groupe" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4 border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
+            <i class="fa-solid fa-users text-sm"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-sm text-slate-900">Nouveau Groupe d'Ingénierie & Effectif</h3>
+            <span class="text-[10px] text-slate-400 font-bold">Attribution du campus fixe et des besoins TP</span>
+          </div>
+        </div>
+        <button onclick="fermerModalAjouterGroupe()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="enregistrerNouveauGroupe(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Code du Groupe *</label>
+            <input type="text" id="grp-code" required placeholder="ex: 2DSI G4, GL G3" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Filière *</label>
+            <select id="grp-filiere" required class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none">
+              <option value="5A-IIR">5A-IIR (Ingénierie Informatique & Réseaux)</option>
+              <option value="4A-IIR">4A-IIR (Ingénierie Informatique & Réseaux)</option>
+              <option value="5A-GI">5A-GI (Génie Industriel)</option>
+              <option value="5A-IFA">5A-IFA (Systèmes Embarqués & Automatique)</option>
+              <option value="3A-IIR">3A-IIR (Tronc Commun)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Nombre d'Étudiants (Effectif) *</label>
+            <input type="number" id="grp-effectif" min="10" max="60" required value="32" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Campus Fixe Attribué *</label>
+            <select id="grp-campus" required class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900 focus:outline-none">
+              <option value="Campus Targa">Campus Targa (100% sur site)</option>
+              <option value="Campus Centre">Campus Centre (100% sur site)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Spécialité / Option</label>
+          <input type="text" id="grp-option" placeholder="ex: Développement Digital & SI" value="Développement Digital & SI" class="w-full p-2.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Laboratoires TP Requis</label>
+            <input type="text" id="grp-labos" value="LI (PC) + LR (Cisco)" class="w-full p-2.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Nom du Délégué</label>
+            <input type="text" id="grp-delegue" placeholder="ex: Nom et Prénom" value="Étudiant Délégué" class="w-full p-2.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="fermerModalAjouterGroupe()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold hover:bg-slate-200">Annuler</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-sm">Créer le Groupe</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL : ANIMATION DE RESOLUTION CP-SAT IA -->
+  <div id="modal-cpsat-animation" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-emerald-200">
+      <div class="text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto animate-spin">
+          <i class="fa-solid fa-gear text-2xl"></i>
+        </div>
+        <h3 class="font-black text-sm text-slate-900">Résolution CP-SAT OR-Tools en Cours...</h3>
+        <div class="space-y-1.5 text-[11px] text-slate-500 text-left bg-slate-50 p-3 rounded-xl border border-slate-200 font-mono">
+          <div class="text-emerald-700 font-bold">✔ Campus sélectionné vérifié (100% Targa)</div>
+          <div class="text-emerald-700 font-bold">✔ Adéquation salles LI/LR vs effectif (32 étu.)</div>
+          <div class="text-amber-700 font-bold">✔ Créneaux vacataires sanctuarisés (Dr. Alami)</div>
+          <div class="text-blue-700 font-bold">✔ Quota contractuel permanents (Pr. Benassou 18h)</div>
+          <div class="text-purple-700 font-bold">✔ 0 chevauchement de salle ou d'enseignant</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Arbitrage Jury IA (Gemini 2.0 Flash) -->
+  <div id="modal-ai-jury" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-5 border border-purple-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+            <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-sm text-slate-900">Arbitrage IA du Jury Officiel à 4 Membres</h3>
+            <span class="text-[10px] text-purple-700 font-bold font-mono">Google Gemini 2.0 Flash (Free API)</span>
+          </div>
+        </div>
+        <button onclick="fermerModalJury()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="ai-modal-content" class="space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC & STATE                           -->
+  <!-- ============================================================== -->
+  <script>
+    const comptes = {
+      SUPER_ADMIN: {
+        nom: 'Moad Moussaoui',
+        role: 'SUPER_ADMIN',
+        roleLabel: 'Super Admin',
+        campus: 'Targa (Gouvernance)',
+        avatar: 'MM',
+        email: 'admin@emsi-edu.ma'
+      },
+      CHEF_FILIERE: {
+        nom: 'Pr. M. Sassoui',
+        role: 'CHEF_FILIERE',
+        roleLabel: 'Chef de Filière IIR',
+        campus: 'Targa & Centre',
+        avatar: 'MS',
+        email: 'm.sassoui@emsi-edu.ma'
+      },
+      RESP_PLANNING: {
+        nom: 'Mme Kenza Tazi',
+        role: 'RESP_PLANNING',
+        roleLabel: 'Resp. Planning EDT',
+        campus: 'Targa (Scolarité)',
+        avatar: 'KT',
+        email: 'kenza.tazi@emsi-edu.ma'
+      },
+      RESP_PFE: {
+        nom: 'Pr. Brahim Abod',
+        role: 'RESP_PFE',
+        roleLabel: 'Resp. PFE & Jurys',
+        campus: 'Targa & Guéliz',
+        avatar: 'BA',
+        email: 'brahim.abod@emsi-edu.ma'
+      },
+      ENSEIGNANT_PERMANENT: {
+        nom: 'Pr. Noussair Benassou',
+        role: 'ENSEIGNANT_PERMANENT',
+        roleLabel: 'Enseignant Permanent',
+        campus: 'Targa (18h/semaine)',
+        avatar: 'NB',
+        email: 'noussair.benassou@emsi-edu.ma'
+      },
+      ENSEIGNANT_VACATAIRE: {
+        nom: 'Dr. Karim Alami',
+        role: 'ENSEIGNANT_VACATAIRE',
+        roleLabel: 'Enseignant Vacataire',
+        campus: 'Targa (Mardi/Jeudi matin)',
+        avatar: 'KA',
+        email: 'karim.alami@emsi-edu.ma'
+      },
+      ETUDIANT: {
+        nom: 'Ilyass Ait Ouahman',
+        role: 'ETUDIANT',
+        roleLabel: 'Étudiant 5A-IIR',
+        campus: 'Targa Fixe (2DSI G3)',
+        avatar: 'IA',
+        email: 'ilyass.aitouahman@emsi-edu.ma'
+      }
+    };
+
+    // ==============================================================
+    // BASE DE DONNÉES DES SALLES EXISTANTES & ÉQUIPEMENTS TP PC
+    // ==============================================================
+    let sallesList = [
+      { id: 1, code: 'LI 8', campus: 'Campus Targa', type: 'LI (PC)', description: '36 PC Dell i7 32GB RAM, GPU RTX 4080 (JEE Microservices, Optimisation BD)', capacite: 38, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '82%', statut: 'DISPONIBLE' },
+      { id: 2, code: 'LI 3', campus: 'Campus Targa', type: 'LI (PC)', description: '34 PC Dell i7 32GB RAM + GPU CUDA (Deep Learning, Vision par Ordinateur)', capacite: 36, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '78%', statut: 'DISPONIBLE' },
+      { id: 3, code: 'LI 4', campus: 'Campus Targa', type: 'LI (PC)', description: '35 PC HP 16GB RAM, SSD NVMe 1To (Optimisation Bases de Données)', capacite: 38, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '72%', statut: 'DISPONIBLE' },
+      { id: 4, code: 'LR Targa', campus: 'Campus Targa', type: 'LR (Réseaux)', description: '32 PC + Baies Cisco Switch 2960 & Routeurs 2901 (DevOps, Big Data, Flutter)', capacite: 36, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '88%', statut: 'DISPONIBLE' },
+      { id: 5, code: 'Salle R', campus: 'Campus Targa', type: 'STANDARD', description: 'Salle de cours interactif, Vidéoprojecteur 4K, Audio (Soft Skills & Employabilité)', capacite: 42, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '65%', statut: 'DISPONIBLE' },
+      { id: 6, code: 'Salle S', campus: 'Campus Targa', type: 'STANDARD', description: 'Salle de cours, Vidéoprojecteur interactif (Gouvernance des SI)', capacite: 40, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '60%', statut: 'DISPONIBLE' },
+      { id: 7, code: 'Salle H1', campus: 'Campus Targa', type: 'STANDARD', description: 'Salle Multimédia & Langues (Business English & Communication)', capacite: 35, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '55%', statut: 'DISPONIBLE' },
+      { id: 8, code: 'Salle I1', campus: 'Campus Targa', type: 'STANDARD', description: 'Salle Collaborative Dev (Projet Collaboratif DevOps)', capacite: 36, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '70%', statut: 'DISPONIBLE' },
+      { id: 9, code: 'Salle M', campus: 'Campus Targa', type: 'STANDARD', description: 'Salle de Soutenance & Communication Professionnelle PFE', capacite: 45, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '80%', statut: 'DISPONIBLE' },
+      { id: 10, code: 'Salle F1', campus: 'Campus Targa', type: 'STANDARD', description: 'Salle ERP & Gestion des flux d\'entreprise (SAP / Odoo)', capacite: 40, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '58%', statut: 'DISPONIBLE' },
+      { id: 11, code: 'Amphi Targa A', campus: 'Campus Targa', type: 'AMPHI', description: 'Grand Amphithéâtre 180 places, sonorisation conférence, double projection', capacite: 180, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '45%', statut: 'DISPONIBLE' },
+      
+      // Campus Centre Guéliz
+      { id: 12, code: 'LR Centre', campus: 'Campus Centre', type: 'LR (Réseaux)', description: '30 PC + Baies Cisco (Réseaux Télécoms & DevOps Cloud)', capacite: 35, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '75%', statut: 'DISPONIBLE' },
+      { id: 13, code: 'LI 2 Centre', campus: 'Campus Centre', type: 'LI (PC)', description: '32 PC i7, Stations CAO/Three.js (Génie Industriel & Informatique)', capacite: 35, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '70%', statut: 'DISPONIBLE' },
+      { id: 14, code: 'LI 4 Centre', campus: 'Campus Centre', type: 'LI (PC)', description: '35 PC HP 16GB RAM (Optimisation BD, Développement Web & API)', capacite: 38, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '68%', statut: 'DISPONIBLE' },
+      { id: 15, code: 'Salle V1 Centre', campus: 'Campus Centre', type: 'STANDARD', description: 'Salle de Soutenances & Séminaires Campus Centre', capacite: 40, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '62%', statut: 'DISPONIBLE' },
+      { id: 16, code: 'Amphi Centre', campus: 'Campus Centre', type: 'AMPHI', description: 'Amphithéâtre Guéliz 200 places assises avec régie audio', capacite: 200, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '50%', statut: 'DISPONIBLE' }
+    ];
+
+    // ==============================================================
+    // CONFIGURATION FILIÈRES, GROUPES & NOMBRE D'ÉTUDIANTS
+    // ==============================================================
+    let groupesConfig = [
+      { id: '2DSI-G3', code: '2DSI G3', filiere: '5A-IIR', effectif: 32, campus: 'Campus Targa', option: 'Développement Digital & SI', labos: 'LI (PC) + LR (Cisco)', delegue: 'Ilyass Ait Ouahman' },
+      { id: '2DSI-G1', code: '2DSI G1', filiere: '5A-IIR', effectif: 35, campus: 'Campus Targa', option: 'Développement Digital & SI', labos: 'LI (PC) + LR (Cisco)', delegue: 'Amine Bella' },
+      { id: 'GL-G2', code: 'GL G2', filiere: '5A-IIR', effectif: 34, campus: 'Campus Targa', option: 'Génie Logiciel & Architecture', labos: 'LI (PC)', delegue: 'Sara El Mansouri' },
+      { id: 'GI-G1', code: '5A-GI G1', filiere: '5A-GI', effectif: 27, campus: 'Campus Centre', option: 'Supply Chain 4.0 & Logistique', labos: 'LI (PC)', delegue: 'Ikram Mellakh' },
+      { id: 'IFA-G1', code: '5A-IFA G1', filiere: '5A-IFA', effectif: 26, campus: 'Campus Targa', option: 'Systèmes Embarqués & IoT', labos: 'LE (Élec) + LI (PC)', delegue: 'Hamza Chraibi' }
+    ];
+
+    let currentCampusCible = 'Campus Targa';
+    let currentGroupeCible = '2DSI G3';
+
+    // ==============================================================
+    // LOGIQUE DE NAVIGATION DES SOUS-ONGLETS IA
+    // ==============================================================
+    function switchIaTab(tabName) {
+      document.querySelectorAll('.ia-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-brand-600', 'shadow-sm');
+        btn.classList.add('text-slate-600');
+      });
+      document.querySelectorAll('.ia-panel').forEach(panel => {
+        panel.classList.add('hidden');
+      });
+
+      const activeBtn = document.getElementById('tab-btn-' + tabName);
+      const activePanel = document.getElementById('ia-panel-' + tabName);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600');
+        activeBtn.classList.add('bg-white', 'text-brand-600', 'shadow-sm');
+      }
+      if (activePanel) {
+        activePanel.classList.remove('hidden');
+      }
+
+      if (tabName === 'salles') renderSallesList();
+      if (tabName === 'groupes') renderGroupes();
+      if (tabName === 'solveur') {
+        initGroupeSelect();
+        renderAllocations();
+        renderIaEdtPreview();
+      }
+    }
+
+    function selectionnerCampusCible(campusName) {
+      currentCampusCible = campusName;
+      
+      const btnTarga = document.getElementById('btn-campus-targa');
+      const btnCentre = document.getElementById('btn-campus-centre');
+      if (campusName === 'Campus Targa') {
+        btnTarga.className = 'campus-select-btn px-3 py-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all';
+        btnCentre.className = 'campus-select-btn px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-all';
+      } else {
+        btnCentre.className = 'campus-select-btn px-3 py-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-800 font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all';
+        btnTarga.className = 'campus-select-btn px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-all';
+      }
+
+      document.getElementById('metric-campus-name').innerText = campusName;
+      initGroupeSelect();
+      renderAllocations();
+      renderIaEdtPreview();
+      showToast(`Campus sélectionné : ${campusName}. Tous les cours du groupe sont assignés sur ce campus.`, 'info');
+    }
+
+    function initGroupeSelect() {
+      const select = document.getElementById('select-groupe-cible');
+      if (!select) return;
+      
+      const filtered = groupesConfig.filter(g => g.campus === currentCampusCible);
+      const groupsToShow = filtered.length > 0 ? filtered : groupesConfig;
+
+      select.innerHTML = groupsToShow.map(g => `
+        <option value="${g.code}" ${g.code === currentGroupeCible ? 'selected' : ''}>
+          ${g.filiere} • ${g.code} (${g.effectif} étudiants) • ${g.option}
+        </option>
+      `).join('');
+
+      if (groupsToShow.length > 0 && !groupsToShow.some(g => g.code === currentGroupeCible)) {
+        currentGroupeCible = groupsToShow[0].code;
+      }
+      changerGroupeSelectionne();
+    }
+
+    function changerGroupeSelectionne() {
+      const select = document.getElementById('select-groupe-cible');
+      if (select) currentGroupeCible = select.value;
+
+      const grp = groupesConfig.find(g => g.code === currentGroupeCible);
+      if (grp) {
+        document.getElementById('badge-effectif-info').innerText = `${grp.effectif} étudiants inscrits`;
+        document.getElementById('metric-groupe-name').innerText = `${grp.code} (${grp.effectif} étudiants)`;
+      }
+      renderAllocations();
+      renderIaEdtPreview();
+    }
+
+    // ==============================================================
+    // AFFICHAGE & GESTION DE L'INVENTAIRE DES SALLES
+    // ==============================================================
+    function renderSallesList() {
+      const tbody = document.getElementById('salles-table-body');
+      if (!tbody) return;
+
+      const campusFilter = document.getElementById('filter-salles-campus') ? document.getElementById('filter-salles-campus').value : 'ALL';
+      const typeFilter = document.getElementById('filter-salles-type') ? document.getElementById('filter-salles-type').value : 'ALL';
+
+      let filtered = sallesList;
+      if (campusFilter !== 'ALL') {
+        filtered = filtered.filter(s => s.campus === campusFilter);
+      }
+      if (typeFilter !== 'ALL') {
+        if (typeFilter === 'LI') filtered = filtered.filter(s => s.type.includes('LI'));
+        else if (typeFilter === 'LR') filtered = filtered.filter(s => s.type.includes('LR'));
+        else filtered = filtered.filter(s => s.type === typeFilter);
+      }
+
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="p-3 font-mono font-black text-slate-900">${s.code}</td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${s.campus.includes('Targa') ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+              ${s.campus}
+            </span>
+          </td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded font-bold text-[10px] ${s.type.includes('LI') ? 'bg-purple-100 text-purple-800' : s.type.includes('LR') ? 'bg-cyan-100 text-cyan-800' : 'bg-slate-100 text-slate-700'}">
+              ${s.type}
+            </span>
+          </td>
+          <td class="p-3 text-slate-600 max-w-xs truncate" title="${s.description}">${s.description}</td>
+          <td class="p-3 font-extrabold text-slate-900">${s.capacite} places PC</td>
+          <td class="p-3 font-mono text-[11px] text-slate-500">${s.horaires}</td>
+          <td class="p-3">
+            <div class="flex items-center gap-1.5">
+              <div class="w-16 h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full bg-emerald-500 rounded-full" style="width: ${s.occupation}"></div>
+              </div>
+              <span class="font-mono text-[10px] font-bold text-slate-600">${s.occupation}</span>
+            </div>
+          </td>
+          <td class="p-3 text-right">
+            <button onclick="supprimerSalle(${s.id})" class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors" title="Supprimer la salle">
+              <i class="fa-solid fa-trash text-xs"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filtrerTableSalles() {
+      renderSallesList();
+    }
+
+    function ouvrirModalAjouterSalle() {
+      document.getElementById('modal-ajouter-salle').classList.remove('hidden');
+    }
+
+    function fermerModalAjouterSalle() {
+      document.getElementById('modal-ajouter-salle').classList.add('hidden');
+    }
+
+    function enregistrerNouvelleSalle(e) {
+      e.preventDefault();
+      const code = document.getElementById('salle-code').value.trim();
+      const campus = document.getElementById('salle-campus').value;
+      const type = document.getElementById('salle-type').value;
+      const capacite = parseInt(document.getElementById('salle-capacite').value, 10);
+      const equipements = document.getElementById('salle-equipements').value.trim() || 'Équipements standards';
+      const horaires = document.getElementById('salle-horaires').value.trim() || 'Séances S1 à S6 (08h30 - 18h45)';
+
+      const newSalle = {
+        id: Date.now(),
+        code,
+        campus,
+        type,
+        description: equipements,
+        capacite,
+        horaires,
+        occupation: '0%',
+        statut: 'DISPONIBLE'
+      };
+
+      sallesList.unshift(newSalle);
+      fermerModalAjouterSalle();
+      renderSallesList();
+      showToast(`Salle ${code} (${campus}) ajoutée avec succès au catalogue des ressources.`, 'success');
+    }
+
+    function supprimerSalle(id) {
+      const idx = sallesList.findIndex(s => s.id === id);
+      if (idx !== -1) {
+        const nom = sallesList[idx].code;
+        sallesList.splice(idx, 1);
+        renderSallesList();
+        showToast(`Salle ${nom} supprimée de l'inventaire.`, 'warning');
+      }
+    }
+
+    // ==============================================================
+    // UPLOAD & IMPORT EXCEL / CSV DES SALLES
+    // ==============================================================
+    function telechargerTemplateExcelSalles() {
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Code_Salle,Campus,Type_Salle,Equipements_TP_PC,Capacite,Horaires_Ouverture\n"
+        + "LI 9,Campus Targa,LI (PC),36 PC Dell i7 32GB RAM + RTX 4080 (Dev / IA),38,Séances S1 à S6 (08h30 - 18h45)\n"
+        + "LR 4,Campus Targa,LR (Réseaux),32 PC + Baies Cisco Switch & Routeurs,36,Séances S1 à S6 (08h30 - 18h45)\n"
+        + "Salle K1,Campus Targa,STANDARD,Salle de cours standard + Vidéoprojecteur 4K,40,Séances S1 à S6 (08h30 - 18h45)\n"
+        + "Amphi C,Campus Centre,AMPHI,Grand Amphithéâtre 180 places avec sonorisation,180,Séances S1 à S6 (08h30 - 18h45)\n";
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Template_Salles_EMSI.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("Modèle Excel / CSV des salles téléchargé avec succès !", "success");
+    }
+
+    function importerFichierExcelSalles(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        // Ajout simulé de nouvelles salles extraites du fichier
+        const parsedCount = 4;
+        sallesList.unshift(
+          { id: Date.now() + 1, code: 'LI 9 (Import)', campus: 'Campus Targa', type: 'LI (PC)', description: '36 PC Dell i7 32GB RAM + GPU RTX (Import Excel)', capacite: 38, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '65%', statut: 'DISPONIBLE' },
+          { id: Date.now() + 2, code: 'LR 4 (Import)', campus: 'Campus Targa', type: 'LR (Réseaux)', description: '32 PC + Baies Cisco Switch (Import Excel)', capacite: 36, horaires: 'Séances S1 à S6 (08h30 - 18h45)', occupation: '70%', statut: 'DISPONIBLE' }
+        );
+        renderSallesList();
+        showToast(`Fichier "${file.name}" analysé : ${parsedCount} salles extraites et intégrées au solveur IA CP-SAT !`, 'success');
+      };
+      reader.readAsText(file);
+    }
+
+    // ==============================================================
+    // GESTION DES GROUPES & EFFECTIFS
+    // ==============================================================
+    function renderGroupes() {
+      const tbody = document.getElementById('groupes-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = groupesConfig.map(g => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="p-3 font-mono font-black text-brand-600">${g.code}</td>
+          <td class="p-3 font-bold text-slate-800">${g.filiere}</td>
+          <td class="p-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${g.campus.includes('Targa') ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+              ${g.campus} Fixe
+            </span>
+          </td>
+          <td class="p-3 text-slate-600">${g.option}</td>
+          <td class="p-3 font-mono font-black text-slate-900">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-slate-100">${g.effectif} étu.</span>
+              <button onclick="modifierEffectifGroupe('${g.code}', 1)" class="w-5 h-5 rounded bg-slate-200 hover:bg-slate-300 font-bold text-slate-700 flex items-center justify-center text-xs" title="Augmenter effectif">+</button>
+              <button onclick="modifierEffectifGroupe('${g.code}', -1)" class="w-5 h-5 rounded bg-slate-200 hover:bg-slate-300 font-bold text-slate-700 flex items-center justify-center text-xs" title="Diminuer effectif">-</button>
+            </div>
+          </td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">${g.labos}</span></td>
+          <td class="p-3 text-slate-700 font-medium">${g.delegue}</td>
+          <td class="p-3 text-right">
+            <button onclick="selectionnerGroupeEtLancer('${g.code}', '${g.campus}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-[10px]">
+              Générer EDT ➔
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function modifierEffectifGroupe(code, delta) {
+      const grp = groupesConfig.find(g => g.code === code);
+      if (grp) {
+        grp.effectif = Math.max(10, grp.effectif + delta);
+        renderGroupes();
+        initGroupeSelect();
+        showToast(`Effectif de ${code} mis à jour : ${grp.effectif} étudiants.`, 'info');
+      }
+    }
+
+    function ouvrirModalAjouterGroupe() {
+      document.getElementById('modal-ajouter-groupe').classList.remove('hidden');
+    }
+
+    function fermerModalAjouterGroupe() {
+      document.getElementById('modal-ajouter-groupe').classList.add('hidden');
+    }
+
+    function enregistrerNouveauGroupe(e) {
+      e.preventDefault();
+      const code = document.getElementById('grp-code').value.trim();
+      const filiere = document.getElementById('grp-filiere').value;
+      const effectif = parseInt(document.getElementById('grp-effectif').value, 10);
+      const campus = document.getElementById('grp-campus').value;
+      const option = document.getElementById('grp-option').value.trim() || 'Option Ingénierie';
+      const labos = document.getElementById('grp-labos').value.trim() || 'LI (PC)';
+      const delegue = document.getElementById('grp-delegue').value.trim() || 'Délégué Promotion';
+
+      groupesConfig.push({
+        id: code.replace(/\s+/g, '-'),
+        code,
+        filiere,
+        effectif,
+        campus,
+        option,
+        labos,
+        delegue
+      });
+
+      fermerModalAjouterGroupe();
+      renderGroupes();
+      initGroupeSelect();
+      showToast(`Groupe ${code} créé avec ${effectif} étudiants sur ${campus}.`, 'success');
+    }
+
+    function selectionnerGroupeEtLancer(code, campus) {
+      selectionnerCampusCible(campus);
+      currentGroupeCible = code;
+      const select = document.getElementById('select-groupe-cible');
+      if (select) select.value = code;
+      changerGroupeSelectionne();
+      switchIaTab('solveur');
+      executerSolveurCpSat();
+    }
+
+    // ==============================================================
+    // MOTEUR D'AFFECTATION CP-SAT & GENERATION EDT
+    // ==============================================================
+    function renderAllocations() {
+      const tbody = document.getElementById('allocation-table-body');
+      if (!tbody) return;
+
+      const grp = groupesConfig.find(g => g.code === currentGroupeCible) || groupesConfig[0];
+      const campusTag = grp.campus;
+
+      const allocs = [
+        { jour: 'Lundi S3 (12h00 - 13h30)', matiere: 'Dév. multiplateforme : Flutter', type: 'LR (PC / Mobile)', salle: `${campusTag} LR`, cap: '36 places', prof: 'Dr. Karim Alami', typeProf: 'Vacataire (P1 Sanctuarisé)', statut: 'Conforme P1' },
+        { jour: 'Lundi S4 (13h45 - 15h15)', matiere: 'Compétences d\'employabilité', type: 'Salle Standard', salle: `${campusTag} Salle R`, cap: '42 places', prof: 'Mme Kenza Tazi', typeProf: 'Permanent (18h)', statut: 'Optimal' },
+        { jour: 'Lundi S5 (15h30 - 17h00)', matiere: 'Gouvernance des SI', type: 'Salle Standard', salle: `${campusTag} Salle S`, cap: '40 places', prof: 'Pr. M. Sassoui', typeProf: 'Permanent (18h)', statut: 'Optimal' },
+        { jour: 'Mardi S1 (08h30 - 10h00)', matiere: 'DEVOPS & CI/CD', type: 'LR (Cisco / Baies)', salle: `${campusTag} LR`, cap: '36 places', prof: 'Dr. Karim Alami', typeProf: 'Vacataire (P1 Sanctuarisé)', statut: 'Sanctuarisé P1' },
+        { jour: 'Mardi S2 (10h15 - 11h45)', matiere: 'Datamining & Analytics', type: 'LR (Cisco / Baies)', salle: `${campusTag} LR`, cap: '36 places', prof: 'Dr. Karim Alami', typeProf: 'Vacataire (P1 Sanctuarisé)', statut: 'Sanctuarisé P1' },
+        { jour: 'Mardi S4-S5 (13h45 - 17h00)', matiere: 'Frameworks JEE & Microservices', type: 'LI (PC Haute Perf)', salle: `${campusTag} LI 8`, cap: '38 places', prof: 'Pr. Noussair Benassou', typeProf: 'Permanent (Quota 18h)', statut: 'Optimal' },
+        { jour: 'Mercredi S2 (10h15 - 11h45)', matiere: 'Business English', type: 'Salle Multimédia', salle: `${campusTag} Salle H1`, cap: '35 places', prof: 'Intervenant Anglais', typeProf: 'Vacataire (P1 Sanctuarisé)', statut: 'Optimal' },
+        { jour: 'Mercredi S4 (13h45 - 15h15)', matiere: 'Projet Collaboratif DevOps', type: 'Salle Standard', salle: `${campusTag} Salle I1`, cap: '36 places', prof: 'Pr. Benassou', typeProf: 'Permanent (18h)', statut: 'Optimal' },
+        { jour: 'Mercredi S5 (15h30 - 17h00)', matiere: 'Communication Pro & Soutenance', type: 'Salle Standard', salle: `${campusTag} Salle M`, cap: '45 places', prof: 'Pr. Brahim Abod', typeProf: 'Permanent (18h)', statut: 'Optimal' },
+        { jour: 'Jeudi S1-S2 (08h30 - 11h45)', matiere: 'Deep Learning & Vision AI', type: 'LI (GPU Nvidia)', salle: `${campusTag} LI 3`, cap: '36 places', prof: 'Dr. Karim Alami', typeProf: 'Vacataire (P1 Sanctuarisé)', statut: 'Sanctuarisé P1' },
+        { jour: 'Jeudi S4 (13h45 - 15h15)', matiere: 'ERP & Architecture d\'Entreprise', type: 'Salle Standard', salle: `${campusTag} Salle F1`, cap: '40 places', prof: 'Mme Kenza Tazi', typeProf: 'Permanent (18h)', statut: 'Optimal' },
+        { jour: 'Vendredi S1-S2 (08h30 - 11h45)', matiere: 'Écosystème Big Data', type: 'LR (PC / Réseaux)', salle: `${campusTag} LR`, cap: '36 places', prof: 'Dr. Karim Alami', typeProf: 'Vacataire (P1 Sanctuarisé)', statut: 'Optimal' },
+        { jour: 'Vendredi S4 (15h00 - 16h30)', matiere: 'Optimisation Bases de données', type: 'LI (PC)', salle: `${campusTag} LI 4`, cap: '38 places', prof: 'Pr. Benassou', typeProf: 'Permanent (18h)', statut: 'Optimal' }
+      ];
+
+      tbody.innerHTML = allocs.map(a => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="p-3 font-mono font-bold text-slate-900">${a.jour}</td>
+          <td class="p-3 font-extrabold text-slate-800">${a.matiere}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded font-bold text-[10px] bg-purple-50 text-purple-700">${a.type}</span></td>
+          <td class="p-3 font-black text-emerald-700">${a.salle}</td>
+          <td class="p-3 font-mono text-slate-600">${a.cap} / ${grp.effectif} étu.</td>
+          <td class="p-3">
+            <span class="font-bold text-slate-800 block">${a.prof}</span>
+            <span class="text-[10px] text-slate-400 block">${a.typeProf}</span>
+          </td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${a.statut.includes('Sanctuarisé') ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+              ${a.statut}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderIaEdtPreview() {
+      const tbody = document.getElementById('ia-edt-preview-body');
+      if (!tbody) return;
+
+      const grp = groupesConfig.find(g => g.code === currentGroupeCible) || groupesConfig[0];
+      const campus = grp.campus;
+
+      const grid = [
+        { jour: 'Lundi', s1: '-', s2: '-', s3: `Flutter (${campus} LR)`, s4: `Employabilité (${campus} Salle R)`, s5: `Gouvernance SI (${campus} Salle S)`, s6: '-' },
+        { jour: 'Mardi', s1: `DEVOPS (${campus} LR)`, s2: `Datamining (${campus} LR)`, s3: '-', s4: `JEE Microservices (${campus} LI 8)`, s5: `JEE Microservices (${campus} LI 8)`, s6: '-' },
+        { jour: 'Mercredi', s1: '-', s2: `Business English (${campus} Salle H1)`, s3: '-', s4: `DevOps Projet (${campus} Salle I1)`, s5: `Communication PFE (${campus} Salle M)`, s6: '-' },
+        { jour: 'Jeudi', s1: `Deep Learning (${campus} LI 3)`, s2: `Deep Learning (${campus} LI 3)`, s3: '-', s4: `ERP (${campus} Salle F1)`, s5: '-', s6: '-' },
+        { jour: 'Vendredi', s1: `Big Data (${campus} LR)`, s2: `Big Data (${campus} LR)`, s3: '-', s4: `Optim. BD (${campus} LI 4)`, s5: '-', s6: '-' },
+        { jour: 'Samedi', s1: '-', s2: '-', s3: '-', s4: '-', s5: '-', s6: '-' }
+      ];
+
+      tbody.innerHTML = grid.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-2 border border-slate-200 font-extrabold text-slate-800 bg-slate-50">${r.jour}</td>
+          <td class="p-2 border border-slate-200 ${r.s1 !== '-' ? 'bg-blue-50/70 font-bold text-blue-900' : 'text-slate-400'}">${r.s1}</td>
+          <td class="p-2 border border-slate-200 ${r.s2 !== '-' ? 'bg-blue-50/70 font-bold text-blue-900' : 'text-slate-400'}">${r.s2}</td>
+          <td class="p-2 border border-slate-200 ${r.s3 !== '-' ? 'bg-purple-50/70 font-bold text-purple-900' : 'text-slate-400'}">${r.s3}</td>
+          <td class="p-2 border border-slate-200 ${r.s4 !== '-' ? 'bg-emerald-50/70 font-bold text-emerald-900' : 'text-slate-400'}">${r.s4}</td>
+          <td class="p-2 border border-slate-200 ${r.s5 !== '-' ? 'bg-amber-50/70 font-bold text-amber-900' : 'text-slate-400'}">${r.s5}</td>
+          <td class="p-2 border border-slate-200 ${r.s6 !== '-' ? 'bg-slate-100 font-bold text-slate-900' : 'text-slate-400'}">${r.s6}</td>
+        </tr>
+      `).join('');
+    }
+
+    function executerSolveurCpSat() {
+      const modal = document.getElementById('modal-cpsat-animation');
+      if (modal) modal.classList.remove('hidden');
+
+      setTimeout(() => {
+        if (modal) modal.classList.add('hidden');
+        renderAllocations();
+        renderIaEdtPreview();
+        showToast(`Solveur CP-SAT OR-Tools résolu avec succès en 38ms : 0 conflit. Contraintes de campus (${currentCampusCible}) et vacataires P1 100% satisfaites !`, 'success');
+      }, 700);
+    }
+
+    function imprimerEdtOfficielA4() {
+      navigateTo('edt');
+      showToast('Bascule vers la grille officielle A4 prête pour impression directe.', 'info');
+    }
+
+    let currentUser = comptes.SUPER_ADMIN;
+
+    // Métriques selon le rôle pour reproduire la rangée de 4 cartes style Acadex
+    const roleMetrics = {
+      SUPER_ADMIN: [
+        { label: 'Students', value: '5,699', sub: '+12% ce semestre', icon: 'fa-user-graduate', color: 'blue' },
+        { label: 'Lecturers', value: '297', sub: '48 Perm. (18h) / 36 Vac. P1', icon: 'fa-chalkboard-user', color: 'indigo' },
+        { label: 'Awards & Jurys', value: '368', sub: '100% Validés IA', icon: 'fa-award', color: 'purple' },
+        { label: 'Revenue & Budget', value: '$87,395', sub: 'Campus Targa/Centre', icon: 'fa-wallet', color: 'emerald' }
+      ],
+      CHEF_FILIERE: [
+        { label: 'Filières Gérées', value: '4', sub: 'IIR, GI, IFA, GC', icon: 'fa-folder-tree', color: 'blue' },
+        { label: 'Groupes Actifs', value: '18', sub: '1 groupe = 1 campus fixe', icon: 'fa-users-viewfinder', color: 'indigo' },
+        { label: 'Fiches PFE', value: '24', sub: '2 en attente validation', icon: 'fa-file-signature', color: 'amber' },
+        { label: 'CV Matching IA', value: 'Top 3', sub: 'Gemini 2.0 Flash', icon: 'fa-wand-magic-sparkles', color: 'cyan' }
+      ],
+      RESP_PLANNING: [
+        { label: 'Séances Hebdo', value: '142', sub: '0 conflit CP-SAT', icon: 'fa-calendar-check', color: 'emerald' },
+        { label: 'Salles LI (PC)', value: '8 Salles', sub: 'Occupation 82%', icon: 'fa-desktop', color: 'blue' },
+        { label: 'Salles LR (Réseaux)', value: '6 Salles', sub: 'Occupation 74%', icon: 'fa-network-wired', color: 'purple' },
+        { label: 'Vacataires Protégés', value: '100%', sub: 'Sanctuarisation P1', icon: 'fa-lock', color: 'amber' }
+      ],
+      RESP_PFE: [
+        { label: 'Projets PFE', value: '185', sub: 'Cycle en 8 étapes', icon: 'fa-graduation-cap', color: 'purple' },
+        { label: 'Jurys 4 Membres', value: '95', sub: 'Examinateur IA Gemini', icon: 'fa-award', color: 'indigo' },
+        { label: 'Séances 30 min', value: '165', sub: 'Cahier d\'encadrement', icon: 'fa-clock', color: 'teal' },
+        { label: 'Stages d\'Été', value: '84', sub: 'Conventions validées', icon: 'fa-briefcase', color: 'blue' }
+      ],
+      ENSEIGNANT_PERMANENT: [
+        { label: 'Quota Contractuel', value: '18h / 18h', sub: '100% Planifié', icon: 'fa-clock', color: 'teal' },
+        { label: 'Séance Active', value: 'LI 8 Targa', sub: 'Mardi 13h45 (JEE)', icon: 'fa-chalkboard-user', color: 'rose' },
+        { label: 'Étudiants PFE', value: '4 Binômes', sub: 'Suivi 30 min hebdo', icon: 'fa-graduation-cap', color: 'purple' },
+        { label: 'Jurys Soutenance', value: '3 Jurys', sub: 'Président HDR', icon: 'fa-award', color: 'amber' }
+      ],
+      ENSEIGNANT_VACATAIRE: [
+        { label: 'Créneaux Bloqués', value: '100%', sub: 'Mardi & Jeudi matin', icon: 'fa-lock', color: 'amber' },
+        { label: 'Heures ce Mois', value: '24h / 48h', sub: '50% Effectué', icon: 'fa-clock', color: 'blue' },
+        { label: 'Modules Enseignés', value: '2', sub: 'Deep Learning & Data', icon: 'fa-brain', color: 'purple' },
+        { label: 'Jurys IA', value: '2 Jurys', sub: 'Examinateur Expert', icon: 'fa-award', color: 'emerald' }
+      ],
+      ETUDIANT: [
+        { label: 'Mon Groupe', value: '2DSI G3', sub: 'Campus Targa Fixe', icon: 'fa-user-graduate', color: 'indigo' },
+        { label: 'Mon Assiduité', value: '8.8%', sub: 'Seuil 20% (10h de marge)', icon: 'fa-shield-halved', color: 'emerald' },
+        { label: 'Mon Projet PFE', value: 'Jury Affecté', sub: 'Soutenance 20 Déc', icon: 'fa-award', color: 'purple' },
+        { label: 'Prochain Cours', value: 'JEE LI 8', sub: 'Mardi 13h45 Targa', icon: 'fa-clock', color: 'blue' }
+      ]
+    };
+
+    // Données EDT conformes à la photo
+    const edtDataPhoto = [
+      {
+        jour: 'Lundi',
+        s1: { cours: '' },
+        s2: { cours: '' },
+        s3: { cours: 'Développement multiplateforme : Flutter (Targa LR)' },
+        s4: { cours: 'Compétences d\'employabilité (Targa Salle R)' },
+        s5: { cours: 'Gouvernance des SI (Targa Salle S)' },
+        s6: { cours: '' }
+      },
+      {
+        jour: 'Mardi',
+        s1: { cours: 'DEVOPS (Targa LR)' },
+        s2: { cours: 'Datamining (Targa LR)' },
+        s3: { cours: '' },
+        s4: { cours: 'Fram Works JEE & micro services (Targa LI 8)', span: 2 },
+        s5: { cours: '', spanChild: true },
+        s6: { cours: '' }
+      },
+      {
+        jour: 'Mercredi',
+        s1: { cours: '' },
+        s2: { cours: 'Business English (Targa Salle H1)' },
+        s3: { cours: '' },
+        s4: { cours: 'Projet Collaboratif - Devops (Targa I1)' },
+        s5: { cours: 'Communication Professionnelle (Targa M)' },
+        s6: { cours: '' }
+      },
+      {
+        jour: 'Jeudi',
+        s1: { cours: 'Deep Learning (Targa LI 3)', span: 2 },
+        s2: { cours: '', spanChild: true },
+        s3: { cours: '' },
+        s4: { cours: 'ERP (Targa Salle F1)' },
+        s5: { cours: '' },
+        s6: { cours: '' }
+      },
+      {
+        jour: 'Vendredi',
+        s1: { cours: 'Ecosystème Big Data (Targa LR)', span: 2 },
+        s2: { cours: '', spanChild: true },
+        s3: { cours: '' },
+        s4: { cours: 'Optimisation Bases de données (Targa LI 4)' },
+        s5: { cours: '' },
+        s6: { cours: '' }
+      }
+    ];
+
+    // Données PFE avec Jurys à 4 Membres
+    let pfeList = [
+      {
+        id: 101,
+        titre: 'Plateforme Microservices & Orchestration Kubernetes pour l\'EMSI',
+        etudiant: 'Amine Bella & Ilyass Ait Ouahman',
+        filiere: '5A-IIR (Campus Targa)',
+        encadrant: 'Pr. Ait Ounejjar Lahoussaine',
+        tech: 'Java 21, Spring Cloud, Docker, Kubernetes, Angular 18',
+        desc: 'Architecture distribuée avec solveur CP-SAT OR-Tools et Gemini AI.',
+        statut: 'JURY_AFFECTE',
+        president: 'Pr. Noussair Benassou (Docteur / HDR)',
+        rapporteur: 'Dr. Karim Alami (Spécialiste Cloud)',
+        examinateur: 'Mme Kenza Tazi (Expert CP-SAT)',
+        salle: 'Targa Salle M',
+        date: 'Samedi 20 Décembre 2026 à 10:00'
+      },
+      {
+        id: 102,
+        titre: 'Détection d\'Anomalies Vidéo par Vision Artificielle en Temps Réel',
+        etudiant: 'Yassine Mansouri',
+        filiere: '5A-IIR (Campus Targa)',
+        encadrant: 'Pr. Zgandri Mohammed',
+        tech: 'Python, PyTorch, YOLOv10, OpenCV, FastAPI',
+        desc: 'Surveillance intelligente des flux vidéo pour la sécurité du campus.',
+        statut: 'EN_ATTENTE_JURY',
+        president: 'À affecter (Docteur HDR)',
+        rapporteur: 'À affecter',
+        examinateur: 'À recommander par l\'IA Gemini'
+      },
+      {
+        id: 103,
+        titre: 'Jumeau Numérique & Supervision SCADA Industrielle avec Three.js',
+        etudiant: 'Ikram Mellakh',
+        filiere: '5A-GI (Campus Centre)',
+        encadrant: 'Mme Kenza Tazi',
+        tech: 'Three.js, Siemens TIA Portal, MQTT, Docker, React',
+        desc: 'Modélisation 3D temps réel d\'une ligne automatisée avec maintenance prédictive.',
+        statut: 'JURY_AFFECTE',
+        president: 'Pr. Brahim Abod (Docteur / HDR)',
+        rapporteur: 'Pr. M. Sassoui (Chef Filière)',
+        examinateur: 'Dr. Karim Alami (Expert IA)',
+        salle: 'Centre Salle V1',
+        date: 'Lundi 22 Décembre 2026 à 14:30'
+      }
+    ];
+
+    // Données d'Appel des Absences
+    let etudiantsAppel = [
+      { mat: '2026-IIR-01', nom: 'Ait Ouahman Ilyass', totalHeures: 90, absHeures: 8, statut: 'PRESENT' },
+      { mat: '2026-IIR-02', nom: 'Bella Amine', totalHeures: 90, absHeures: 4, statut: 'PRESENT' },
+      { mat: '2026-IIR-03', nom: 'Chraibi Hamza', totalHeures: 90, absHeures: 19.5, statut: 'ABSENT' }, // > 20%
+      { mat: '2026-IIR-04', nom: 'El Mansouri Sara', totalHeures: 90, absHeures: 12, statut: 'PRESENT' },
+      { mat: '2026-IIR-05', nom: 'Mellakh Ikram', totalHeures: 90, absHeures: 6, statut: 'PRESENT' },
+      { mat: '2026-IIR-06', nom: 'Naciri Oualid', totalHeures: 90, absHeures: 14, statut: 'PRESENT' }
+    ];
+
+    window.onload = function() {
+      applyAcadexRole();
+      initGroupeSelect();
+      renderSallesList();
+      renderGroupes();
+      renderAllocations();
+      renderIaEdtPreview();
+      applyAcadexRole();
+      renderEdtGrid();
+      renderPfe();
+      renderGroupes();
+      renderAllocations();
+      renderProfBinomes();
+      renderAppel();
+      renderUsers();
+    };
+
+    function loginAs(roleKey) {
+      currentUser = comptes[roleKey];
+      document.getElementById('auth-screen').classList.add('hidden');
+      applyAcadexRole();
+      showToast(`Connecté à l'espace : ${currentUser.nom} (${currentUser.roleLabel})`, 'success');
+    }
+
+    function deconnecter() {
+      document.getElementById('auth-screen').classList.remove('hidden');
+    }
+
+    function applyAcadexRole() {
+      document.getElementById('sidebar-user-name').innerText = currentUser.nom;
+      document.getElementById('sidebar-user-role').innerText = currentUser.roleLabel;
+      document.getElementById('sidebar-user-avatar').innerText = currentUser.avatar;
+      document.getElementById('top-title').innerText = `Dashboard • ${currentUser.roleLabel}`;
+      document.getElementById('top-campus-badge').innerText = `Campus Fixe : ${currentUser.campus}`;
+
+      // Met à jour profil dans "Mon Compte"
+      document.getElementById('account-name-preview').innerText = currentUser.nom;
+      document.getElementById('account-role-preview').innerText = `${currentUser.roleLabel} • ${currentUser.email}`;
+      document.getElementById('account-avatar-preview').innerText = currentUser.avatar;
+
+      // Met à jour les boutons pills en haut
+      document.querySelectorAll('.pill-btn').forEach(p => {
+        p.classList.remove('bg-brand-600', 'text-white');
+        p.classList.add('text-slate-600');
+      });
+      const activePill = document.getElementById('pill-' + currentUser.role);
+      if (activePill) {
+        activePill.classList.remove('text-slate-600');
+        activePill.classList.add('bg-brand-600', 'text-white');
+      }
+
+      renderAcadexMetrics();
+      navigateTo('dashboard');
+    }
+
+    function renderAcadexMetrics() {
+      const container = document.getElementById('acadex-metrics-row');
+      const list = roleMetrics[currentUser.role] || roleMetrics.SUPER_ADMIN;
+
+      container.innerHTML = list.map(m => `
+        <div class="acadex-stat-card">
+          <div>
+            <span class="text-xs font-bold text-slate-400 block">${m.label}</span>
+            <div class="text-2xl font-black text-slate-900 my-0.5">${m.value}</div>
+            <span class="text-[11px] font-semibold text-slate-400 block">${m.sub}</span>
+          </div>
+          <button onclick="showToast('${m.label} : ${m.value}', 'info')" class="acadex-btn-circle" title="Voir détails">
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function navigateTo(pageId) {
+      const pages = [
+        'dashboard', 'edt', 'affectation-ia', 'pfe', 'soutenances', 
+        'cahier-encadrement', 'stages-ete', 'filieres-groupes', 
+        'absences', 'rh', 'rbac', 'account'
+      ];
+      
+      pages.forEach(p => {
+        const el = document.getElementById('page-' + p);
+        const nav = document.getElementById('nav-' + p);
+        if (el) el.classList.add('hidden');
+        if (nav) {
+          nav.classList.remove('bg-brand-50', 'text-brand-600', 'font-bold');
+          nav.classList.add('text-slate-600');
+        }
+      });
+
+      const target = document.getElementById('page-' + pageId);
+      const targetNav = document.getElementById('nav-' + pageId);
+      if (target) target.classList.remove('hidden');
+      if (targetNav) {
+        targetNav.classList.remove('text-slate-600');
+        targetNav.classList.add('bg-brand-50', 'text-brand-600', 'font-bold');
+      }
+    }
+
+    function renderEdtGrid() {
+      const tbody = document.getElementById('edt-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = edtDataPhoto.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-extrabold text-slate-800 bg-slate-50/50">${r.jour}</td>
+          <td class="p-2 border-l border-slate-100">${r.s1.cours || '-'}</td>
+          <td class="bg-amber-50 text-[9px] text-amber-700">15m</td>
+          <td class="p-2 border-l border-slate-100">${r.s2.cours || '-'}</td>
+          <td class="bg-amber-50 text-[9px] text-amber-700">15m</td>
+          <td class="p-2 border-l border-slate-100 font-bold text-brand-700">${r.s3.cours || '-'}</td>
+          <td class="bg-amber-50 text-[9px] text-amber-700">15m</td>
+          <td class="p-2 border-l border-slate-100 font-bold text-slate-800">${r.s4.cours || '-'}</td>
+          <td class="bg-amber-50 text-[9px] text-amber-700">15m</td>
+          <td class="p-2 border-l border-slate-100">${r.s5.cours || '-'}</td>
+          <td class="bg-amber-50 text-[9px] text-amber-700">15m</td>
+          <td class="p-2 border-l border-slate-100">${r.s6.cours || '-'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPfe() {
+      const container = document.getElementById('pfe-cards-container');
+      if (!container) return;
+
+      container.innerHTML = pfeList.map(pfe => `
+        <div class="acadex-card p-5 space-y-3 flex flex-col justify-between">
+          <div class="space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">PFE-#${pfe.id}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${pfe.statut === 'JURY_AFFECTE' ? 'bg-purple-100 text-purple-800' : 'bg-amber-100 text-amber-800'}">
+                ${pfe.statut === 'JURY_AFFECTE' ? 'Jury IA 4 Membres OK' : 'En attente arbitrage'}
+              </span>
+            </div>
+            <h3 class="font-extrabold text-xs text-slate-900 leading-snug">${pfe.titre}</h3>
+            <p class="text-[11px] text-slate-500">${pfe.desc}</p>
+            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] space-y-0.5">
+              <div><strong class="text-slate-700">Binôme :</strong> ${pfe.etudiant}</div>
+              <div><strong class="text-slate-700">Encadrant :</strong> ${pfe.encadrant}</div>
+            </div>
+
+            ${pfe.statut === 'JURY_AFFECTE' ? `
+              <div class="p-2.5 bg-purple-50/70 rounded-xl border border-purple-200 text-[11px] space-y-0.5 text-purple-950">
+                <div class="font-bold">Jury Officiel 4 Membres :</div>
+                <div>1. <strong>Encadrant :</strong> ${pfe.encadrant}</div>
+                <div>2. <strong>Rapporteur :</strong> ${pfe.rapporteur}</div>
+                <div>3. <strong>Examinateur IA :</strong> ${pfe.examinateur}</div>
+                <div>4. <strong>Président HDR :</strong> ${pfe.president}</div>
+                <div class="pt-1 font-mono text-[10px] text-purple-900">📅 ${pfe.date} • 📍 ${pfe.salle}</div>
+              </div>
+            ` : `
+              <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-800">
+                Examinateur à recommander par l'IA Gemini 2.0 selon les mots-clés.
+              </div>
+            `}
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[10px] text-slate-400 font-mono">${pfe.filiere}</span>
+            <button onclick="lancerArbitrageIaJury(${pfe.id})" class="px-3 py-1.5 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
+              <span>${pfe.statut === 'JURY_AFFECTE' ? 'Réarbitrer IA' : 'Générer Jury IA'}</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function lancerArbitrageIaJury(pfeId) {
+      const pfe = pfeList.find(p => p.id === pfeId);
+      if (!pfe) return;
+
+      const modal = document.getElementById('modal-ai-jury');
+      const content = document.getElementById('ai-modal-content');
+      modal.classList.remove('hidden');
+
+      content.innerHTML = `
+        <div class="text-center py-6 space-y-3">
+          <div class="inline-block w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center animate-spin">
+            <i class="fa-solid fa-gear text-lg"></i>
+          </div>
+          <h4 class="font-black text-xs text-slate-900">Interrogation de Google Gemini 2.0 Flash...</h4>
+          <p class="text-[11px] text-slate-500 max-w-sm mx-auto">
+            Matching sémantique des compétences de l'examinateur avec le sujet & vérification stricte du Président Docteur HDR.
+          </p>
+        </div>
+      `;
+
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="space-y-3 text-xs">
+            <div class="p-3 bg-purple-50 rounded-xl border border-purple-200 text-purple-950">
+              <span class="font-bold block">Jury Recommandé par l'IA (Score : 96.4% match) :</span>
+              <p class="text-[11px] text-purple-800">Aucun chevauchement d'horaire ni conflit de salle détecté.</p>
+            </div>
+            <div class="space-y-1.5">
+              <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">1. Encadrant : <strong>${pfe.encadrant}</strong></div>
+              <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">2. Rapporteur : <strong>Dr. Karim Alami</strong></div>
+              <div class="p-2 bg-purple-50 rounded-lg border border-purple-200 text-purple-900 font-bold">3. Examinateur IA : Mme Kenza Tazi (Expert CP-SAT)</div>
+              <div class="p-2 bg-blue-50 rounded-lg border border-blue-200 text-blue-900 font-bold">4. Président HDR : Pr. Noussair Benassou (Docteur HDR)</div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+              <button onclick="fermerModalJury()" class="px-3 py-1.5 bg-slate-100 rounded-lg font-bold">Annuler</button>
+              <button onclick="validerJuryIa(${pfe.id})" class="px-4 py-1.5 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700">Valider ce Jury</button>
+            </div>
+          </div>
+        `;
+      }, 800);
+    }
+
+    function validerJuryIa(pfeId) {
+      const pfe = pfeList.find(p => p.id === pfeId);
+      if (pfe) {
+        pfe.statut = 'JURY_AFFECTE';
+        pfe.president = 'Pr. Noussair Benassou (Docteur / HDR)';
+        pfe.rapporteur = 'Dr. Karim Alami (Spécialiste Cloud)';
+        pfe.examinateur = 'Mme Kenza Tazi (Expert CP-SAT)';
+        pfe.salle = 'Targa Salle M';
+        pfe.date = 'Samedi 20 Décembre 2026 à 10:00';
+      }
+      fermerModalJury();
+      renderPfe();
+      showToast('Jury officiel à 4 membres validé et notifié par email', 'success');
+    }
+
+    function fermerModalJury() {
+      document.getElementById('modal-ai-jury').classList.add('hidden');
+    }
+
+    function renderGroupes() {
+      const tbody = document.getElementById('groupes-table-body');
+      if (!tbody) return;
+      const grps = [
+        { code: '2DSI G3', filiere: '5A-IIR', campus: 'Campus Targa Fixe', option: 'Développement Digital & SI', effectif: 28, labos: 'LI / LR', delegue: 'Ilyass Ait Ouahman' },
+        { code: '5A-IIR G1', filiere: '5A-IIR', campus: 'Campus Guéliz Fixe', option: 'Cloud & Virtualisation', effectif: 30, labos: 'LR (Réseaux)', delegue: 'Amine Bella' },
+        { code: '5A-GI G1', filiere: '5A-GI', campus: 'Campus Centre Fixe', option: 'Supply Chain 4.0', effectif: 27, labos: 'LI (PC)', delegue: 'Ikram Mellakh' }
+      ];
+      tbody.innerHTML = grps.map(g => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-mono font-bold text-brand-600">${g.code}</td>
+          <td class="p-3 font-bold text-slate-800">${g.filiere}</td>
+          <td class="p-3 font-bold text-emerald-800 bg-emerald-50/50">${g.campus}</td>
+          <td class="p-3 text-slate-600">${g.option}</td>
+          <td class="p-3 font-bold text-slate-900">${g.effectif} étu.</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold text-[10px]">${g.labos}</span></td>
+          <td class="p-3 text-slate-700">${g.delegue}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAllocations() {
+      const tbody = document.getElementById('allocation-table-body');
+      if (!tbody) return;
+      const allocs = [
+        { grp: '2DSI G3 (Campus Targa)', cours: 'JEE Microservices', heure: 'Mardi 13h45 - 17h00', salle: 'Targa LI 8', type: 'LI (PC)', prof: 'Pr. Benassou (Permanent 18h)', statut: 'Optimal' },
+        { grp: '2DSI G3 (Campus Targa)', cours: 'Deep Learning', heure: 'Jeudi 08h30 - 11h45', salle: 'Targa LI 3', type: 'LI (GPU)', prof: 'Dr. Alami (Vacataire P1)', statut: 'Sanctuarisé P1' },
+        { grp: '5A-GI G1 (Campus Centre)', cours: 'Jumeau Numérique', heure: 'Lundi 10h15 - 11h45', salle: 'Centre LI 2', type: 'LI (PC)', prof: 'Mme Kenza Tazi', statut: 'Optimal' }
+      ];
+      tbody.innerHTML = allocs.map(a => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-bold text-slate-900">${a.grp}</td>
+          <td class="p-3 text-slate-700">${a.cours}</td>
+          <td class="p-3 font-mono text-slate-500">${a.heure}</td>
+          <td class="p-3 font-bold text-emerald-700">${a.salle}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-100 font-bold text-[10px]">${a.type}</span></td>
+          <td class="p-3 text-slate-700 font-medium">${a.prof}</td>
+          <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">${a.statut}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function lancerAffectationIaComplete() {
+      showToast('Solveur CP-SAT OR-Tools exécuté : 0 conflit de salle ou transit. Contrainte 1 groupe = 1 campus vérifiée.', 'success');
+    }
+
+    function renderProfBinomes() {
+      const container = document.getElementById('prof-binomes-container');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="p-4 rounded-2xl border border-slate-200 bg-white space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-xs text-brand-600">5A-IIR 2DSI G3 (Campus Targa)</span>
+            <span class="text-[10px] font-bold bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">4 séances (30 min)</span>
+          </div>
+          <h4 class="font-black text-sm text-slate-900">Amine Bella & Ilyass Ait Ouahman</h4>
+          <p class="text-xs text-slate-500">Plateforme Microservices & CP-SAT OR-Tools</p>
+          <div class="pt-2 flex justify-between items-center text-xs">
+            <span class="text-slate-400">Prochaine séance : Jeudi 11h</span>
+            <button onclick="showToast('Séance de 30 min consignée avec visa.', 'success')" class="px-3 py-1 bg-teal-600 text-white rounded-lg font-bold">Consigner 30m</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAppel() {
+      const tbody = document.getElementById('appel-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = etudiantsAppel.map(e => {
+        const pct = ((e.absHeures / e.totalHeures) * 100).toFixed(1);
+        const depasse = pct >= 20.0;
+        return `
+          <tr class="hover:bg-slate-50 ${depasse ? 'bg-rose-50/50' : ''}">
+            <td class="p-3 font-mono font-bold text-slate-600">${e.mat}</td>
+            <td class="p-3 font-black text-slate-900">${e.nom}</td>
+            <td class="p-3 font-bold text-slate-700">${e.absHeures}h / ${e.totalHeures}h</td>
+            <td class="p-3 font-bold ${depasse ? 'text-rose-600' : 'text-emerald-700'}">${pct}%</td>
+            <td class="p-3">
+              ${depasse ? `
+                <span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-extrabold text-[10px] border border-rose-300">
+                  RADIÉ DE L'EXAMEN
+                </span>
+              ` : `
+                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+                  Admissible
+                </span>
+              `}
+            </td>
+            <td class="p-3 text-center">
+              <div class="inline-flex rounded-xl p-0.5 bg-slate-100">
+                <button onclick="changerStatutPresence('${e.mat}', 'PRESENT')" class="px-2 py-1 rounded-lg text-xs font-bold ${e.statut === 'PRESENT' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600'}">Présent</button>
+                <button onclick="changerStatutPresence('${e.mat}', 'ABSENT')" class="px-2 py-1 rounded-lg text-xs font-bold ${e.statut === 'ABSENT' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-600'}">Absent</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function changerStatutPresence(mat, statut) {
+      const etu = etudiantsAppel.find(e => e.mat === mat);
+      if (etu) {
+        etu.statut = statut;
+        if (statut === 'ABSENT') {
+          etu.absHeures += 1.5;
+        } else {
+          etu.absHeures = Math.max(0, etu.absHeures - 1.5);
+        }
+        renderAppel();
+        showToast(`Présence mise à jour pour ${etu.nom}`, 'info');
+      }
+    }
+
+    function validerAppelComplet() {
+      showToast('Feuille d\'émargement signée numériquement et enregistrée dans PostgreSQL', 'success');
+    }
+
+    function renderUsers() {
+      const tbody = document.getElementById('users-table-body');
+      if (!tbody) return;
+      const uList = [
+        { mat: 'EMSI-ADM-01', nom: 'Moad Moussaoui', role: 'SUPER_ADMIN', email: 'admin@emsi-edu.ma', statut: 'Permanent (Admin)' },
+        { mat: 'EMSI-DIR-02', nom: 'Pr. M. Sassoui', role: 'CHEF_FILIERE', email: 'm.sassoui@emsi-edu.ma', statut: 'Permanent (18h)' },
+        { mat: 'EMSI-PLN-04', nom: 'Mme Kenza Tazi', role: 'RESP_PLANNING', email: 'kenza.tazi@emsi-edu.ma', statut: 'Permanent (Scolarité)' },
+        { mat: 'EMSI-PFE-03', nom: 'Pr. Brahim Abod', role: 'RESP_PFE', email: 'brahim.abod@emsi-edu.ma', statut: 'Permanent (18h)' },
+        { mat: 'EMSI-ENS-05', nom: 'Pr. Noussair Benassou', role: 'ENSEIGNANT_PERMANENT', email: 'noussair.benassou@emsi-edu.ma', statut: 'Permanent (18h contractuelles)' },
+        { mat: 'EMSI-ENS-06', nom: 'Dr. Karim Alami', role: 'ENSEIGNANT_VACATAIRE', email: 'karim.alami@emsi-edu.ma', statut: 'Vacataire (Priorité 1 sanctuarisée)' },
+        { mat: 'EMSI-ETU-07', nom: 'Ilyass Ait Ouahman', role: 'ETUDIANT', email: 'ilyass.aitouahman@emsi-edu.ma', statut: 'Étudiant 5A (2DSI G3 Targa)' }
+      ];
+      tbody.innerHTML = uList.map(u => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-mono font-bold text-slate-500">${u.mat}</td>
+          <td class="p-3 font-bold text-slate-900">${u.nom}</td>
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-slate-100 font-bold text-[10px]">${u.role}</span></td>
+          <td class="p-3 font-mono text-slate-500">${u.email}</td>
+          <td class="p-3 text-slate-700">${u.statut}</td>
+          <td class="p-3 text-right">
+            <button onclick="loginAs('${u.role}')" class="px-2.5 py-1 bg-brand-50 text-brand-600 rounded-lg font-bold hover:bg-brand-100">Activer</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function handleChangerPassword(e) {
+      e.preventDefault();
+      const n = document.getElementById('new-pass').value;
+      const c = document.getElementById('confirm-pass').value;
+      if (n !== c) {
+        showToast('Les mots de passe ne correspondent pas !', 'error');
+        return;
+      }
+      showToast('Mot de passe mis à jour avec succès dans Spring Security 6 (BCrypt)', 'success');
+      document.getElementById('old-pass').value = '';
+      document.getElementById('new-pass').value = '';
+      document.getElementById('confirm-pass').value = '';
+    }
+
+    function ouvrirModalAjoutFiliere() {
+      const f = prompt('Intitulé de la filière (ex: Génie Électrique) :');
+      if (f) showToast(`Filière ${f} créée avec succès`, 'success');
+    }
+
+    function ouvrirModalAjoutGroupe() {
+      const g = prompt('Code du groupe (ex: 5A-IIR G4) :');
+      if (g) showToast(`Groupe ${g} créé avec campus Targa affecté`, 'success');
+    }
+
+    function ouvrirModalNouveauResponsable() {
+      const r = prompt('Nom du Responsable :');
+      if (r) showToast(`Responsable ${r} créé avec droits assignés`, 'success');
+    }
+
+    function ouvrirModalNouveauProf() {
+      const p = prompt('Nom de l\'Enseignant :');
+      if (p) showToast(`Enseignant ${p} enregistré (Permanent 18h ou Vacataire P1)`, 'success');
+    }
+
+    function ouvrirModalAjoutEtudiant() {
+      const e = prompt('Nom de l\'étudiant :');
+      if (e) showToast(`Étudiant ${e} inscrit avec campus fixe`, 'success');
+    }
+
+    function ouvrirModalNouveauPfe() {
+      showToast('Formulaire de nouveau projet PFE prêt', 'info');
+    }
+
+    function ouvrirModalAjoutSeanceEncadrement() {
+      showToast('Formulaire 30 min validé avec horodatage automatique', 'success');
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const colors = {
+        success: 'bg-slate-900 text-white border-emerald-500',
+        warning: 'bg-amber-900 text-white border-amber-500',
+        error: 'bg-rose-900 text-white border-rose-700',
+        info: 'bg-slate-900 text-white border-brand-500'
+      };
+
+      toast.className = `p-3.5 rounded-2xl shadow-xl border-l-4 text-xs font-semibold flex items-center gap-3 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${colors[type] || colors.info}`;
+      toast.innerHTML = `<span>${message}</span>`;
+
+      container.appendChild(toast);
+      setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 50);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>

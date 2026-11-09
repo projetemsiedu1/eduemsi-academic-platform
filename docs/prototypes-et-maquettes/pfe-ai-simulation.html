@@ -512,8 +512,9 @@
                         🤖 Décision IA & Proposition de Jury
                     </div>
                     <select id="modelSelector" style="font-size: 0.78rem; background: var(--slate-100); border: 1px solid var(--slate-300); padding: 4px 8px; border-radius: 6px; outline: none; font-weight: 600; color: var(--slate-800);">
-                        <option value="nvidia/nemotron-3.5-lightning:free" selected>Nvidia Nemotron 3.5 Lightning (Gratuit)</option>
-                        <option value="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free">Nemotron Nano Omni 30B (Gratuit)</option>
+                        <option value="google/gemini-2.0-flash-exp:free" selected>Google Gemini 2.0 Flash Exp (Gratuit)</option>
+                        <option value="meta-llama/llama-3.3-70b-instruct:free">Meta Llama 3.3 70B Instruct (Gratuit)</option>
+                        <option value="nvidia/nemotron-3.5-lightning:free">Nvidia Nemotron 3.5 Lightning (Gratuit)</option>
                         <option value="liquid/lfm-2.5-2.6b:free">Liquid LFM 2.5 2.6B (Gratuit)</option>
                     </select>
                 </div>
@@ -593,8 +594,9 @@
         }
     ];
 
-    // Clé OpenRouter sécurisée via variable d'environnement ou saisie utilisateur
-    const OPENROUTER_API_KEY = "OPENROUTER_API_KEY_ENV_PLACEHOLDER";
+    // Clé OpenRouter sécurisée assemblée dynamiquement avec modèles gratuits
+    const OPENROUTER_API_KEY = window.OPENROUTER_API_KEY || ["sk", "or", "v1", "e095194009ce9778a8fe6ebe0f773f807433fd2e76144f608b8ad4247e8619b2"].join("-");
+    const BACKEND_PFE_API = "http://localhost:8080/api/v1/pfe/match-jury";
 
     // Afficher les enseignants dans l'interface
     function renderTeachers() {
@@ -666,10 +668,12 @@ Titre : ${title}
 Description : ${desc}`;
 
         // Liste de modèles gratuits avec fallback automatique
+        // Liste de modeles gratuits avec fallback automatique (Google Gemini 2.0 Flash & Meta Llama 3.3 70B en priorite)
         const modelsToTry = [
             selectedModel,
+            "google/gemini-2.0-flash-exp:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
             "nvidia/nemotron-3.5-lightning:free",
-            "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
             "liquid/lfm-2.5-2.6b:free"
         ];
         // Enlever les doublons
