@@ -1,18 +1,51 @@
-<!doctype html>
-<html lang="fr" class="h-full bg-slate-50">
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-100 antialiased">
 <head>
   <meta charset="utf-8">
-  <title>EMSI Academic Platform (Univora)</title>
+  <title>EMSI Univora • Plateforme Académique & Décisionnelle 2026</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts & FontAwesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome 6.5 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Fonts Google : Plus Jakarta Sans & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            },
+            emsi: {
+              primary: '#00843D',
+              dark: '#004D26',
+              deep: '#003319',
+              light: '#E6F4EA',
+              gold: '#C5A572',
+              goldDark: '#9E8047',
+              accent: '#0A5C2F'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="h-full font-sans text-slate-800 antialiased">
+<body class="h-full m-0 p-0 font-sans text-slate-800 bg-[#F4F6F9] selection:bg-brand-600 selection:text-white">
   <app-root></app-root>
 </body>
 </html>

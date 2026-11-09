@@ -1,12 +1,14 @@
-# Multi-stage Dockerfile pour Angular 18 sur Nginx
+# Stage 1: Build Angular application
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build --prod
+RUN npm run build --configuration=production
 
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
-COPY --from=build /app/dist/frontend-angular/browser /usr/share/nginx/html
+COPY --from=build /app/dist/eduemsi-frontend/browser /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
