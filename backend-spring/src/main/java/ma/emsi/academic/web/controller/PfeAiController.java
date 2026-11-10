@@ -221,7 +221,7 @@ public class PfeAiController {
         return ResponseEntity.ok(reponse);
     }
 
-    @PostMapping({"/match-jury", "/match-jury-direct"})
+    @PostMapping("/match-jury-direct")
     @Operation(summary = "Matching IA instantané direct à partir de texte libre")
     public ResponseEntity<MatchJuryResponse> matcherJuryDirect(@RequestBody MatchJuryRequest request) {
         MatchJuryResponse res = openRouterAiService.matcherJuryPfe(request, enseignantsDisponibles);
