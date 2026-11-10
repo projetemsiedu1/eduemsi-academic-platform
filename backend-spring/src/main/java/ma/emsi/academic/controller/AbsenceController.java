@@ -54,4 +54,21 @@ public class AbsenceController {
         String motif = body.getOrDefault("motif", "").toString();
         return ResponseEntity.ok(absenceService.enregistrerAbsence(etudiantId, seanceId, motif));
     }
+
+    @PatchMapping("/{id}/justifier")
+    @Operation(summary = "Justifier ou requalifier une absence d'étudiant avec motif")
+    public ResponseEntity<AbsenceDto> justifierAbsence(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> body) {
+        String motif = body.getOrDefault("motif", "Justificatif médical validé").toString();
+        boolean justifiee = body.containsKey("justifiee") ? Boolean.parseBoolean(body.get("justifiee").toString()) : true;
+        return ResponseEntity.ok(absenceService.justifierAbsence(id, motif, justifiee));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Supprimer un enregistrement d'absence erroné")
+    public ResponseEntity<Void> deleteAbsence(@PathVariable Long id) {
+        absenceService.deleteAbsence(id);
+        return ResponseEntity.noContent().build();
+    }
 }

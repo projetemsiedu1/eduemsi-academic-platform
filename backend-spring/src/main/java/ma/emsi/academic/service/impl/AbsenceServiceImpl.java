@@ -63,8 +63,10 @@ public class AbsenceServiceImpl implements AbsenceService {
     @Override
     @Transactional(readOnly = true)
     public List<EtudiantAlerteAbsenceDto> getEtudiantsSeuilCritique() {
-        List<Absence> absences = absenceRepository.findAll();
-        Map<Etudiant, List<Absence>> parEtudiant = absences.stream()
+        List<Absence> toutesLesAbsences = absenceRepository.findAll();
+
+        Map<Etudiant, List<Absence>> parEtudiant = toutesLesAbsences.stream()
+                .filter(a -> a.getStatut() == StatutAbsence.ABSENT_NON_JUSTIFIE)
                 .collect(Collectors.groupingBy(Absence::getEtudiant));
 
         List<EtudiantAlerteAbsenceDto> alertes = new ArrayList<>();
@@ -77,11 +79,9 @@ public class AbsenceServiceImpl implements AbsenceService {
                     .map(Absence::getHeuresAbsence)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            // Base de calcul standard semestre : ~90 heures de cours par module / semestre
             double totalHeuresSemestre = 90.0;
             double pct = Math.min(100.0, (totalHeures.doubleValue() / totalHeuresSemestre) * 100.0);
 
-            // Règle d'exclusion académique EMSI : 20% ou 18 heures d'absence
             boolean seuilDepasse = totalHeures.compareTo(BigDecimal.valueOf(18.0)) >= 0 || pct >= 20.0;
 
             String sanction = "Normal";
@@ -127,7 +127,40 @@ public class AbsenceServiceImpl implements AbsenceService {
                 .valideParScolarite(false)
                 .build();
 
+        // Mettre à jour le cumul d'heures de l'étudiant
+        etudiant.setCumulHeuresAbsence(etudiant.getCumulHeuresAbsence().add(BigDecimal.valueOf(2.0)));
+        if (etudiant.getTotalHeuresModuleSemestre() != null && etudiant.getTotalHeuresModuleSemestre().compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal seuil = etudiant.getTotalHeuresModuleSemestre().multiply(BigDecimal.valueOf(0.20));
+            if (etudiant.getCumulHeuresAbsence().compareTo(seuil) > 0) {
+                etudiant.setEstRadieExamen(true);
+            }
+        }
+        etudiantRepository.save(etudiant);
+
         return mapToDto(absenceRepository.save(absence));
+    }
+
+    @Override
+    @Transactional
+    public AbsenceDto justifierAbsence(Long absenceId, String motif, boolean justifiee) {
+        Absence absence = absenceRepository.findById(absenceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Absence introuvable avec l'identifiant : " + absenceId));
+
+        absence.setStatut(justifiee ? StatutAbsence.ABSENT_JUSTIFIE : StatutAbsence.ABSENT_NON_JUSTIFIE);
+        absence.setMotifJustification(motif);
+        absence.setDateJustification(LocalDate.now());
+        absence.setValideParScolarite(justifiee);
+
+        Absence saved = absenceRepository.save(absence);
+        return mapToDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAbsence(Long absenceId) {
+        Absence absence = absenceRepository.findById(absenceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Absence introuvable avec l'identifiant : " + absenceId));
+        absenceRepository.delete(absence);
     }
 
     private AbsenceDto mapToDto(Absence a) {
@@ -139,8 +172,7 @@ public class AbsenceServiceImpl implements AbsenceService {
                 .etudiantMatricule(a.getEtudiant().getMatricule())
                 .groupeNom(a.getEtudiant().getGroupe() != null ? a.getEtudiant().getGroupe().getCodeGroupe() : "N/A")
                 .seanceId(a.getSeance() != null ? a.getSeance().getId() : null)
-                .moduleNom(a.getSeance() != null && a.getSeance().getElementModule() != null
-                        ? a.getSeance().getElementModule().getIntitule() : "Séance de cours")
+                .moduleNom(a.getSeance() != null && a.getSeance().getElementModule() != null ? a.getSeance().getElementModule().getIntitule() : null)
                 .dateSeance(a.getDateSeance())
                 .statut(a.getStatut())
                 .heuresAbsence(a.getHeuresAbsence())

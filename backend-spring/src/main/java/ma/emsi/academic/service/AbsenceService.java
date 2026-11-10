@@ -12,4 +12,6 @@ public interface AbsenceService {
     List<AbsenceDto> getAbsencesByEtudiant(Long etudiantId);
     List<EtudiantAlerteAbsenceDto> getEtudiantsSeuilCritique();
     AbsenceDto enregistrerAbsence(Long etudiantId, Long seanceId, String motif);
+    AbsenceDto justifierAbsence(Long absenceId, String motif, boolean justifiee);
+    void deleteAbsence(Long absenceId);
 }
