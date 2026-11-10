@@ -1,6 +1,9 @@
 # Node & Dependencies
 node_modules/
+frontend/node_modules/
 dist/
+.next/
+frontend/.next/
 .angular/
 
 # Java & Spring Boot
