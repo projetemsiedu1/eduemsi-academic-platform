@@ -748,3 +748,4 @@ export function clearStoredResources(): void {
   const keys = ['campuses', 'salles', 'enseignants', 'groupes', 'modules', 'elements', 'seances'];
   keys.forEach((k) => localStorage.removeItem(STORAGE_KEY_PREFIX + k));
 }
+

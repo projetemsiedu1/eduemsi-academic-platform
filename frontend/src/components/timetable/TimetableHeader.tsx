@@ -100,3 +100,4 @@ export function TimetableHeader({ title, subtitle, onOpenMobileMenu }: Timetable
     </header>
   );
 }
+

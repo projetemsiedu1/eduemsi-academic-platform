@@ -36,3 +36,4 @@ export default function TimetableLayout({ children }: { children: React.ReactNod
     </TimetableProvider>
   );
 }
+

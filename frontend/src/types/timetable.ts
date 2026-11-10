@@ -186,3 +186,4 @@ export interface TimetableStats {
   nbSeancesTotal: number;
   tauxOccupationSallesPct: number;
 }
+
