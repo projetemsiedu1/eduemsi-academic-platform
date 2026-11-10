@@ -2,7 +2,10 @@ package ma.emsi.academic.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import ma.emsi.academic.dto.pfe.MatchJuryRequest;
+import ma.emsi.academic.dto.pfe.MatchJuryResponse;
 import ma.emsi.academic.service.ai.GeminiAiServiceClient;
+import ma.emsi.academic.service.ai.OpenRouterAiService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +17,11 @@ import java.util.concurrent.atomic.AtomicLong;
 @RestController
 @RequestMapping("/api/v1/pfe")
 @CrossOrigin(origins = "*")
-@Tag(name = "Gestion PFE & Intelligence Artificielle", description = "CRUD des PFE, Matching IA des jurys de soutenance (Gemini 2.0 Flash) & Analyse RH")
+@Tag(name = "Gestion PFE & Intelligence Artificielle OpenRouter",
+     description = "CRUD des PFE, Matching IA 4 membres (Encadrant, Rapporteur, Examinateur IA, Président HDR) via OpenRouter & Analyse RH")
 public class PfeAiController {
 
+    private final OpenRouterAiService openRouterAiService;
     private final GeminiAiServiceClient geminiAiClient;
     private final Map<Long, Map<String, Object>> pfeDatabase = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(100);
@@ -31,7 +36,8 @@ public class PfeAiController {
         Map.of("id", "6", "nom", "M. Berrada Omar", "grade", "Expert Industriel", "specialite", "Cloud Architecture AWS / Azure / CI-CD", "departement", "IIR (Informatique)", "statut", "VACATAIRE")
     );
 
-    public PfeAiController(GeminiAiServiceClient geminiAiClient) {
+    public PfeAiController(OpenRouterAiService openRouterAiService, GeminiAiServiceClient geminiAiClient) {
+        this.openRouterAiService = openRouterAiService;
         this.geminiAiClient = geminiAiClient;
         initialiserJeuxEssai();
     }
@@ -49,7 +55,7 @@ public class PfeAiController {
             "Dr. Alami Karim",
             "M. Berrada Omar",
             94.5,
-            "Matching optimal validé par l'IA : Le rapporteur possède une affinité de 94.5% avec Spring Cloud et Docker. Encadrant non inclus dans le jury (déontologie respectée)."
+            "Matching optimal validé par l'IA : Le rapporteur possède une affinité de 94.5% avec Spring Cloud et Docker. Encadrant non inclus dans le collège d'évaluation (BR-PFE-07 respectée)."
         );
 
         ajouterPfeInterne(
@@ -83,7 +89,9 @@ public class PfeAiController {
         Map<String, Object> pfe = new HashMap<>();
         pfe.put("id", id);
         pfe.put("titre", titre);
+        pfe.put("sujet", titre);
         pfe.put("problematique", problematique);
+        pfe.put("resume", problematique);
         pfe.put("etudiantNom", etudiant);
         pfe.put("filiere", filiere);
         pfe.put("encadrantNom", encadrant);
@@ -96,6 +104,18 @@ public class PfeAiController {
         pfe.put("justificationIa", justification);
         pfe.put("dateCreation", LocalDateTime.now().toString());
         pfeDatabase.put(id, pfe);
+    }
+
+    // =========================================================================
+    // ENDPOINT REQUIS : POST /api/v1/pfe/match-jury (4 MEMBRES OPENROUTER IA)
+    // =========================================================================
+
+    @PostMapping("/match-jury")
+    @Operation(summary = "Matching IA OpenRouter d'un Jury PFE à 4 membres (Encadrant, Rapporteur, Examinateur IA, Président HDR)",
+               description = "Prend en entrée le sujet, le résumé, technologies, et retourne les 4 membres du jury avec score et justification éthique BR-PFE-07")
+    public ResponseEntity<MatchJuryResponse> matchJuryQuatreMembres(@RequestBody MatchJuryRequest request) {
+        MatchJuryResponse response = openRouterAiService.matcherJuryPfe(request, enseignantsDisponibles);
+        return ResponseEntity.ok(response);
     }
 
     // ================= CRUD PFE =================
@@ -143,60 +163,73 @@ public class PfeAiController {
         return ResponseEntity.ok(Map.of("message", "PFE supprimé avec succès", "id", id));
     }
 
-    // ================= MOTEUR MATCHING IA =================
+    // ================= COMPATIBILITÉ ENDPOINTS PFE =================
 
     @PostMapping("/{id}/match-jury")
-    @Operation(summary = "Lancer le matching IA sémantique pour affecter le jury de ce PFE")
-    public ResponseEntity<Map<String, Object>> matcherJuryPourPfe(@PathVariable Long id) {
+    @Operation(summary = "Lancer le matching IA sémantique pour affecter le jury de ce PFE existant")
+    public ResponseEntity<Map<String, Object>> matcherJuryPourPfeExistant(@PathVariable Long id) {
         Map<String, Object> pfe = pfeDatabase.get(id);
         if (pfe == null) {
             return ResponseEntity.notFound().build();
         }
 
-        String titre = (String) pfe.getOrDefault("titre", "");
-        String problematique = (String) pfe.getOrDefault("problematique", "");
+        String titre = (String) pfe.getOrDefault("titre", pfe.getOrDefault("sujet", ""));
+        String problematique = (String) pfe.getOrDefault("problematique", pfe.getOrDefault("resume", ""));
+        String technologies = (String) pfe.getOrDefault("technologies", "");
         String encadrant = (String) pfe.getOrDefault("encadrantNom", "");
 
-        // RÈGLE ÉTHIQUE STRICTE (BR-PFE-07) : Filtrer les enseignants pour exclure l'encadrant du jury
-        List<Map<String, String>> enseignantsEligibles = enseignantsDisponibles.stream()
-                .filter(prof -> !prof.get("nom").equalsIgnoreCase(encadrant))
-                .toList();
+        MatchJuryRequest req = MatchJuryRequest.builder()
+                .sujet(titre)
+                .resume(problematique)
+                .technologies(technologies)
+                .encadrant(encadrant)
+                .build();
 
-        Map<String, Object> resultatIa = geminiAiClient.matcherJuryPfe(titre, problematique, enseignantsEligibles);
+        MatchJuryResponse matchResp = openRouterAiService.matcherJuryPfe(req, enseignantsDisponibles);
 
-        // Mettre à jour le projet PFE avec les recommandations de l'IA
-        pfe.put("presidentJury", resultatIa.get("presidentRecommande"));
-        pfe.put("rapporteurJury", resultatIa.get("rapporteurRecommande"));
-        pfe.put("examinateurJury", resultatIa.get("examinateurRecommande"));
-        pfe.put("scoreMatchingIa", resultatIa.get("scoreGlobalMatching"));
-        pfe.put("justificationIa", resultatIa.get("justificationIa"));
-        pfe.put("modeExecutionIa", resultatIa.get("modeExecution"));
+        // Mettre à jour la base
+        if (matchResp.getJury() != null) {
+            if (matchResp.getJury().getEncadrant() != null) {
+                pfe.put("encadrantNom", matchResp.getJury().getEncadrant().getNom());
+            }
+            if (matchResp.getJury().getPresidentHdr() != null) {
+                pfe.put("presidentJury", matchResp.getJury().getPresidentHdr().getNom());
+            }
+            if (matchResp.getJury().getRapporteur() != null) {
+                pfe.put("rapporteurJury", matchResp.getJury().getRapporteur().getNom());
+            }
+            if (matchResp.getJury().getExaminateurIa() != null) {
+                pfe.put("examinateurJury", matchResp.getJury().getExaminateurIa().getNom());
+            }
+            pfe.put("jury4Membres", matchResp.getJury());
+        }
+
+        pfe.put("scoreMatchingIa", matchResp.getScoreMatching());
+        pfe.put("justificationIa", matchResp.getJustification());
+        pfe.put("modeExecutionIa", matchResp.getModeleUtilise());
         pfe.put("statut", "JURY_AFFECTE");
         pfe.put("dateMiseAJour", LocalDateTime.now().toString());
 
-        Map<String, Object> reponse = new HashMap<>(resultatIa);
+        Map<String, Object> reponse = new HashMap<>();
         reponse.put("pfe", pfe);
-        reponse.put("regleEthiqueValidee", "Encadrant (" + encadrant + ") formellement exclu du jury");
+        reponse.put("jury", matchResp.getJury());
+        reponse.put("scoreGlobalMatching", matchResp.getScoreMatching());
+        reponse.put("justificationIa", matchResp.getJustification());
+        reponse.put("modeExecution", matchResp.getModeleUtilise());
+        reponse.put("regleEthiqueValidee", "Encadrant formellement disjoint du collège évaluateur (BR-PFE-07)");
+
         return ResponseEntity.ok(reponse);
     }
 
-    @PostMapping("/match-jury-direct")
-    @Operation(summary = "Matching IA instantané à partir de texte libre")
-    public ResponseEntity<Map<String, Object>> matcherJuryDirect(@RequestBody Map<String, String> request) {
-        String titre = request.getOrDefault("titre", "Projet PFE EMSI");
-        String resume = request.getOrDefault("resume", "");
-        String encadrant = request.getOrDefault("encadrant", "");
-
-        List<Map<String, String>> enseignantsEligibles = enseignantsDisponibles.stream()
-                .filter(prof -> encadrant.isBlank() || !prof.get("nom").equalsIgnoreCase(encadrant))
-                .toList();
-
-        Map<String, Object> resultat = geminiAiClient.matcherJuryPfe(titre, resume, enseignantsEligibles);
-        return ResponseEntity.ok(resultat);
+    @PostMapping({"/match-jury", "/match-jury-direct"})
+    @Operation(summary = "Matching IA instantané direct à partir de texte libre")
+    public ResponseEntity<MatchJuryResponse> matcherJuryDirect(@RequestBody MatchJuryRequest request) {
+        MatchJuryResponse res = openRouterAiService.matcherJuryPfe(request, enseignantsDisponibles);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/enseignants")
-    @Operation(summary = "Lister les enseignants et jurys disponibles")
+    @Operation(summary = "Lister les enseignants et jurys éligibles EMSI")
     public ResponseEntity<List<Map<String, String>>> listerEnseignants() {
         return ResponseEntity.ok(enseignantsDisponibles);
     }
@@ -220,7 +253,7 @@ public class PfeAiController {
     public ResponseEntity<Map<String, Object>> analyserCv(@RequestBody Map<String, String> payload) {
         String cvTexte = payload.getOrDefault("cvTexte", "");
         List<String> matieres = List.of("Java / Spring Cloud", "DevOps & Cloud", "Intelligence Artificielle / Data", "Génie Industriel & Robotique");
-        Map<String, Object> resultat = geminiAiClient.analyserCvCandidat(cvTexte, matieres);
+        Map<String, Object> resultat = openRouterAiService.analyserCvCandidat(cvTexte, matieres);
         return ResponseEntity.ok(resultat);
     }
 }
