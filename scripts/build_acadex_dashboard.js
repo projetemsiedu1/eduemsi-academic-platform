@@ -603,8 +603,8 @@ const newComptes = `const comptes = {
       }
     };
 
-    // Configuration OpenRouter AI & Modeles Gratuits Officiels (Decodage securise base64 conforme GitHub Secret Scanning)
-    const OPENROUTER_API_KEY = window.OPENROUTER_API_KEY || localStorage.getItem('OPENROUTER_API_KEY') || atob("c2stb3ItdjEtZTA5NTE5NDAwOWNlOTc3OGE4ZmU2ZWJlMGY3NzNmODA3NDMzZmQyZTc2MTQ0ZjYwOGI4YWQ0MjQ3ZTg2MTliMg==");
+    // Configuration OpenRouter fournie explicitement par l utilisateur.
+    const OPENROUTER_API_KEY = window.OPENROUTER_API_KEY || localStorage.getItem('OPENROUTER_API_KEY') || "";
     const OPENROUTER_MODELS = [
       "google/gemini-2.0-flash-exp:free",
       "meta-llama/llama-3.3-70b-instruct:free",

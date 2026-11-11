@@ -11,6 +11,7 @@ public interface GroupeService {
     PageResponse<GroupeDto> getGroupesByFiliere(Long filiereId, Pageable pageable);
     GroupeDto getGroupeById(Long id);
     GroupeDto createGroupe(CreateGroupeRequest request);
+    GroupeDto updateGroupe(Long id, CreateGroupeRequest request);
     GroupeDto updateEffectif(Long id, int newEffectif);
     void deleteGroupe(Long id);
 }

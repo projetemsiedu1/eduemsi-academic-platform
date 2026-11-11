@@ -1,108 +1,89 @@
-# 🎓 Plateforme Académique EMSI — Gestion des Emplois du Temps, PFE & Scolarité
+﻿# EMSI Univora
 
-[![Java 21](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.3-green.svg)](https://spring.io/projects/spring-boot)
-[![Angular](https://img.shields.io/badge/Angular-18_Standalone-red.svg)](https://angular.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-blue.svg)](https://tailwindcss.com/)
-[![OR-Tools](https://img.shields.io/badge/Google_OR--Tools-9.8-yellow.svg)](https://developers.google.com/optimization)
-[![Gemini AI](https://img.shields.io/badge/Google_Gemini-2.0_Flash-purple.svg)](https://ai.google.dev/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)](https://www.postgresql.org/)
-[![Jira Scrum](https://img.shields.io/badge/Jira-Agile_Scrum-0052cc.svg)](https://moussaoui9881.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
+Plateforme académique EMSI : connexion, ressources pédagogiques, planification et suivi des absences. Cette copie intègre le module **Responsable planning** dans les dossiers principaux, avec une interface Next.js et une API Spring Boot.
 
-Application web académique conçue pour l'**École Marocaine des Sciences de l'Ingénieur (EMSI)**. Elle orchestre la planification intelligente des emplois du temps avec contraintes d'or (solveur Google OR-Tools CP-SAT), le matching éthique des jurys de PFE et l'analyse prédictive des recrutements par IA générative (Google Gemini 2.0 Flash Free Tier avec fallback local), l'émargement numérique manuel et le suivi pédagogique post-cours.
+## Organisation
 
----
+- `frontend/` : Next.js 16, React 19, TypeScript, Tailwind CSS 4.
+- `backend-spring/` : Java cible 21, Spring Boot 3.3.4, JPA, Flyway, sécurité JWT et OR-Tools.
+- `scripts/` : scripts de développement et contrôle des API.
+- `docs/` : documentation et rapports, dont [le rapport d’intégration](docs/analysis/integration-planning-2026-11-11.md).
+- `frontend1/`, `backend-spring1/`, `scripts1/` : sources reçues du collaborateur, conservées pour référence. Elles ne sont pas les dossiers à lancer.
 
-## 👥 Équipe d'Ingénieurs & Rôles Scrum Dédiés
+## Lancer en développement sous Windows
 
-| Membre | Rôle Scrum | Périmètre de Responsabilité |
-| :--- | :--- | :--- |
-| **Noussair Benassou** | **Technical Lead** | Architecture Spring Boot 3, Moteur OR-Tools (vacataires, campus, salles TP PC) & briques IA Gemini |
-| **Moad Moussaoui** | **Scrum Master** | Pilotage Agile, animation des cérémonies, burndown chart, gouvernance RBAC & soutenance finale |
-| **Amine Bella** | **Product Owner** | Règles déontologiques PFE (zéro conflit), cahier de texte post-séance & seuil d'absence éliminatoire 20% |
-| **Brahim Abod** | **DevOps Engineer** | Organisation GitHub, Docker Compose multi-stage, persistance PostgreSQL & pipelines CI/CD |
-| **Ilyass Ait Ouahman** | **Test and Quality** | Tests unitaires JUnit 5, validation du Fallback Heuristique Local (simulation panne IA) & recette E2E |
-| **Ikram Mellakh** | **UX/UI Designer** | Design System Tailwind CSS EMSI, grille hebdomadaire réactive d'EDT & écrans d'émargement |
+Prérequis : JDK 21, Maven, Node.js et MySQL 8. Le terminal doit sélectionner le JDK compatible (`java -version` et `mvn -version`).
 
----
+Lancement assisté depuis la racine (mot de passe MySQL saisi de façon masquée, sans fichier à modifier) :
 
-## 📂 Structure du Répertoire (Arborescence Officielle)
-
-```text
-eduemsi-academic-platform/
-│
-├── 📁 backend-spring/              # API REST Spring Boot 3.3 (Java 21)
-│   ├── src/main/java/              # Contrôleurs, Services Métier, Moteur OR-Tools, Client Gemini
-│   ├── src/main/resources/         # Configuration application.yml & Scripts SQL Flyway
-│   ├── pom.xml                     # Dépendances Maven (Spring Data, Security, OR-Tools, Jackson)
-│   └── Dockerfile                  # Build multi-stage Maven / Alpine
-│
-├── 📁 frontend-angular/            # Application Web Angular 18 Standalone
-│   ├── src/app/                    # Composants Standalone (Timetable, PfeMatching, Attendance)
-│   ├── package.json                # Dépendances npm (Angular 18, Tailwind CSS, Lucide icons)
-│   └── Dockerfile                  # Build multi-stage Node / Nginx
-│
-├── 📁 docs/                        # Documentation d'Ingénierie & Spécifications
-│   ├── 📁 architecture-systeme/    # Schémas d'architecture globale, ERD et galeries de flux
-│   ├── 📁 cahier-des-charges/      # Cahier des charges officiel, rapports et documentation métier
-│   ├── 📁 cadrage-scrum-agile/     # Dossier de cadrage Agile, Product Backlog & Exports Jira CSV
-│   ├── 📁 prototypes-et-maquettes/ # Simulations interactives (Matching PFE IA, maquettes Figma)
-│   └── 📁 uml/                     # Diagrammes formels OMG UML 2.5.1 (Use Case, Class, Sequence, Activity)
-│
-├── 📁 scripts/                     # Scripts d'Automatisation & Outillage
-│   ├── 📁 jira-automation/         # Scripts Node.js d'alimentation et réorganisation Jira REST API
-│   └── 📁 tools/                   # Utilitaires de conversion et d'analyse
-│
-├── 📄 docker-compose.yml           # Déploiement 1-clic (PostgreSQL 16 + Backend + Frontend)
-├── 📄 .gitignore                   # Règles strictes d'exclusion de fichiers
-└── 📄 README.md                    # Guide officiel du projet
+```powershell
+.\scripts\start-backend-local.ps1
+# Autre compte : .\scripts\start-backend-local.ps1 -DatabaseUser mon_utilisateur
 ```
 
----
+Le script utilise `JAVA_HOME` ou détecte le JDK 21 Eclipse Adoptium installé. Il démarre toujours `backend-spring/`. Une ancienne instance doit être arrêtée avant de lancer la nouvelle. Si `/api/v1/planning/workspace` renvoie 404 après une mise à jour, redémarrer le backend : Spring Boot ne recharge pas automatiquement les nouvelles routes.
 
-## ⚡ Démarrage Rapide en 1 Commande
+Premier terminal, depuis la racine :
 
-### Prérequis
-* Docker & Docker Compose installés sur votre machine.
+```powershell
+$env:SPRING_PROFILES_ACTIVE = 'local'
+$env:SPRING_DATASOURCE_USERNAME = '<utilisateur MySQL>'
+$env:SPRING_DATASOURCE_PASSWORD = '<mot de passe MySQL>'
+cd backend-spring
+mvn.cmd "-Dmaven.repo.local=$env:USERPROFILE\.m2\repository" spring-boot:run
+```
 
-```bash
-# 1. Cloner le projet
-git clone https://github.com/projetemsiedu1/eduemsi-academic-platform.git
-cd eduemsi-academic-platform
+Le profil local utilise `emsi_academic_db` sur `localhost:3306`. Il applique les migrations MySQL ; utilisez une base de développement dédiée. Les comptes de démonstration historiques ne sont initialisés que sur une base utilisateurs vide et dans les profils `local`, `dev` ou `test`. Consultez `AuthServiceImpl.seedDefaultUsersIfEmpty` pour les comptes de votre copie ; changez leurs mots de passe avant toute exposition réseau.
 
-# 2. Lancer la stack complète en tâche de fond
+Deuxième terminal :
+
+```powershell
+cd frontend
+npm.cmd ci
+npm.cmd run dev
+```
+
+- Connexion : http://localhost:3000/login (ou le port annoncé).
+- Espace planning : `/timetable`, pour `ROLE_RESPONSABLE_PLANNING` et `ROLE_SUPER_ADMIN`.
+- API : http://localhost:8085/api/v1.
+- Swagger : http://localhost:8085/swagger-ui.html.
+- Configuration frontend : `frontend/.env.example`, à recopier dans `.env.local` si nécessaire.
+
+Un responsable planning est redirigé vers son module après connexion. Un administrateur y accède depuis son espace. L’inscription publique crée uniquement des étudiants ; elle n’accorde pas de privilèges administratifs.
+
+## Vérifier
+
+```powershell
+cd frontend
+npm.cmd run lint
+npm.cmd run test:planning
+npm.cmd run build
+```
+
+Dans `backend-spring/` :
+
+```powershell
+mvn.cmd "-Dmaven.repo.local=$env:USERPROFILE\.m2\repository" clean test
+```
+
+Les tests d’intégration utilisent H2 en mémoire, sans modifier MySQL. Le script `scripts/test_all_apis.ps1` vérifie les lectures sur un backend lancé, avec les identifiants fournis au moment de son exécution.
+
+## Données réelles et démonstration
+
+Le module charge ses ressources depuis `/api/v1/planning/workspace`. Les créations, modifications et suppressions passent par les API. Le bouton « Explorer la démonstration » utilise des données fictives temporaires et n’écrit pas sur le serveur.
+
+La proposition automatique appelle le solveur du backend et reste un aperçu non enregistré. Les horaires par groupe et enseignant, les volumes, l’occupation des salles et les anomalies sont calculés depuis les données affichées. Une absence de conflit ne prouve pas l’optimalité d’un planning.
+
+## Docker local
+
+La configuration Compose a été alignée sur MySQL, Spring Boot 8085 et Next.js 3000. Compléter les secrets dans un `.env` non versionné à partir du `.env.example` racine, puis :
+
+```powershell
 docker compose up -d --build
 ```
 
-### URLs d'Accès Local
-* 🌐 **Frontend Web Angular :** `http://localhost:4200`
-* 🔌 **Backend API Spring Boot :** `http://localhost:8080/api`
-* 🗄️ **Base de Données PostgreSQL :** `localhost:5432` (`emsi_academic_db` / `emsi_admin`)
+Docker n’a pas été exécuté dans cette session : ce chemin reste à valider sur une machine équipée. Il s’agit d’une configuration locale, pas d’une certification de déploiement en production. Le profil PostgreSQL historique n’est pas le chemin de lancement retenu.
 
----
+## Périmètre restant
 
-## 🧠 Contraintes d'Or Académiques EMSI
-
-1. **Priorité Absolue aux Professeurs Vacataires :** Le solveur OR-Tools affecte d'abord les créneaux stricts des vacataires avant de placer les professeurs permanents (2-pass CP-SAT solver).
-2. **Campus Unique par Jour :** Interdiction pour une classe d'étudier sur deux campus différents dans la même journée (zéro déplacement inter-campus).
-3. **Pauses Réglementaires :** Pause fixe de 15 min le matin (10h00-10h15) et trou de midi limité à 1h30 maximum.
-4. **Affectation Salles TP PC :** Tout TP des filières IIR et Génie Industriel requérant des machines est obligatoirement alloué dans une salle dotée du nombre de postes informatiques adéquat.
-5. **Appel Numérique Manuel & Seuil Éliminatoire 20% :** Émargement manuel par l'enseignant (la méthode QR code est bannie). Alerte rouge instantanée dès qu'un étudiant franchit 20% d'absences injustifiées.
-6. **IA Gemini 2.0 Flash avec Fallback Local :** Matching sémantique des jurys de PFE avec respect de la déontologie (l'encadrant ne peut être ni Président ni Rapporteur de son propre étudiant). En cas de panne de connexion, le système bascule sur l'algorithme heuristique local sans crash.
-
----
-
-## 📅 Calendrier des Sprints (Échéance : 24 Décembre 2026)
-
-* **Sprint 0 (06 Nov &rarr; 13 Nov) :** Socle, Gouvernance RBAC, Docker Compose & Organisation GitHub.
-* **Sprint 1 (14 Nov &rarr; 24 Nov) :** 🔥 **Briques IA Gemini Free API & Matching Jurys PFE (Priorité Démo Professeur)**.
-* **Sprint 2 (25 Nov &rarr; 05 Déc) :** Solveur OR-Tools Contraintes EMSI & Grille EDT Angular Tailwind.
-* **Sprint 3 (06 Déc &rarr; 15 Déc) :** Cahier de texte post-séance, Appel Manuel & Alerte rouge 20%.
-* **Sprint 4 (16 Déc &rarr; 24 Déc) :** Tests TDD JUnit 5, Validation Fallback Panne IA, Recette & Soutenance Finale le 24/12/2026.
-
----
-
-## 🔗 Liens Utiles
-* 📋 **Jira Backlog :** [https://moussaoui9881.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog](https://moussaoui9881.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
-* 🐙 **Dépôt GitHub Officiel :** [https://github.com/projetemsiedu1/eduemsi-academic-platform](https://github.com/projetemsiedu1/eduemsi-academic-platform)
-* 📐 **Documentation UML :** [`docs/uml/README.md`](docs/uml/README.md)
+L’ERP complet du cahier des charges n’est pas entièrement implémenté. Les PFE du contrôleur existant utilisent encore un stockage mémoire. Les paiements, délibérations et autres modules documentaires ne sont pas livrés par cette intégration. Aucun compte Jira, service IA distant ou environnement de production n’a été modifié.

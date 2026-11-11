@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/absences")
 @RequiredArgsConstructor
 @Tag(name = "Scolarité & Assiduité", description = "Feuille d'émargement, suivi des absences et seuil critique d'élimination de 20% (18h max)")
-@CrossOrigin(origins = "*")
+
 @SecurityRequirement(name = "bearerAuth")
 public class AbsenceController {
 
@@ -47,6 +47,7 @@ public class AbsenceController {
     }
 
     @PostMapping("/enregistrer")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_SCOLARITE','RESPONSABLE_FILIERE')")
     @Operation(summary = "Enregistrer une absence pour une séance")
     public ResponseEntity<AbsenceDto> enregistrerAbsence(@RequestBody Map<String, Object> body) {
         Long etudiantId = Long.valueOf(body.get("etudiantId").toString());
@@ -56,6 +57,7 @@ public class AbsenceController {
     }
 
     @PatchMapping("/{id}/justifier")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_SCOLARITE','RESPONSABLE_FILIERE')")
     @Operation(summary = "Justifier ou requalifier une absence d'étudiant avec motif")
     public ResponseEntity<AbsenceDto> justifierAbsence(
             @PathVariable Long id,
@@ -66,6 +68,7 @@ public class AbsenceController {
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_SCOLARITE','RESPONSABLE_FILIERE')")
     @Operation(summary = "Supprimer un enregistrement d'absence erroné")
     public ResponseEntity<Void> deleteAbsence(@PathVariable Long id) {
         absenceService.deleteAbsence(id);

@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 @RequestMapping("/api/v1/pfe")
-@CrossOrigin(origins = "*")
+
 @Tag(name = "Gestion PFE & Intelligence Artificielle OpenRouter",
      description = "CRUD des PFE, Matching IA 4 membres (Encadrant, Rapporteur, Examinateur IA, Président HDR) via OpenRouter & Analyse RH")
 public class PfeAiController {

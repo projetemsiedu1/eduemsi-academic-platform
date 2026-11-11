@@ -79,14 +79,14 @@ public class AbsenceServiceImpl implements AbsenceService {
                     .map(Absence::getHeuresAbsence)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            double totalHeuresSemestre = 90.0;
+            double totalHeuresSemestre = etu.getTotalHeuresModuleSemestre() != null && etu.getTotalHeuresModuleSemestre().signum() > 0 ? etu.getTotalHeuresModuleSemestre().doubleValue() : 90.0;
             double pct = Math.min(100.0, (totalHeures.doubleValue() / totalHeuresSemestre) * 100.0);
 
-            boolean seuilDepasse = totalHeures.compareTo(BigDecimal.valueOf(18.0)) >= 0 || pct >= 20.0;
+            boolean seuilDepasse = pct >= 20.0;
 
             String sanction = "Normal";
             if (seuilDepasse) {
-                sanction = "Élimination Examen (Seuil 20% / 18h dépassé)";
+                sanction = "Élimination Examen (Seuil de 20% atteint)";
             } else if (totalHeures.compareTo(BigDecimal.valueOf(12.0)) >= 0) {
                 sanction = "Avertissement 2 (Proche seuil)";
             } else if (totalHeures.compareTo(BigDecimal.valueOf(6.0)) >= 0) {
@@ -122,22 +122,14 @@ public class AbsenceServiceImpl implements AbsenceService {
                 .seance(seance)
                 .dateSeance(LocalDate.now())
                 .statut(StatutAbsence.ABSENT_NON_JUSTIFIE)
-                .heuresAbsence(BigDecimal.valueOf(2.0))
+                .heuresAbsence(BigDecimal.valueOf(1.5 * seance.getSpanSeances()))
                 .motifJustification(motif)
                 .valideParScolarite(false)
                 .build();
 
-        // Mettre à jour le cumul d'heures de l'étudiant
-        etudiant.setCumulHeuresAbsence(etudiant.getCumulHeuresAbsence().add(BigDecimal.valueOf(2.0)));
-        if (etudiant.getTotalHeuresModuleSemestre() != null && etudiant.getTotalHeuresModuleSemestre().compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal seuil = etudiant.getTotalHeuresModuleSemestre().multiply(BigDecimal.valueOf(0.20));
-            if (etudiant.getCumulHeuresAbsence().compareTo(seuil) > 0) {
-                etudiant.setEstRadieExamen(true);
-            }
-        }
-        etudiantRepository.save(etudiant);
-
-        return mapToDto(absenceRepository.save(absence));
+        Absence saved = absenceRepository.save(absence);
+        recalculerCumul(etudiant);
+        return mapToDto(saved);
     }
 
     @Override
@@ -152,6 +144,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         absence.setValideParScolarite(justifiee);
 
         Absence saved = absenceRepository.save(absence);
+        recalculerCumul(absence.getEtudiant());
         return mapToDto(saved);
     }
 
@@ -160,7 +153,20 @@ public class AbsenceServiceImpl implements AbsenceService {
     public void deleteAbsence(Long absenceId) {
         Absence absence = absenceRepository.findById(absenceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Absence introuvable avec l'identifiant : " + absenceId));
+        Etudiant etudiant = absence.getEtudiant();
         absenceRepository.delete(absence);
+        absenceRepository.flush();
+        recalculerCumul(etudiant);
+    }
+
+    private void recalculerCumul(Etudiant etudiant) {
+        BigDecimal cumul = absenceRepository.findByEtudiantId(etudiant.getId()).stream()
+                .filter(a -> a.getStatut() == StatutAbsence.ABSENT_NON_JUSTIFIE)
+                .map(Absence::getHeuresAbsence).reduce(BigDecimal.ZERO, BigDecimal::add);
+        etudiant.setCumulHeuresAbsence(cumul);
+        BigDecimal base = etudiant.getTotalHeuresModuleSemestre();
+        etudiant.setEstRadieExamen(base != null && base.signum() > 0 && cumul.compareTo(base.multiply(new BigDecimal("0.20"))) >= 0);
+        etudiantRepository.save(etudiant);
     }
 
     private AbsenceDto mapToDto(Absence a) {

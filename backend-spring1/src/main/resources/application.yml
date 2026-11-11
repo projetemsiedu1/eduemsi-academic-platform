@@ -1,0 +1,32 @@
+server:
+  port: 8085
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: eduemsi-backend
+  profiles:
+    active: local
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 20MB
+
+app:
+  jwt:
+    secret: EMSI_UNIVORA_ACADEMIC_SECURITY_SUPER_SECRET_KEY_2026_HMAC_SHA256_SECURED
+    expiration-ms: 86400000 # 24 heures
+    refresh-expiration-ms: 604800000 # 7 jours
+  openrouter:
+    base-url: https://openrouter.ai/api/v1
+    free-model: google/gemini-2.0-flash-exp:free
+    fallback-model: meta-llama/llama-3.3-70b-instruct:free
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

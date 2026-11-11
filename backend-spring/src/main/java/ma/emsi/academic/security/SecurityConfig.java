@@ -29,6 +29,8 @@ import java.util.List;
 @EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
+    @org.springframework.beans.factory.annotation.Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003}")
+    private String allowedOrigins;
 
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -64,7 +66,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/register",
-                                "/api/v1/auth/seed-users",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
@@ -72,6 +73,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/error"
                         ).permitAll()
+                        .requestMatchers("/api/v1/auth/seed-users").hasRole("SUPER_ADMIN")
                         // Autoriser les requêtes OPTIONS préliminaires pour CORS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Tout le reste nécessite un JWT valide
@@ -86,11 +88,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedOrigins(Arrays.stream(allowedOrigins.split(",")).map(String::trim).filter(s -> !s.isBlank()).toList());
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         configuration.setExposedHeaders(List.of("Authorization"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface EtudiantRepository extends JpaRepository<Etudiant, Long>, JpaSpecificationExecutor<Etudiant> {
+    boolean existsByGroupeId(Long groupeId);
 
     @EntityGraph(attributePaths = {"groupe"})
     Optional<Etudiant> findByMatricule(String matricule);

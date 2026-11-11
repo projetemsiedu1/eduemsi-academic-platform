@@ -60,6 +60,7 @@ public class FiliereServiceImpl implements FiliereService {
     @Override
     @Transactional
     public FiliereDto createFiliere(CreateFiliereRequest request) {
+        request.setCode(request.getCode().trim().toUpperCase(java.util.Locale.ROOT));
         if (filiereRepository.findByCode(request.getCode()).isPresent()) {
             throw new BadRequestException("Une filière avec le code '" + request.getCode() + "' existe déjà.");
         }
@@ -74,6 +75,7 @@ public class FiliereServiceImpl implements FiliereService {
     @Override
     @Transactional
     public FiliereDto updateFiliere(Long id, CreateFiliereRequest request) {
+        request.setCode(request.getCode().trim().toUpperCase(java.util.Locale.ROOT));
         Filiere filiere = filiereRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Filiere introuvable avec l'identifiant : " + id));
 

@@ -29,6 +29,8 @@ public class CreateSalleRequest {
     private Integer capacite;
 
     @Builder.Default
+    @Min(0)
+    @NotNull
     private Integer nombrePcOperationnels = 0;
 
     private String specsEquipements;
@@ -38,4 +40,9 @@ public class CreateSalleRequest {
 
     @Builder.Default
     private Boolean estDisponible = true;
+
+    @jakarta.validation.constraints.AssertTrue(message = "Le nombre de postes ne peut pas dépasser la capacité de la salle")
+    public boolean isPcCapacityValid() {
+        return capacite == null || nombrePcOperationnels == null || nombrePcOperationnels <= capacite;
+    }
 }

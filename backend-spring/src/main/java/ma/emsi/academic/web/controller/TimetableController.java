@@ -14,7 +14,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/planning")
-@CrossOrigin(origins = "*")
+
 @Tag(name = "Planification & Emploi du Temps OR-Tools",
      description = "Solveur sous contraintes CP-SAT & Heuristique : Vacataire Priorité 1, 1 Groupe = 1 Campus Fixe, Salles LI_PC / LR_RESEAUX")
 public class TimetableController {
@@ -32,6 +32,7 @@ public class TimetableController {
     }
 
     @PostMapping({"/generer", "/generate"})
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING')")
     @Operation(summary = "Générer l'emploi du temps avec OR-Tools CP-SAT (3 règles dures EMSI)",
                description = "Résout l'emploi du temps en appliquant : R1 (Vacataire Priorité 1 absolue), R2 (1 groupe = 1 campus fixe), R3 (Type salle LI_PC/LR_RESEAUX)")
     public ResponseEntity<Map<String, Object>> genererEmploiDuTemps(@RequestBody(required = false) Map<String, Object> payload) {
@@ -39,6 +40,7 @@ public class TimetableController {
     }
 
     @PostMapping("/solve")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING')")
     @Operation(summary = "Endpoint alternatif pour résoudre l'emploi du temps sous contraintes CP-SAT")
     public ResponseEntity<Map<String, Object>> resoudrePlanification(@RequestBody(required = false) Map<String, Object> payload) {
         return executerResolution(payload);

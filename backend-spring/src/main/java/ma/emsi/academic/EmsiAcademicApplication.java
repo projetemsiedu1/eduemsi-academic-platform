@@ -12,10 +12,5 @@ public class EmsiAcademicApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(EmsiAcademicApplication.class, args);
-        System.out.println("==========================================================");
-        System.out.println("  EMSI ACADEMIC PLATFORM (UNIVORA) - BACKEND ACTIVE (8080)");
-        System.out.println("  SWAGGER DOCS : http://localhost:8080/swagger-ui.html");
-        System.out.println("  OR-TOOLS SOLVER & GEMINI FLASH AI ENGINES READY");
-        System.out.println("==========================================================");
     }
 }

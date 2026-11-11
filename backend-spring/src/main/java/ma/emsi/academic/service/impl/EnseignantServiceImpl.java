@@ -22,6 +22,7 @@ import java.util.List;
 public class EnseignantServiceImpl implements EnseignantService {
 
     private final EnseignantRepository enseignantRepository;
+    private final ma.emsi.academic.service.PlanningAvailability availabilityParser;
 
     @Override
     @Transactional(readOnly = true)
@@ -64,6 +65,9 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     @Transactional
     public EnseignantDto createEnseignant(CreateEnseignantRequest request) {
+        availabilityParser.read(request.getDisponibilitesFixesJson());
+        request.setMatricule(request.getMatricule().trim().toUpperCase(java.util.Locale.ROOT));
+        request.setEmail(request.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
         if (enseignantRepository.existsByMatricule(request.getMatricule())) {
             throw new BadRequestException("Un enseignant avec le matricule '" + request.getMatricule() + "' existe déjà.");
         }
@@ -94,6 +98,9 @@ public class EnseignantServiceImpl implements EnseignantService {
     @Override
     @Transactional
     public EnseignantDto updateEnseignant(Long id, CreateEnseignantRequest request) {
+        availabilityParser.read(request.getDisponibilitesFixesJson());
+        request.setMatricule(request.getMatricule().trim().toUpperCase(java.util.Locale.ROOT));
+        request.setEmail(request.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
         Enseignant enseignant = enseignantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Enseignant introuvable avec l'identifiant : " + id));
 

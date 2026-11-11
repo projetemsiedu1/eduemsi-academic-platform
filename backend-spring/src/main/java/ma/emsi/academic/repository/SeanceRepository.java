@@ -16,6 +16,7 @@ import java.util.List;
 
 @Repository
 public interface SeanceRepository extends JpaRepository<Seance, Long>, JpaSpecificationExecutor<Seance> {
+    boolean existsByGroupeId(Long groupeId);
 
     @EntityGraph(attributePaths = {"groupe", "salle", "enseignant", "elementModule"})
     List<Seance> findByGroupeIdOrderByJourSemaineAscNumeroCreneauAsc(Long groupeId);

@@ -43,6 +43,8 @@ public class CreateEnseignantRequest {
     private TypeContrat typeContrat;
 
     @Builder.Default
+    @jakarta.validation.constraints.Min(1)
+    @jakarta.validation.constraints.Max(54)
     private Integer heuresContractuellesSemaine = 18;
 
     private String disponibilitesFixesJson;

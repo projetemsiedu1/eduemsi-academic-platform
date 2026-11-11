@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginResponse {
 
+    @lombok.ToString.Exclude
     private String accessToken;
 
     @Builder.Default
