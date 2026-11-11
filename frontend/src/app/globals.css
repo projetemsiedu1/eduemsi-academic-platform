@@ -10,6 +10,12 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-emsi-primary: #00843D;
+  --color-emsi-dark: #004D26;
+  --color-emsi-deep: #003319;
+  --color-emsi-light: #E6F4EA;
+  --color-emsi-gold: #C5A572;
+  --color-emsi-accent: #0A5C2F;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -33,11 +33,17 @@ export default function Home() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-4 pt-6">
+          <Link
+            href="/timetable"
+            className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-900/40 transition-all hover:scale-105 flex items-center gap-2"
+          >
+            <span>Accéder au Module Emplois du Temps (MVP)</span>
+          </Link>
           <a
             href="http://localhost:8085/swagger-ui.html"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-lg shadow-emerald-900/30 transition-all hover:scale-105"
+            className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium border border-white/10 transition-all"
           >
             Explorer Swagger UI (Port 8085)
           </a>
