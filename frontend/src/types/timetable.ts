@@ -196,7 +196,13 @@ export interface Seance {
   jourSemaine: JourSemaine;
   numeroCreneau: CreneauCode;
   spanSeances: number;
-  statutAffectation: "OPTIMAL_CPSAT" | "MANUEL" | "RESERVE";
+  statutAffectation:
+    | "OPTIMAL_CPSAT"
+    | "MANUEL"
+    | "RESERVE"
+    | "CPSAT_OPTIMAL"
+    | "CPSAT_FEASIBLE"
+    | "PROPOSITION";
   verrouillee?: boolean;
 }
 

@@ -26,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GroupeServiceImpl implements GroupeService {
+    private final ma.emsi.academic.repository.TeachingRequirementRepository requirements;
     private final ma.emsi.academic.repository.SeanceRepository seanceRepository;
     private final ma.emsi.academic.repository.EtudiantRepository etudiantRepository;
 
@@ -70,7 +71,7 @@ public class GroupeServiceImpl implements GroupeService {
     @Override
     @Transactional
     public GroupeDto createGroupe(CreateGroupeRequest request) {
-        if (groupeRepository.existsByCodeGroupe(request.getCodeGroupe().trim())) {
+        if (groupeRepository.findAll().stream().anyMatch(g -> g.getCodeGroupe().equalsIgnoreCase(request.getCodeGroupe().trim()))) {
             throw new BusinessRuleException("Un groupe avec le code '" + request.getCodeGroupe() + "' existe déjà.");
         }
 
@@ -99,6 +100,7 @@ public class GroupeServiceImpl implements GroupeService {
     @Transactional
     public GroupeDto updateGroupe(Long id, CreateGroupeRequest request) {
         Groupe groupe = groupeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Groupe introuvable."));
+        if (!groupe.getFiliere().getId().equals(request.getFiliereId()) && requirements.existsByGroupeId(id)) throw new BusinessRuleException("Ce groupe a des besoins pédagogiques. Réaffectez ou retirez ces besoins avant de changer sa filière.");
         if (groupeRepository.findAll().stream().anyMatch(g -> !g.getId().equals(id) && g.getCodeGroupe().equalsIgnoreCase(request.getCodeGroupe().trim()))) throw new BusinessRuleException("Ce code de groupe existe déjà.");
         if (groupe.getSeances().stream().anyMatch(s -> !s.getSalle().getCampus().getId().equals(request.getCampusFixeId()) || s.getSalle().getCapacite() < request.getEffectif() || !s.getElementModule().getModule().getFiliere().getId().equals(request.getFiliereId()))) throw new BusinessRuleException("Cette modification rendrait les séances existantes incompatibles.");
         groupe.setFiliere(filiereRepository.findById(request.getFiliereId()).orElseThrow(() -> new ResourceNotFoundException("Filière introuvable.")));
@@ -128,6 +130,7 @@ public class GroupeServiceImpl implements GroupeService {
     public void deleteGroupe(Long id) {
         Groupe groupe = groupeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Groupe introuvable."));
         if (etudiantRepository.existsByGroupeId(id) || seanceRepository.existsByGroupeId(id)) throw new BusinessRuleException("Ce groupe contient des étudiants ou des séances. Réaffectez-les avant de le supprimer.");
+        if (requirements.existsByGroupeId(id)) throw new BusinessRuleException("Ce groupe est utilisé par des besoins pédagogiques. Retirez ces besoins dans la planification avant de supprimer le groupe.");
         groupeRepository.delete(groupe);
     }
 

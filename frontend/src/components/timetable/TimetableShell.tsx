@@ -146,13 +146,12 @@ function Workspace({ children }: { children: ReactNode }) {
             {notice}
           </div>
         )}
-        {loading ? (
+        {loading && (
           <div className="planning-loading" role="status">
             Chargement des ressources académiques…
           </div>
-        ) : (
-          children
         )}
+        <div hidden={loading}>{children}</div>
       </div>
     </div>
   );

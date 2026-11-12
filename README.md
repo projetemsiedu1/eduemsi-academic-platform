@@ -8,7 +8,7 @@ Plateforme académique EMSI : connexion, ressources pédagogiques, planification
 - `backend-spring/` : Java cible 21, Spring Boot 3.3.4, JPA, Flyway, sécurité JWT et OR-Tools.
 - `scripts/` : scripts de développement et contrôle des API.
 - `docs/` : documentation et rapports, dont [le rapport d’intégration](docs/analysis/integration-planning-2026-11-11.md).
-- `frontend1/`, `backend-spring1/`, `scripts1/` : sources reçues du collaborateur, conservées pour référence. Elles ne sont pas les dossiers à lancer.
+- Les anciennes copies `frontend1/`, `backend-spring1/` et `scripts1/` ont été retirées après intégration. Leur version antérieure reste disponible dans l’historique Git ; utilisez les dossiers principaux ci-dessus.
 
 ## Lancer en développement sous Windows
 
@@ -72,7 +72,15 @@ Les tests d’intégration utilisent H2 en mémoire, sans modifier MySQL. Le scr
 
 Le module charge ses ressources depuis `/api/v1/planning/workspace`. Les créations, modifications et suppressions passent par les API. Le bouton « Explorer la démonstration » utilise des données fictives temporaires et n’écrit pas sur le serveur.
 
-La proposition automatique appelle le solveur du backend et reste un aperçu non enregistré. Les horaires par groupe et enseignant, les volumes, l’occupation des salles et les anomalies sont calculés depuis les données affichées. Une absence de conflit ne prouve pas l’optimalité d’un planning.
+Le bouton **Planifier** dans `/timetable/constraints` appelle le solveur global OR-Tools CP-SAT à partir des besoins et qualifications enregistrés. La proposition reste un aperçu jusqu’à **Accepter et enregistrer** ; cette acceptation ajoute les séances dans une transaction après une nouvelle vérification. Les séances existantes sont conservées. L’optimalité n’est affichée que si CP-SAT l’a prouvée pour son objectif de réduction des trous.
+
+Renseigner les salles et filières ne suffit pas : chaque besoin précise un groupe, un élément de module, un enseignant qualifié et le nombre de séances hebdomadaires. Les disponibilités des vacataires sont obligatoires. Les **Ressources académiques** séparent Filières, Groupes, Modules, Enseignants, Salles et Campus ; le bouton **Créer un groupe** reste visible et les filières disposent d’une liste avec création/modification.
+
+Pour repartir d’un planning vide : **Planifier les cours → Séances enregistrées → Vider le planning**, puis saisir `VIDER`. La route `/api/v1/planning/reset` doit être disponible sur le backend à jour. Une sauvegarde locale est créée avant la suppression transactionnelle ; ressources, qualifications et besoins sont conservés. Si une séance contient des absences, toute la remise à zéro est refusée. Les archives sont dans `backend-spring/.planning-backups/` avec le script de lancement et sont exclues de Git.
+
+Voir le [rapport de réorganisation](docs/analysis/reorganisation-planning-2026-11-11.md) pour l’audit tâche par tâche, les vérifications et les limites. Cette opération n’est jamais exécutée automatiquement au démarrage.
+
+Voir le [rapport du solveur](docs/analysis/solveur-cpsat-2026-11-11.md) pour les contraintes, le calendrier configurable, les endpoints, les tests et un planning fictif réellement calculé. La migration V4 ajoute uniquement les tables du solveur ; elle n’injecte pas ce jeu fictif dans MySQL. Le calendrier affiché est une démonstration à confirmer avec l’établissement.
 
 ## Docker local
 

@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(properties = {"logging.level.root=WARN", "logging.level.org.springframework=WARN", "logging.level.org.hibernate=WARN"})
+@SpringBootTest(properties = {"logging.level.root=WARN", "logging.level.org.springframework=WARN", "logging.level.org.hibernate=WARN", "univora.planning-backup-directory=target/planning-test-backups"})
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
@@ -40,6 +40,9 @@ class PlanningIntegrationTest {
     @Autowired ma.emsi.academic.service.AbsenceService absenceService;
     @Autowired UtilisateurRepository users;
     @Autowired JwtTokenProvider tokens;
+    @Autowired ma.emsi.academic.service.PlanningResetService resetService;
+    @Autowired TimetableProposalRepository proposals;
+    @Autowired TeachingRequirementRepository requirements;
     Campus campus;
     Groupe group;
     Salle room;
@@ -121,5 +124,64 @@ class PlanningIntegrationTest {
         absenceService.justifierAbsence(recorded.getId(), "Non justifié", false);
         absenceService.deleteAbsence(recorded.getId());
         org.junit.jupiter.api.Assertions.assertEquals(0, student.getCumulHeuresAbsence().signum());
+    }
+
+    @Test void groupCanBeCreatedUpdatedAndFoundInWorkspace() throws Exception {
+        String code="ORG-"+UUID.randomUUID().toString().substring(0,8);
+        var body=new java.util.HashMap<String,Object>();body.put("codeGroupe",code);body.put("filiereId",group.getFiliere().getId());body.put("campusFixeId",campus.getId());body.put("anneeEtude",2);body.put("effectif",24);body.put("laboratoiresRequis","STANDARD");
+        var response=http.perform(post("/api/v1/groupes").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(body))).andExpect(status().isCreated()).andExpect(jsonPath("$.codeGroupe").value(code)).andReturn();
+        long id=mapper.readTree(response.getResponse().getContentAsString()).path("id").asLong();
+        body.put("effectif",28);http.perform(put("/api/v1/groupes/"+id).header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(body))).andExpect(status().isOk()).andExpect(jsonPath("$.effectif").value(28));
+        var workspace=http.perform(get("/api/v1/planning/workspace").header("Authorization",authorization)).andExpect(status().isOk()).andReturn();
+        org.junit.jupiter.api.Assertions.assertTrue(java.util.stream.StreamSupport.stream(mapper.readTree(workspace.getResponse().getContentAsString()).path("groupes").spliterator(),false).anyMatch(g->g.path("id").asText().equals(String.valueOf(id))&&g.path("effectif").asInt()==28));
+        body.put("codeGroupe",code.toLowerCase(java.util.Locale.ROOT));http.perform(post("/api/v1/groupes").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(body))).andExpect(status().isBadRequest());
+        body.put("anneeEtude",6);http.perform(put("/api/v1/groupes/"+id).header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(body))).andExpect(status().isBadRequest());
+        var need=new ma.emsi.academic.domain.solver.TeachingRequirement();need.setGroupeId(id);need.setElementId(element.getId());need.setEnseignantId(teacher.getId());need.setWeeklySessions(2);requirements.saveAndFlush(need);
+        http.perform(delete("/api/v1/groupes/"+id).header("Authorization",authorization)).andExpect(status().isBadRequest());org.junit.jupiter.api.Assertions.assertTrue(groupes.existsById(id));
+        var otherFiliere=filieres.saveAndFlush(Filiere.builder().code("OTHER-"+UUID.randomUUID().toString().substring(0,6)).libelle("Autre filière").build());body.put("filiereId",otherFiliere.getId());body.put("anneeEtude",3);
+        http.perform(put("/api/v1/groupes/"+id).header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(body))).andExpect(status().isBadRequest());
+    }
+    @Test void filiereWithModulesCannotCascadeDeleteItsContent() throws Exception {
+        String code="F-ORG-"+UUID.randomUUID().toString().substring(0,6);
+        var response=http.perform(post("/api/v1/filieres").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("code",code,"libelle","Formation organisée")))).andExpect(status().isCreated()).andReturn();
+        long id=mapper.readTree(response.getResponse().getContentAsString()).path("id").asLong();
+        var f=filieres.findById(id).orElseThrow();var m=modules.saveAndFlush(ma.emsi.academic.domain.entity.Module.builder().codeModule("M-"+code).intitule("Module à conserver").filiere(f).build());
+        // Refresh the inverse relationship as it would be in a separate HTTP transaction.
+        f.getModules().add(m);
+        http.perform(delete("/api/v1/filieres/"+id).header("Authorization",authorization)).andExpect(status().isBadRequest());org.junit.jupiter.api.Assertions.assertTrue(modules.existsById(m.getId()));
+        http.perform(put("/api/v1/filieres/"+id).header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("code",code,"libelle","Intitulé corrigé")))).andExpect(status().isOk()).andExpect(jsonPath("$.libelle").value("Intitulé corrigé"));
+    }
+    @Test void teacherProfileAndQualificationsAreVisibleInWorkspace() throws Exception {
+        String unique=UUID.randomUUID().toString().substring(0,8);var body=new java.util.HashMap<String,Object>();body.put("matricule","ORG-"+unique);body.put("nom","Nom");body.put("prenom","Prénom");body.put("email",unique+"@example.invalid");body.put("typeContrat","PERMANENT");body.put("heuresContractuellesSemaine",18);body.put("estActif",true);body.put("disponibilitesFixesJson","[]");
+        var response=http.perform(post("/api/v1/enseignants").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(body))).andExpect(status().isCreated()).andReturn();long id=mapper.readTree(response.getResponse().getContentAsString()).path("id").asLong();
+        http.perform(post("/api/v1/planning/solver/qualifications").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("enseignantId",id,"moduleId",element.getModule().getId())))).andExpect(status().isOk());
+        var workspace=http.perform(get("/api/v1/planning/workspace").header("Authorization",authorization)).andExpect(status().isOk()).andReturn();var teachers=mapper.readTree(workspace.getResponse().getContentAsString()).path("enseignants");
+        var profile=java.util.stream.StreamSupport.stream(teachers.spliterator(),false).filter(t->t.path("id").asText().equals(String.valueOf(id))).findFirst().orElseThrow();org.junit.jupiter.api.Assertions.assertEquals(String.valueOf(element.getModule().getId()),profile.path("competencesModulesIds").get(0).asText());
+        body.put("estActif",false);http.perform(put("/api/v1/enseignants/"+id).header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(body))).andExpect(status().isOk()).andExpect(jsonPath("$.estActif").value(false));
+        http.perform(delete("/api/v1/enseignants/"+id).header("Authorization",authorization)).andExpect(status().isBadRequest());org.junit.jupiter.api.Assertions.assertTrue(enseignants.existsById(id));
+    }
+    @Test void resetArchivesSessionsAndPreservesTheAcademicDirectory() throws Exception {
+        var s=seances.saveAndFlush(Seance.builder().groupe(group).salle(room).enseignant(teacher).elementModule(element).jourSemaine(JourSemaine.LUNDI).numeroCreneau(CreneauHoraire.S1_08H30).build());
+        var p=new ma.emsi.academic.domain.solver.TimetableProposal();p.setId(UUID.randomUUID().toString());p.setOwner("test");p.setState("PENDING");p.setExpiresAt(java.time.Instant.now().plusSeconds(60));p.setFingerprint("a".repeat(64));p.setSolutionJson("{}");proposals.saveAndFlush(p);
+        var response=http.perform(post("/api/v1/planning/reset").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("expectedSessionIds",java.util.List.of(s.getId()),"confirmation","VIDER")))).andExpect(status().isOk()).andExpect(jsonPath("$.deletedSessions").value(1)).andReturn();
+        String backup=mapper.readTree(response.getResponse().getContentAsString()).path("backupFile").asText();var path=java.nio.file.Path.of("target/planning-test-backups",backup);org.junit.jupiter.api.Assertions.assertTrue(java.nio.file.Files.exists(path));org.junit.jupiter.api.Assertions.assertEquals(1,mapper.readTree(path.toFile()).path("workspace").path("seances").size());
+        org.junit.jupiter.api.Assertions.assertEquals(0,seances.count());org.junit.jupiter.api.Assertions.assertTrue(groupes.existsById(group.getId()));org.junit.jupiter.api.Assertions.assertTrue(salles.existsById(room.getId()));org.junit.jupiter.api.Assertions.assertTrue(enseignants.existsById(teacher.getId()));org.junit.jupiter.api.Assertions.assertTrue(elements.existsById(element.getId()));org.junit.jupiter.api.Assertions.assertEquals("REJECTED",proposals.findById(p.getId()).orElseThrow().getState());
+    }
+    @Test void resetRefusesAStaleListOrMissingConfirmation() throws Exception {
+        seances.saveAndFlush(Seance.builder().groupe(group).salle(room).enseignant(teacher).elementModule(element).jourSemaine(JourSemaine.LUNDI).numeroCreneau(CreneauHoraire.S1_08H30).build());
+        http.perform(post("/api/v1/planning/reset").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content("{\"expectedSessionIds\":[],\"confirmation\":\"VIDER\"}")).andExpect(status().isConflict());
+        http.perform(post("/api/v1/planning/reset").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content("{\"expectedSessionIds\":[],\"confirmation\":\"\"}")).andExpect(status().isBadRequest());org.junit.jupiter.api.Assertions.assertEquals(1,seances.count());
+    }
+    @Test void resetNeverDeletesRecordedAbsences() throws Exception {
+        var s=seances.saveAndFlush(Seance.builder().groupe(group).salle(room).enseignant(teacher).elementModule(element).jourSemaine(JourSemaine.LUNDI).numeroCreneau(CreneauHoraire.S1_08H30).build());var other=seances.saveAndFlush(Seance.builder().groupe(group).salle(room).enseignant(teacher).elementModule(element).jourSemaine(JourSemaine.MARDI).numeroCreneau(CreneauHoraire.S1_08H30).build());
+        String suffix=UUID.randomUUID().toString();var student=students.saveAndFlush(Etudiant.builder().matricule(suffix).nom("Test").prenom("Étudiant").email(suffix+"@example.invalid").groupe(group).totalHeuresModuleSemestre(new java.math.BigDecimal("45")).build());absenceService.enregistrerAbsence(student.getId(),s.getId(),"Test");
+        http.perform(post("/api/v1/planning/reset").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(Map.of("expectedSessionIds",java.util.List.of(s.getId(),other.getId()),"confirmation","VIDER")))).andExpect(status().isBadRequest());org.junit.jupiter.api.Assertions.assertEquals(2,seances.count());org.junit.jupiter.api.Assertions.assertEquals(1,absences.count());
+    }
+    @Test void resetRequiresPlanningRoleAndSuccessfulBackup() throws Exception {
+        var s=seances.saveAndFlush(Seance.builder().groupe(group).salle(room).enseignant(teacher).elementModule(element).jourSemaine(JourSemaine.LUNDI).numeroCreneau(CreneauHoraire.S1_08H30).build());String body=mapper.writeValueAsString(Map.of("expectedSessionIds",java.util.List.of(s.getId()),"confirmation","VIDER"));
+        http.perform(post("/api/v1/planning/reset").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isUnauthorized());http.perform(post("/api/v1/planning/reset").header("Authorization",bearer(RoleEnum.ROLE_ETUDIANT)).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isForbidden());
+        java.nio.file.Files.createDirectories(java.nio.file.Path.of("target"));var blocked=java.nio.file.Files.createTempFile(java.nio.file.Path.of("target"),"blocked-archive-",".tmp");Object previous=org.springframework.test.util.ReflectionTestUtils.getField(resetService,"backupDirectory");
+        try {org.springframework.test.util.ReflectionTestUtils.setField(resetService,"backupDirectory",blocked.toString());http.perform(post("/api/v1/planning/reset").header("Authorization",authorization).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isBadRequest());org.junit.jupiter.api.Assertions.assertEquals(1,seances.count());}
+        finally{org.springframework.test.util.ReflectionTestUtils.setField(resetService,"backupDirectory",previous);java.nio.file.Files.deleteIfExists(blocked);}
     }
 }

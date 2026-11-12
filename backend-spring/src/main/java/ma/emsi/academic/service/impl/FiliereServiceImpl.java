@@ -99,6 +99,9 @@ public class FiliereServiceImpl implements FiliereService {
         if (filiere.getGroupes() != null && !filiere.getGroupes().isEmpty()) {
             throw new BadRequestException("Impossible de supprimer cette filière car elle contient " + filiere.getGroupes().size() + " groupe(s) actif(s).");
         }
+        if (filiere.getModules() != null && !filiere.getModules().isEmpty()) {
+            throw new BadRequestException("Cette filière contient des modules. Leur contenu est conservé : réaffectez-les avant de supprimer la filière.");
+        }
         filiereRepository.delete(filiere);
     }
 

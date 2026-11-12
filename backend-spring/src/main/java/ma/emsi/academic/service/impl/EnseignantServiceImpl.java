@@ -22,6 +22,8 @@ import java.util.List;
 public class EnseignantServiceImpl implements EnseignantService {
 
     private final EnseignantRepository enseignantRepository;
+    private final ma.emsi.academic.repository.TeachingRequirementRepository requirements;
+    private final ma.emsi.academic.repository.TeacherQualificationRepository qualifications;
     private final ma.emsi.academic.service.PlanningAvailability availabilityParser;
 
     @Override
@@ -88,7 +90,7 @@ public class EnseignantServiceImpl implements EnseignantService {
                 .typeContrat(request.getTypeContrat())
                 .heuresContractuellesSemaine(heures)
                 .disponibilitesFixesJson(request.getDisponibilitesFixesJson())
-                .estActif(true)
+                .estActif(!Boolean.FALSE.equals(request.getEstActif()))
                 .build();
 
         Enseignant saved = enseignantRepository.save(enseignant);
@@ -123,6 +125,7 @@ public class EnseignantServiceImpl implements EnseignantService {
         enseignant.setTelephone(request.getTelephone());
         enseignant.setSpecialite(request.getSpecialite());
         enseignant.setTypeContrat(request.getTypeContrat());
+        if (request.getEstActif() != null) enseignant.setEstActif(request.getEstActif());
         if (request.getHeuresContractuellesSemaine() != null) {
             enseignant.setHeuresContractuellesSemaine(request.getHeuresContractuellesSemaine());
         }
@@ -141,6 +144,9 @@ public class EnseignantServiceImpl implements EnseignantService {
                 .orElseThrow(() -> new ResourceNotFoundException("Enseignant introuvable avec l'identifiant : " + id));
         if (enseignant.getSeances() != null && !enseignant.getSeances().isEmpty()) {
             throw new BadRequestException("Impossible de supprimer cet enseignant car il a des séances de cours planifiées.");
+        }
+        if (requirements.existsByEnseignantId(id) || qualifications.existsByEnseignantId(id)) {
+            throw new BadRequestException("Cet enseignant est utilisé par des besoins ou qualifications. Réaffectez-les dans la planification avant de supprimer son profil.");
         }
         enseignantRepository.delete(enseignant);
     }
@@ -161,6 +167,7 @@ public class EnseignantServiceImpl implements EnseignantService {
                 .typeContrat(enseignant.getTypeContrat())
                 .heuresContractuellesSemaine(enseignant.getHeuresContractuellesSemaine())
                 .heuresPlanifiees(heuresPlanifiees)
+                .estActif(enseignant.getEstActif())
                 .build();
     }
 }

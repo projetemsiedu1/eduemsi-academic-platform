@@ -37,7 +37,7 @@ export function TimetableSidebar({
     },
     {
       href: "/timetable/constraints",
-      label: "Séances et vérification",
+      label: "Planifier les cours",
       icon: Sliders,
     },
   ];

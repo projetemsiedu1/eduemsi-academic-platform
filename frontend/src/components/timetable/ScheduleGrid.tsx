@@ -7,7 +7,7 @@ import {
   Seance,
 } from "@/types/timetable";
 import { useTimetable } from "@/context/TimetableContext";
-import { MapPin, Laptop, Lock, User, Users, Coffee, Clock } from "lucide-react";
+import { MapPin, Laptop, Lock, User, Users, Clock } from "lucide-react";
 
 interface ScheduleGridProps {
   seances: Seance[];
@@ -26,7 +26,43 @@ export function ScheduleGrid({
   campusName,
   onSeanceClick,
 }: ScheduleGridProps) {
-  const { salles, enseignants, groupes, elements, modules } = useTimetable();
+  const {
+    salles,
+    enseignants,
+    groupes,
+    elements,
+    modules,
+    calendar,
+    calendarError,
+  } = useTimetable();
+  const days = JOURS_SEMAINE.filter(
+    (d) =>
+      !calendar ||
+      calendar.days.includes(d.code) ||
+      seances.some((s) => s.jourSemaine === d.code),
+  );
+  const coveredCodes = new Set(
+    seances.flatMap((a) => {
+      const start = CRENEAUX_OFFICIELS_EMSI.findIndex(
+        (c) => c.code === a.numeroCreneau,
+      );
+      return start < 0
+        ? []
+        : CRENEAUX_OFFICIELS_EMSI.slice(start, start + a.spanSeances).map(
+            (c) => c.code,
+          );
+    }),
+  );
+  const slots = calendar
+    ? CRENEAUX_OFFICIELS_EMSI.filter(
+        (s) =>
+          calendar.slots.some((c) => c.code === s.code) ||
+          coveredCodes.has(s.code),
+      ).map((s) => ({ ...s, ...calendar.slots.find((c) => c.code === s.code) }))
+    : CRENEAUX_OFFICIELS_EMSI;
+  const columns = {
+    gridTemplateColumns: `repeat(${days.length + 1}, minmax(0, 1fr))`,
+  };
 
   const salleMap = new Map(salles.map((s) => [s.id, s]));
   const enseignantMap = new Map(enseignants.map((e) => [e.id, e]));
@@ -52,6 +88,17 @@ export function ScheduleGrid({
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200  overflow-hidden">
+      {calendar && (
+        <p className="solver-calendar-note">
+          {calendar.label} · Pause déjeuner {calendar.lunchStart}–
+          {calendar.lunchEnd}.
+        </p>
+      )}
+      {calendarError && (
+        <p role="alert" className="planning-form-error">
+          {calendarError}
+        </p>
+      )}
       {/* EN-TÊTE DU PLANNING */}
       <div className="p-5 border-b border-slate-200 bg-slate-50/70 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
@@ -95,15 +142,23 @@ export function ScheduleGrid({
       </div>
 
       {/* GRILLE DES 6 JOURS X CRENEAUX EMSI */}
-      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Grille hebdomadaire, défilement horizontal disponible">
+      <div
+        className="overflow-x-auto"
+        tabIndex={0}
+        role="region"
+        aria-label="Grille hebdomadaire, défilement horizontal disponible"
+      >
         <div className="min-w-[980px]">
           {/* LIGNE DES JOURS */}
-          <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-100/80 text-xs font-bold text-slate-700 text-center">
+          <div
+            style={columns}
+            className="grid grid-cols-7 border-b border-slate-200 bg-slate-100/80 text-xs font-bold text-slate-700 text-center"
+          >
             <div className="p-3 border-r border-slate-200 text-slate-500   flex items-center justify-center gap-1 font-semibold">
               <Clock className="w-3.5 h-3.5" />
               <span>Créneaux</span>
             </div>
-            {JOURS_SEMAINE.map((jour) => (
+            {days.map((jour) => (
               <div
                 key={jour.code}
                 className="p-3 border-r border-slate-200 last:border-r-0"
@@ -112,21 +167,28 @@ export function ScheduleGrid({
                   {jour.label}
                 </span>
                 <span className="text-xs text-slate-400 font-medium">
-                  8h30 - 18h45
+                  {slots[0]?.heureDebut} – {slots.at(-1)?.heureFin}
                 </span>
               </div>
             ))}
           </div>
 
           {/* LIGNES DES CRÉNEAUX */}
-          {CRENEAUX_OFFICIELS_EMSI.map((creneau) => {
-            const showMorningBreakAfter = creneau.code === "S1_08H30";
-            const showLunchBreakAfter = creneau.code === "S3_12H00";
-            const showAfternoonBreakAfter = creneau.code === "S4_13H45";
+          {slots.map((creneau, index) => {
+            const next = slots[index + 1];
+            const gap = next && creneau.heureFin < next.heureDebut;
+            const lunch =
+              calendar &&
+              creneau.heureFin <= calendar.lunchStart &&
+              next &&
+              next.heureDebut >= calendar.lunchEnd;
 
             return (
               <React.Fragment key={creneau.code}>
-                <div className="grid grid-cols-7 border-b border-slate-100 last:border-b-0">
+                <div
+                  style={columns}
+                  className="grid grid-cols-7 border-b border-slate-100 last:border-b-0"
+                >
                   {/* CELLULE HORAIRE */}
                   <div className="p-3 border-r border-slate-200 bg-slate-50 flex flex-col justify-center items-center text-center">
                     <span className="text-xs font-semibold text-slate-800 tabular-nums">
@@ -144,7 +206,7 @@ export function ScheduleGrid({
                   </div>
 
                   {/* CELLULES PAR JOUR */}
-                  {JOURS_SEMAINE.map((jour) => {
+                  {days.map((jour) => {
                     const key = `${jour.code}__${creneau.code}`;
                     const seancesCellule = seancesMatrix.get(key) || [];
 
@@ -267,30 +329,12 @@ export function ScheduleGrid({
                   })}
                 </div>
 
-                {/* PAUSE OFFICIELLE EMSI DU MATIN (10h00 - 10h15) */}
-                {showMorningBreakAfter && (
-                  <div className="bg-slate-50/80 border-b border-slate-200/80 py-1 px-4 text-center text-xs font-bold text-slate-900 flex items-center justify-center gap-2">
-                    <Coffee className="w-3.5 h-3.5 text-slate-700" />
-                    <span>
-                      Pause Réglementaire EMSI • 10h00 à 10h15 (15 min)
-                    </span>
-                  </div>
-                )}
-
-                {/* PAUSE DEJEUNER */}
-                {showLunchBreakAfter && (
-                  <div className="bg-slate-100 border-b border-slate-200 py-1.5 px-4 text-center text-xs font-bold text-slate-700 flex items-center justify-center gap-2">
-                    <span>Interruption entre créneaux : 13h30 à 13h45</span>
-                  </div>
-                )}
-
-                {/* PAUSE OFFICIELLE EMSI DE L'APRES-MIDI */}
-                {showAfternoonBreakAfter && (
-                  <div className="bg-slate-50/80 border-b border-slate-200/80 py-1 px-4 text-center text-xs font-bold text-slate-900 flex items-center justify-center gap-2">
-                    <Coffee className="w-3.5 h-3.5 text-slate-700" />
-                    <span>
-                      Pause Réglementaire EMSI • 15h15 à 15h30 (15 min)
-                    </span>
+                {gap && (
+                  <div className="bg-slate-50 border-b border-slate-200 py-2 px-4 text-center text-xs text-slate-700">
+                    {lunch
+                      ? "Pause déjeuner configurée"
+                      : "Interruption entre créneaux"}{" "}
+                    : {creneau.heureFin} à {next.heureDebut}
                   </div>
                 )}
               </React.Fragment>

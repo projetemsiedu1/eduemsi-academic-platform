@@ -22,6 +22,7 @@ Thumbs.db
 
 # Environment & Temp
 .integration/
+.planning-backups/
 .taste-skill/
 *.log
 .env

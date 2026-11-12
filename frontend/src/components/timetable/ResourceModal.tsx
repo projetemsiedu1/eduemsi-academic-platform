@@ -17,6 +17,9 @@ interface Props {
   onClose: () => void;
   resourceType: ModalResourceType;
   itemToEdit?: Salle | Enseignant | Groupe | null;
+  initialFiliereId?: string;
+  initialCampusId?: string;
+  onSaved?: () => void;
 }
 export function ResourceModal(props: Props) {
   const { busy } = useTimetable();
@@ -25,9 +28,7 @@ export function ResourceModal(props: Props) {
       open={props.isOpen}
       onClose={props.onClose}
       busy={busy}
-      title={
-        props.itemToEdit ? "Modifier la ressource" : "Ajouter une ressource"
-      }
+      title={`${props.itemToEdit ? "Modifier" : "Créer"} ${props.resourceType === "groupe" ? "un groupe" : props.resourceType === "salle" ? "une salle" : props.resourceType === "enseignant" ? "un enseignant" : "un module"}`}
     >
       <ResourceForm
         key={`${props.resourceType}-${props.itemToEdit?.id ?? "new"}-${props.isOpen}`}
@@ -52,10 +53,20 @@ function Field({
     </div>
   );
 }
-function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
+function ResourceForm({
+  resourceType,
+  itemToEdit,
+  onClose,
+  onSaved,
+  initialFiliereId,
+  initialCampusId,
+}: Props) {
   const ctx = useTimetable();
   const item = itemToEdit as Partial<Salle & Enseignant & Groupe> | null;
-  const [selectedFiliere, setSelectedFiliere] = useState(item?.filiereId ?? "");
+  const [selectedFiliere, setSelectedFiliere] = useState(
+    item?.filiereId ?? initialFiliereId ?? "",
+  );
+  const [contract, setContract] = useState(item?.typeContrat ?? "PERMANENT");
   const [pending, setPending] = useState(false);
   const [failure, setFailure] = useState("");
   const [availability, setAvailability] = useState<DisponibiliteJour[]>(
@@ -114,7 +125,7 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
           typeContrat: str("contrat") as TypeContrat,
           heuresContractuellesSemaine: num("hours"),
           disponibilites: availability,
-          estActif: true,
+          estActif: f.get("active") === "on",
           competencesModulesIds:
             (itemToEdit as Enseignant)?.competencesModulesIds ?? [],
         });
@@ -140,8 +151,10 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
           volumeHoraire: num("hours"),
           typeSalleRequis: str("type"),
         });
-      if (success) onClose();
-      else
+      if (success) {
+        onSaved?.();
+        onClose();
+      } else
         setFailure(
           "L’enregistrement a été refusé. Vérifiez les valeurs ou les ressources déjà utilisées.",
         );
@@ -161,7 +174,9 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
         name="campus"
         required
         defaultValue={
-          resourceType === "salle" ? item?.campusId : item?.campusFixeId
+          (resourceType === "salle" ? item?.campusId : item?.campusFixeId) ??
+          initialCampusId ??
+          ""
         }
       >
         <option value="">Choisir un campus</option>
@@ -185,7 +200,7 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
         <option value="">Choisir une filière</option>
         {ctx.filieres.map((f) => (
           <option key={f.id} value={f.id}>
-            {f.intitule}
+            {f.codeFiliere} — {f.intitule}
           </option>
         ))}
       </select>
@@ -218,7 +233,13 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
       <fieldset disabled={pending}>
         <Field
           name="code"
-          label={resourceType === "enseignant" ? "Matricule" : "Code"}
+          label={
+            resourceType === "enseignant"
+              ? "Matricule de l’enseignant"
+              : resourceType === "groupe"
+                ? "Code du groupe (ex. 2DSI G3)"
+                : "Code"
+          }
         >
           {input("code", {
             required: true,
@@ -272,6 +293,14 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
         )}
         {resourceType === "enseignant" && (
           <>
+            <label className="planning-checkbox">
+              <input
+                type="checkbox"
+                name="active"
+                defaultChecked={item?.estActif ?? true}
+              />
+              Enseignant actif pour la planification
+            </label>
             <div className="planning-form-row">
               <Field name="nom" label="Nom">
                 {input("nom", {
@@ -314,7 +343,8 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
                 <select
                   id="resource-contrat"
                   name="contrat"
-                  defaultValue={item?.typeContrat ?? "PERMANENT"}
+                  value={contract}
+                  onChange={(e) => setContract(e.target.value as TypeContrat)}
                 >
                   <option value="PERMANENT">Permanent</option>
                   <option value="VACATAIRE">Vacataire</option>
@@ -330,10 +360,16 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
                 })}
               </Field>
             </div>
-            <details>
-              <summary>Disponibilités de l’enseignant</summary>
+            <details open={contract === "VACATAIRE"}>
+              <summary>
+                Disponibilités de l’enseignant ·{" "}
+                {availability.reduce((n, d) => n + d.creneaux.length, 0)}{" "}
+                créneaux sélectionnés
+              </summary>
               <p className="planning-hint">
-                Sans sélection, les disponibilités ne sont pas renseignées.
+                {contract === "VACATAIRE"
+                  ? "Les disponibilités d’un vacataire doivent être renseignées avant la planification. Cochez ses créneaux autorisés."
+                  : "Sans sélection, ce permanent n’a aucune restriction de disponibilité. Cochez des créneaux pour limiter sa disponibilité."}
               </p>
               {JOURS_SEMAINE.map((day) => (
                 <fieldset key={day.code} className="planning-availability">
@@ -342,6 +378,17 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
                     <label key={slot.code}>
                       <input
                         type="checkbox"
+                        disabled={Boolean(
+                          ctx.calendar &&
+                            !ctx.calendar.slots.some(
+                              (s) => s.code === slot.code,
+                            ) &&
+                            !availability.some(
+                              (d) =>
+                                d.jour === day.code &&
+                                d.creneaux.includes(slot.code),
+                            ),
+                        )}
                         checked={availability.some(
                           (d) =>
                             d.jour === day.code &&
@@ -352,6 +399,10 @@ function ResourceForm({ resourceType, itemToEdit, onClose }: Props) {
                         }
                       />
                       {slot.heureDebut}
+                      {ctx.calendar &&
+                      !ctx.calendar.slots.some((s) => s.code === slot.code)
+                        ? " (fermé)"
+                        : ""}
                     </label>
                   ))}
                 </fieldset>

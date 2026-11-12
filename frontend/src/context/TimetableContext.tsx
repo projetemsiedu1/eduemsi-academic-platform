@@ -35,6 +35,7 @@ import {
 } from "@/data/timetable-mock";
 import { checkTimetableConflicts } from "@/lib/timetable-checker";
 import { ApiClient, ApiError } from "@/lib/api-client";
+import type { SolverCalendar } from "@/types/solver";
 
 export interface TimetableData {
   campuses: Campus[];
@@ -79,6 +80,8 @@ export interface ModuleInput {
 }
 
 type ContextValue = TimetableData & {
+  calendar: SolverCalendar | null;
+  calendarError: string;
   stats: ReturnType<typeof computeTimetableStats>;
   verificationReport: ReturnType<typeof checkTimetableConflicts>;
   mode: "live" | "demo";
@@ -117,6 +120,8 @@ function workspaceError(reason: unknown): string {
 }
 
 export function TimetableProvider({ children }: { children: ReactNode }) {
+  const [calendar, setCalendar] = useState<SolverCalendar | null>(null);
+  const [calendarError, setCalendarError] = useState("");
   const [data, setData] = useState<TimetableData>(EMPTY);
   const [mode, setMode] = useState<"live" | "demo">("live");
   const [loading, setLoading] = useState(true);
@@ -127,6 +132,30 @@ export function TimetableProvider({ children }: { children: ReactNode }) {
   const [isCustomScenario, setIsCustomScenario] = useState(false);
   const mutation = useRef(false);
   const generation = useRef(0);
+
+  useEffect(() => {
+    let active = true;
+    if (mode === "live") {
+      ApiClient.get<SolverCalendar>("/planning/solver/calendar")
+        .then((value) => {
+          if (active) {
+            setCalendar(value);
+            setCalendarError("");
+          }
+        })
+        .catch(() => {
+          if (active) {
+            setCalendar(null);
+            setCalendarError(
+              "Le calendrier du solveur est indisponible. Vérifiez que le backend est à jour.",
+            );
+          }
+        });
+    }
+    return () => {
+      active = false;
+    };
+  }, [mode]);
 
   const reload = useCallback(async () => {
     const ticket = ++generation.current;
@@ -145,8 +174,7 @@ export function TimetableProvider({ children }: { children: ReactNode }) {
         throw new Error("Le format des données de planning est invalide.");
       if (ticket === generation.current) setData(snapshot);
     } catch (reason) {
-      if (ticket === generation.current)
-        setError(workspaceError(reason));
+      if (ticket === generation.current) setError(workspaceError(reason));
     } finally {
       if (ticket === generation.current) setLoading(false);
     }
@@ -383,6 +411,8 @@ export function TimetableProvider({ children }: { children: ReactNode }) {
     <TimetableContext.Provider
       value={{
         ...data,
+        calendar: mode === "live" ? calendar : null,
+        calendarError: mode === "live" ? calendarError : "",
         stats,
         verificationReport,
         mode,

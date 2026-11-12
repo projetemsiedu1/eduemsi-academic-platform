@@ -32,10 +32,12 @@ public class PlanningService {
     private final AbsenceRepository absences;
     private final EntityManager entityManager;
     private final PlanningAvailability availabilityParser;
+    private final TeacherQualificationRepository qualifications;
 
     @Transactional(readOnly = true)
     public PlanningSnapshot snapshot() {
         var allGroupes = groupes.findAll();
+        var allQualifications = qualifications.findAll();
         var options = allGroupes.stream().filter(g -> g.getOptionSpecialite() != null && !g.getOptionSpecialite().isBlank())
                 .map(g -> new OptionData(g.getFiliere().getId() + ":" + g.getOptionSpecialite(), g.getOptionSpecialite(),
                         g.getOptionSpecialite(), id(g.getFiliere().getId()))).distinct().toList();
@@ -45,7 +47,7 @@ public class PlanningService {
                         s.getTypeSalle().name(), s.getCapacite(), s.getNombrePcOperationnels(), text(s.getSpecsEquipements()), Boolean.TRUE.equals(s.getEstDisponible()))).toList(),
                 enseignants.findAll().stream().map(e -> new EnseignantData(id(e.getId()), e.getMatricule(), e.getNom(), e.getPrenom(), e.getEmail(),
                         text(e.getTelephone()), text(e.getSpecialite()), e.getTypeContrat().name(), e.getHeuresContractuellesSemaine(),
-                        disponibilites(e.getDisponibilitesFixesJson()), Boolean.TRUE.equals(e.getEstActif()), List.of())).toList(),
+                        disponibilites(e.getDisponibilitesFixesJson()), Boolean.TRUE.equals(e.getEstActif()), allQualifications.stream().filter(q -> q.getEnseignantId().equals(e.getId())).map(q -> id(q.getModuleId())).toList())).toList(),
                 filieres.findAll().stream().map(f -> new FiliereData(id(f.getId()), f.getCode(), f.getLibelle(), "", "")).toList(), options,
                 allGroupes.stream().map(g -> new GroupeData(id(g.getId()), g.getCodeGroupe(), id(g.getFiliere().getId()),
                         g.getOptionSpecialite() == null ? null : g.getFiliere().getId() + ":" + g.getOptionSpecialite(), g.getAnneeEtude(),

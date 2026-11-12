@@ -1,0 +1,180 @@
+{
+  "status": "OPTIMAL",
+  "wallTimeSeconds": 0.9584134,
+  "requestedSessions": 18,
+  "assignedSessions": 18,
+  "objectiveValue": 0,
+  "bestObjectiveBound": 0,
+  "assignments": [
+    {
+      "requirementId": "1",
+      "groupId": "1",
+      "elementId": "1",
+      "teacherId": "1",
+      "roomId": "3",
+      "day": "VENDREDI",
+      "slot": "S1_08H30"
+    },
+    {
+      "requirementId": "1",
+      "groupId": "1",
+      "elementId": "1",
+      "teacherId": "1",
+      "roomId": "1",
+      "day": "VENDREDI",
+      "slot": "S2_10H15"
+    },
+    {
+      "requirementId": "1",
+      "groupId": "1",
+      "elementId": "1",
+      "teacherId": "1",
+      "roomId": "1",
+      "day": "SAMEDI",
+      "slot": "S1_08H30"
+    },
+    {
+      "requirementId": "2",
+      "groupId": "1",
+      "elementId": "2",
+      "teacherId": "4",
+      "roomId": "2",
+      "day": "LUNDI",
+      "slot": "S2_10H15"
+    },
+    {
+      "requirementId": "2",
+      "groupId": "1",
+      "elementId": "2",
+      "teacherId": "4",
+      "roomId": "2",
+      "day": "LUNDI",
+      "slot": "S4_13H45"
+    },
+    {
+      "requirementId": "2",
+      "groupId": "1",
+      "elementId": "2",
+      "teacherId": "4",
+      "roomId": "2",
+      "day": "MERCREDI",
+      "slot": "S6_17H15"
+    },
+    {
+      "requirementId": "3",
+      "groupId": "2",
+      "elementId": "3",
+      "teacherId": "2",
+      "roomId": "2",
+      "day": "JEUDI",
+      "slot": "S4_13H45"
+    },
+    {
+      "requirementId": "3",
+      "groupId": "2",
+      "elementId": "3",
+      "teacherId": "2",
+      "roomId": "1",
+      "day": "SAMEDI",
+      "slot": "S5_15H30"
+    },
+    {
+      "requirementId": "3",
+      "groupId": "2",
+      "elementId": "3",
+      "teacherId": "2",
+      "roomId": "1",
+      "day": "SAMEDI",
+      "slot": "S6_17H15"
+    },
+    {
+      "requirementId": "4",
+      "groupId": "2",
+      "elementId": "4",
+      "teacherId": "3",
+      "roomId": "3",
+      "day": "LUNDI",
+      "slot": "S1_08H30"
+    },
+    {
+      "requirementId": "4",
+      "groupId": "2",
+      "elementId": "4",
+      "teacherId": "3",
+      "roomId": "3",
+      "day": "LUNDI",
+      "slot": "S2_10H15"
+    },
+    {
+      "requirementId": "4",
+      "groupId": "2",
+      "elementId": "4",
+      "teacherId": "3",
+      "roomId": "3",
+      "day": "SAMEDI",
+      "slot": "S4_13H45"
+    },
+    {
+      "requirementId": "5",
+      "groupId": "3",
+      "elementId": "5",
+      "teacherId": "1",
+      "roomId": "4",
+      "day": "LUNDI",
+      "slot": "S1_08H30"
+    },
+    {
+      "requirementId": "5",
+      "groupId": "3",
+      "elementId": "5",
+      "teacherId": "1",
+      "roomId": "6",
+      "day": "LUNDI",
+      "slot": "S2_10H15"
+    },
+    {
+      "requirementId": "5",
+      "groupId": "3",
+      "elementId": "5",
+      "teacherId": "1",
+      "roomId": "4",
+      "day": "LUNDI",
+      "slot": "S4_13H45"
+    },
+    {
+      "requirementId": "6",
+      "groupId": "3",
+      "elementId": "6",
+      "teacherId": "5",
+      "roomId": "5",
+      "day": "JEUDI",
+      "slot": "S1_08H30"
+    },
+    {
+      "requirementId": "6",
+      "groupId": "3",
+      "elementId": "6",
+      "teacherId": "5",
+      "roomId": "5",
+      "day": "JEUDI",
+      "slot": "S2_10H15"
+    },
+    {
+      "requirementId": "6",
+      "groupId": "3",
+      "elementId": "6",
+      "teacherId": "5",
+      "roomId": "5",
+      "day": "VENDREDI",
+      "slot": "S6_17H15"
+    }
+  ],
+  "diagnostics": [
+    "Enseignant permanent 1 : sans restriction de disponibilité renseignée, tous les créneaux ouverts sont autorisés.",
+    "Enseignant permanent 2 : sans restriction de disponibilité renseignée, tous les créneaux ouverts sont autorisés.",
+    "Enseignant permanent 3 : sans restriction de disponibilité renseignée, tous les créneaux ouverts sont autorisés."
+  ],
+  "validated": true,
+  "proposalId": null,
+  "proposalState": null
+}

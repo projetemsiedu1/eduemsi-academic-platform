@@ -212,6 +212,76 @@ button:disabled { cursor: wait; }
 }
 
 /* Shared planning workspace: flat surfaces, neutral navigation, EMSI actions. */
+.directory-sections { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.directory-sections a { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; padding: 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); font-size: 13px; }
+.directory-sections a[aria-current] { border-color: var(--foreground); font-weight: 600; }
+.directory-sections a span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.directory-panel { min-width: 0; }
+.directory-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.directory-heading h2 { margin: 0; }
+.directory-heading p { margin-top: 8px; }
+.directory-heading .planning-form-actions { margin: 0; }
+.directory-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr)); align-items: end; gap: 16px; margin: 24px 0 16px; }
+.directory-filters .planning-field, .directory-filters input, .directory-filters select { min-width: 0; width: 100%; }
+.directory-filters button, .directory-heading button, .planning-reset > button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); font-size: 13px; }
+.directory-heading .planning-primary { background: var(--emsi-green-dark); color: var(--surface); border-color: transparent; }
+.directory-prerequisite { padding: 16px; background: var(--background); font-size: 14px; }
+.directory-table { max-width: 100%; overflow-x: auto; margin-top: 20px; }
+.directory-table table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.directory-table th, .directory-table td { text-align: left; border-bottom: 1px solid var(--border); padding: 16px 12px; vertical-align: top; }
+.directory-table thead th { font-size: 12px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.directory-table tbody th { min-width: 190px; font-weight: 400; }
+.directory-table tbody th strong { font-weight: 500; }
+.directory-table tbody th span { display: block; margin-top: 6px; color: var(--muted); overflow-wrap: anywhere; }
+.directory-table a, .directory-prerequisite a { text-decoration: underline; text-underline-offset: 4px; }
+.directory-elements { list-style: none; margin: 0; padding: 0; }
+.directory-elements li + li { margin-top: 8px; }
+.directory-row-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+.directory-row-actions button { min-height: 44px; padding: 8px 10px; border: 0; background: transparent; color: var(--emsi-green-dark); font-size: 13px; }
+.directory-row-actions button:hover { text-decoration: underline; text-underline-offset: 4px; }
+.directory-mobile-list { display: none; }
+.directory-filter-toggle { display: none; }
+.planning-manual summary { min-height: 48px; cursor: pointer; font-weight: 500; }
+.planning-manual > section { margin-top: 20px; }
+.planning-reset { max-width: 100%; }
+.planning-reset p { max-width: 60ch; overflow-wrap: anywhere; }
+.planning-setup-steps { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px 24px; padding-left: 20px; margin-top: 20px; }
+.planning-setup-steps li { padding: 8px; font-size: 13px; }
+.planning-setup-steps a { display: grid; gap: 10px; min-height: 110px; }
+.planning-setup-steps strong { display: flex; justify-content: space-between; gap: 12px; font-weight: 500; }
+.planning-setup-steps a > span:not(.planning-text-link) { color: var(--muted); line-height: 1.6; }
+@media (max-width: 1000px) { .directory-sections, .planning-setup-steps { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+@media (max-width: 640px) {
+ .directory-filter-toggle { display: inline-flex; align-items: center; min-height: 48px; border: 1px solid var(--border); background: var(--surface); padding: 10px 16px; border-radius: 6px; font-size: 13px; margin-block: 12px; }
+ .directory-filters:not([data-open]) { display: none; }
+ .directory-sections { grid-template-columns: repeat(2, minmax(0,1fr)); }
+ .directory-heading { align-items: flex-start; }
+ .directory-heading button, .directory-filters button, .directory-row-actions button { min-height: 48px; }
+ .directory-table { display: none; }
+ .directory-mobile-list { display: grid; gap: 20px; list-style: none; padding: 0; margin-top: 20px; }
+ .directory-mobile-list > li { border-top: 1px solid var(--border); padding-top: 20px; }
+ .directory-mobile-list h3 { font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
+ .directory-mobile-list p { overflow-wrap: anywhere; }
+ .directory-mobile-list dl { display: grid; gap: 12px; margin-block: 16px; }
+ .directory-mobile-list dt { font-size: 12px; color: var(--muted); }
+ .directory-mobile-list dd { margin: 4px 0 0; font-size: 14px; }
+ .planning-setup-steps { grid-template-columns: 1fr; }
+ .planning-setup-steps a { min-height: 90px; }
+}
+.solver-panel { min-width: 0; }
+.solver-panel > p { max-width: 85ch; }
+.solver-setup { margin-block: 24px; border-top: 1px solid var(--border); padding-top: 12px; }
+.solver-setup summary { min-height: 44px; padding-block: 10px; cursor: pointer; font-weight: 500; }
+.solver-setup .planning-resource-form { padding: 16px 0; }
+.solver-records { list-style: none; padding: 0; margin: 0; }
+.solver-records li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding: 12px 0; border-top: 1px solid var(--border); font-size: 13px; }
+.solver-records li > span { flex: 1; min-width: min(220px, 100%); overflow-wrap: anywhere; }
+.solver-records button { background: transparent; border: 0; padding: 8px 12px; color: var(--emsi-green-dark); text-decoration: underline; text-underline-offset: 4px; }
+.solver-notice { padding: 16px; border-left: 2px solid var(--emsi-green-dark); background: var(--green-soft); }
+.solver-preview { min-width: 0; margin-block: 20px; }
+.solver-calendar-note { color: var(--muted); padding: 12px 20px; font-size: 12px; line-height: 1.7; }
+.solver-panel .planning-proposal { padding: 16px; }
+.solver-panel .planning-field select { max-width: 100%; min-width: 0; }
 .planning-app { min-height: 100svh; color: var(--foreground); background: var(--background); font-size: 14px; line-height: 1.5; }
 .planning-app a { text-underline-offset: 4px; }
 .planning-app button, .planning-modal button, .planning-access button { min-height: 44px; }

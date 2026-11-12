@@ -48,4 +48,5 @@ public class CreateEnseignantRequest {
     private Integer heuresContractuellesSemaine = 18;
 
     private String disponibilitesFixesJson;
+    private Boolean estActif;
 }
