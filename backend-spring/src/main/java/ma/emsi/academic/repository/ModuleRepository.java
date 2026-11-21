@@ -20,4 +20,7 @@ public interface ModuleRepository extends JpaRepository<Module, Long>, JpaSpecif
 
     @EntityGraph(attributePaths = {"filiere"})
     Page<Module> findByFiliereId(Long filiereId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"filiere"})
+    java.util.List<Module> findByFiliereId(Long filiereId);
 }

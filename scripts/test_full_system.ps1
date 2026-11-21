@@ -209,6 +209,11 @@ try {
     $examList = Invoke-RestMethod -Uri "$BackendUrl/examens" -Method Get -Headers $planningHeaders -TimeoutSec 10
     Record-Test "Examens" "Recuperation liste des examens (/examens)" ($examList -ne $null) "Total: $($examList.Count)"
 
+    # Nettoyage preventif de residus de test sur 2026-06-15
+    $examList | Where-Object { $_.dateExamen -eq "2026-06-15" } | ForEach-Object {
+        try { Invoke-RestMethod -Uri "$BackendUrl/examens/$($_.id)" -Method Delete -Headers $planningHeaders -TimeoutSec 5 } catch {}
+    }
+
     # 2. Creer un examen de test
     $examPayload = @{
         moduleId = 1
@@ -249,7 +254,44 @@ try {
     }
     Record-Test "Examens" "Anti-collision salle/horaire detecte (Validation Conflit)" $conflictDetected "Protection chevauchement activee"
 
-    # 4. Suppression de l'examen de test pour nettoyer
+    # 4. Tester distribution heterogene des places (Anti-triche 1 place sur 2)
+    $distribResp = Invoke-RestMethod -Uri "$BackendUrl/examens/1/distribuer-places?unSurDeux=true" -Method Post -Headers $planningHeaders -TimeoutSec 10
+    Record-Test "Examens" "Distribution heterogene des tables (/distribuer-places)" ($distribResp.Count -gt 0) "Places assignees: $($distribResp.Count)"
+
+    # 5. Tester consultation des places d'une salle d'examen
+    $placesList = Invoke-RestMethod -Uri "$BackendUrl/examens/1/places" -Method Get -Headers $planningHeaders -TimeoutSec 10
+    Record-Test "Examens" "Consultation plan de salle et tables (/places)" ($placesList.Count -gt 0) "Total tables: $($placesList.Count)"
+
+    # 6. Tester connexion etudiant et consultation de sa convocation avec numero de table
+    $studentToken = $null
+    try {
+        $etudiantLogin = Invoke-RestMethod -Uri "$BackendUrl/auth/login" -Method Post -ContentType "application/json" -Body (@{ username = "etudiant"; password = "Emsi@2026!" } | ConvertTo-Json) -TimeoutSec 10
+        $studentToken = $etudiantLogin.accessToken
+    } catch {}
+
+    if ($studentToken) {
+        $studentHeaders = @{ Authorization = "Bearer $studentToken"; "Content-Type" = "application/json" }
+        $convocations = Invoke-RestMethod -Uri "$BackendUrl/examens/convocations/me" -Method Get -Headers $studentHeaders -TimeoutSec 10
+        Record-Test "Examens" "Espace Etudiant - Notification & Numero de Table (/convocations/me)" ($convocations -ne $null) "Convocations trouvees: $($convocations.Count)"
+    } else {
+        Record-Test "Examens" "Espace Etudiant - Notification & Numero de Table" $false "Echec connexion etudiant"
+    }
+
+    # 7. Tester Auto-planificateur de session avec contraintes (Jours, Modules/Jour, Espacement)
+    $autoPlanifPayload = @{
+        dateDebut = "2026-07-01"
+        nombreJours = 5
+        maxModulesParJour = 1
+        session = "RATTRAPAGE"
+        unSurDeux = $true
+        inclureSamedi = $false
+    } | ConvertTo-Json
+    $autoResult = Invoke-RestMethod -Uri "$BackendUrl/examens/auto-planifier" -Method Post -Headers $planningHeaders -Body $autoPlanifPayload -TimeoutSec 20
+    $autoPassed = ($null -ne $autoResult)
+    $autoCount = if ($autoResult) { $autoResult.Count } else { 0 }
+    Record-Test "Examens" "Solveur Auto-planification de session (/auto-planifier)" $autoPassed "Examens programmes: $autoCount"
+
+    # 8. Suppression de l'examen de test pour nettoyer
     if ($testExamenId) {
         Invoke-RestMethod -Uri "$BackendUrl/examens/$testExamenId" -Method Delete -Headers $planningHeaders -TimeoutSec 10
         Record-Test "Examens" "Nettoyage examen de test (DELETE /examens/$testExamenId)" $true "Supprime avec succes"

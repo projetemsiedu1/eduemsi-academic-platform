@@ -5,13 +5,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ma.emsi.academic.dto.examen.CreateExamenRequest;
-import ma.emsi.academic.dto.examen.ExamenDto;
+import ma.emsi.academic.dto.examen.*;
 import ma.emsi.academic.service.ExamenService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/examens")
 @RequiredArgsConstructor
-@Tag(name = "Planification des Examens", description = "Gestion des épreuves d'examen, affectation des salles et des surveillants sans conflit")
+@Tag(name = "Planification des Examens", description = "Gestion des épreuves d'examen, affectation des salles, surveillants et distribution des places")
 @SecurityRequirement(name = "bearerAuth")
 public class ExamenController {
 
@@ -71,5 +71,53 @@ public class ExamenController {
     public ResponseEntity<Void> deleteExamen(@PathVariable Long id) {
         examenService.deleteExamen(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // -------------------------------------------------------------------------
+    // DISTRIBUTION HÉTÉROGÈNE DES PLACES & TABLES D'EXAMEN
+    // -------------------------------------------------------------------------
+
+    @PostMapping("/{id}/distribuer-places")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_SCOLARITE')")
+    @Operation(summary = "Générer la distribution hétérogène des étudiants (anti-triche & numéros de tables)")
+    public ResponseEntity<List<ExamenAffectationDto>> distribuerPlaces(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "true") boolean unSurDeux) {
+        return ResponseEntity.ok(examenService.distribuerPlacesHeterogene(id, unSurDeux));
+    }
+
+    @GetMapping("/{id}/places")
+    @Operation(summary = "Consulter le plan d'affectation des places et tables pour une épreuve")
+    public ResponseEntity<List<ExamenAffectationDto>> getPlacesParExamen(@PathVariable Long id) {
+        return ResponseEntity.ok(examenService.getPlacesParExamen(id));
+    }
+
+    // -------------------------------------------------------------------------
+    // ESPACE ÉTUDIANT : CONVOCATIONS, SALLES & NUMÉROS DE TABLES
+    // -------------------------------------------------------------------------
+
+    @GetMapping("/convocations/me")
+    @Operation(summary = "Consulter ses convocations d'examens officielles avec salle et numéro de place (Étudiant connecté)")
+    public ResponseEntity<List<ConvocationEtudiantDto>> getMesConvocations(Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "etudiant";
+        return ResponseEntity.ok(examenService.getConvocationsEtudiant(username));
+    }
+
+    @GetMapping("/convocations/etudiant/{etudiantId}")
+    @Operation(summary = "Consulter les convocations officielles d'un étudiant par son ID")
+    public ResponseEntity<List<ConvocationEtudiantDto>> getConvocationsEtudiant(@PathVariable Long etudiantId) {
+        return ResponseEntity.ok(examenService.getConvocationsEtudiantById(etudiantId));
+    }
+
+    // -------------------------------------------------------------------------
+    // PLANIFICATION AUTOMATIQUE AVEC CONTRAINTES DE SESSION
+    // -------------------------------------------------------------------------
+
+    @PostMapping("/auto-planifier")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_SCOLARITE')")
+    @Operation(summary = "Ordonnancement automatique des examens selon les contraintes (durée, max modules/jour, décalage)")
+    public ResponseEntity<List<ExamenDto>> autoPlanifierExamens(
+            @Valid @RequestBody AutoPlanificationExamensRequest request) {
+        return ResponseEntity.ok(examenService.autoPlanifierExamens(request));
     }
 }

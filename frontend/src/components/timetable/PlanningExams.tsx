@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { Plus, Trash2, Calendar, Clock, AlertTriangle, Users, MapPin, CheckCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Trash2, Calendar, Clock, AlertTriangle, Users, CheckCircle, Sparkles } from "lucide-react";
 import { TimetableHeader } from "@/components/timetable/TimetableHeader";
 import { ApiClient } from "@/lib/api-client";
-import type { ExamenDto, SessionExamen } from "@/types/exams";
+import type { ExamenDto } from "@/types/exams";
 import { ExamenModal } from "./ExamenModal";
+import { ExamenDistributionModal } from "./ExamenDistributionModal";
+import { AutoPlanificationModal } from "./AutoPlanificationModal";
 
 export function PlanningExams() {
   const [examens, setExamens] = useState<ExamenDto[]>([]);
@@ -13,6 +15,8 @@ export function PlanningExams() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [autoPlanifOpen, setAutoPlanifOpen] = useState(false);
+  const [distributionExamen, setDistributionExamen] = useState<ExamenDto | null>(null);
   const [filterSession, setFilterSession] = useState<string>("ALL");
   const [filterSearch, setFilterSearch] = useState("");
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -22,7 +26,7 @@ export function PlanningExams() {
     setError("");
     try {
       const data = await ApiClient.get<ExamenDto[]>("/examens");
-      setExamens(data);
+      setExamens(data || []);
     } catch {
       setError("Impossible de charger le calendrier des examens.");
     } finally {
@@ -55,6 +59,12 @@ export function PlanningExams() {
     setTimeout(() => setNotice(""), 4000);
   }
 
+  function handleAutoPlanified(scheduled: ExamenDto[]) {
+    void loadExamens();
+    setNotice(`Auto-planification CP-SAT réussie : ${scheduled.length} épreuves générées sans collision.`);
+    setTimeout(() => setNotice(""), 5000);
+  }
+
   const filteredExamens = examens.filter((e) => {
     if (filterSession !== "ALL" && e.session !== filterSession) return false;
     if (filterSearch) {
@@ -74,7 +84,7 @@ export function PlanningExams() {
     <>
       <TimetableHeader
         title="Planification des Examens"
-        subtitle="Organisation des sessions d'examens, affectation des salles et désignation des surveillants sans conflit."
+        subtitle="Organisation des sessions d'examens, répartition hétérogène des étudiants (anti-triche), salles et surveillants."
       />
 
       <main className="planning-content">
@@ -129,20 +139,42 @@ export function PlanningExams() {
             </select>
           </div>
 
-          <button
-            onClick={() => setModalOpen(true)}
-            className="planning-primary"
-            style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.1rem", borderRadius: "0.5rem", fontWeight: 600, fontSize: "0.875rem" }}
-          >
-            <Plus size={17} />
-            <span>Planifier une épreuve d'examen</span>
-          </button>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <button
+              onClick={() => setAutoPlanifOpen(true)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.6rem 1rem",
+                borderRadius: "0.5rem",
+                fontWeight: 600,
+                fontSize: "0.875rem",
+                backgroundColor: "#047857",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              <Sparkles size={16} />
+              <span>Auto-planifier la session (Solveur)</span>
+            </button>
+
+            <button
+              onClick={() => setModalOpen(true)}
+              className="planning-primary"
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.1rem", borderRadius: "0.5rem", fontWeight: 600, fontSize: "0.875rem" }}
+            >
+              <Plus size={17} />
+              <span>Planifier une épreuve</span>
+            </button>
+          </div>
         </div>
 
         {/* Table des examens */}
         <section className="planning-panel">
           <h2 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "1rem" }}>
-            Calendrier Officiel des Épreuves ({filteredExamens.length})
+            Calendrier Officiel des Épreuves & Affectation des Tables ({filteredExamens.length})
           </h2>
 
           {loading ? (
@@ -150,8 +182,8 @@ export function PlanningExams() {
           ) : filteredExamens.length === 0 ? (
             <div style={{ textAlign: "center", padding: "3rem", color: "#64748b" }}>
               <Calendar size={40} style={{ margin: "0 auto 1rem", opacity: 0.4 }} />
-              <p style={{ fontWeight: 600, fontSize: "1rem" }}>Aucune épreuve d'examen trouvée.</p>
-              <p style={{ fontSize: "0.85rem" }}>Cliquez sur "Planifier une épreuve d'examen" pour ajouter un premier examen.</p>
+              <p style={{ fontWeight: 600, fontSize: "1rem" }}>Aucune épreuve d&apos;examen trouvée.</p>
+              <p style={{ fontSize: "0.85rem" }}>Cliquez sur &quot;Auto-planifier la session&quot; ou &quot;Planifier une épreuve&quot; pour démarrer.</p>
             </div>
           ) : (
             <div style={{ overflowX: "auto" }}>
@@ -164,7 +196,7 @@ export function PlanningExams() {
                     <th style={{ padding: "0.75rem 0.5rem" }}>Salle & Campus</th>
                     <th style={{ padding: "0.75rem 0.5rem" }}>Surveillance</th>
                     <th style={{ padding: "0.75rem 0.5rem" }}>Session</th>
-                    <th style={{ padding: "0.75rem 0.5rem", textAlign: "right" }}>Actions</th>
+                    <th style={{ padding: "0.75rem 0.5rem", textAlign: "right" }}>Actions & Tables</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -222,22 +254,33 @@ export function PlanningExams() {
                         </span>
                       </td>
                       <td style={{ padding: "0.85rem 0.5rem", textAlign: "right" }}>
-                        <button
-                          onClick={() => handleDelete(exam.id)}
-                          disabled={deletingId === exam.id}
-                          aria-label="Supprimer cette épreuve"
-                          style={{
-                            background: "none",
-                            border: "none",
-                            color: "#ef4444",
-                            cursor: "pointer",
-                            padding: "0.4rem",
-                            borderRadius: "0.25rem",
-                          }}
-                          title="Supprimer l'épreuve"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                          <button
+                            onClick={() => setDistributionExamen(exam)}
+                            className="px-2.5 py-1 text-xs font-semibold rounded bg-emerald-100 hover:bg-emerald-200 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900 border border-emerald-300 dark:border-emerald-800 transition flex items-center gap-1"
+                            title="Visualiser et générer la répartition des tables"
+                          >
+                            <Users size={14} />
+                            <span>Tables & Places</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(exam.id)}
+                            disabled={deletingId === exam.id}
+                            aria-label="Supprimer cette épreuve"
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#ef4444",
+                              cursor: "pointer",
+                              padding: "0.4rem",
+                              borderRadius: "0.25rem",
+                            }}
+                            title="Supprimer l'épreuve"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -252,6 +295,18 @@ export function PlanningExams() {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onCreated={handleCreated}
+      />
+
+      <AutoPlanificationModal
+        open={autoPlanifOpen}
+        onClose={() => setAutoPlanifOpen(false)}
+        onSuccess={handleAutoPlanified}
+      />
+
+      <ExamenDistributionModal
+        open={Boolean(distributionExamen)}
+        onClose={() => setDistributionExamen(null)}
+        examen={distributionExamen}
       />
     </>
   );

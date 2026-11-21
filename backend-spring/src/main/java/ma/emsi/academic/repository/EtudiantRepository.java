@@ -30,6 +30,9 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Long>, JpaSp
     Page<Etudiant> findByGroupeId(Long groupeId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"groupe"})
+    List<Etudiant> findByGroupeId(Long groupeId);
+
+    @EntityGraph(attributePaths = {"groupe"})
     Page<Etudiant> findByEstRadieExamenTrue(Pageable pageable);
 
     @Query("SELECT COUNT(e) FROM Etudiant e WHERE e.estRadieExamen = true")

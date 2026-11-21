@@ -36,3 +36,53 @@ export interface CreateExamenRequest {
   session: SessionExamen;
   consignes?: string;
 }
+
+export interface ExamenAffectation {
+  id: number;
+  examenId: number;
+  etudiantId: number;
+  etudiantNom: string;
+  etudiantPrenom: string;
+  etudiantMatricule: string;
+  etudiantEmail: string;
+  groupeCode: string;
+  salleId: number;
+  salleCode: string;
+  numeroPlace: number;
+  codePlace: string;
+  statutPresence: "CONVOQUE" | "PRESENT" | "ABSENT" | "RADIE";
+  notifie: boolean;
+  estRadie: boolean;
+}
+
+export interface ConvocationEtudiant {
+  affectationId: number;
+  examenId: number;
+  moduleCode: string;
+  moduleNom: string;
+  filiereNom: string;
+  session: string;
+  dateExamen: string;
+  heureDebut: string;
+  heureFin: string;
+  dureeMinutes: number;
+  salleCode: string;
+  campusNom: string;
+  numeroPlace: number;
+  codePlace: string;
+  surveillantPrincipalNom: string;
+  consignes: string;
+  statutPresence: string;
+  notifie: boolean;
+  estRadie: boolean;
+}
+
+export interface AutoPlanificationRequest {
+  dateDebut: string;
+  nombreJours: number;
+  maxModulesParJour: number;
+  session: SessionExamen;
+  filiereIds?: number[];
+  inclureSamedi?: boolean;
+  unSurDeux?: boolean;
+}

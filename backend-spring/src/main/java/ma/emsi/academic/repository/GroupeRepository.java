@@ -26,5 +26,8 @@ public interface GroupeRepository extends JpaRepository<Groupe, Long>, JpaSpecif
     Page<Groupe> findByFiliereId(Long filiereId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"filiere", "campusFixe"})
+    List<Groupe> findByFiliereId(Long filiereId);
+
+    @EntityGraph(attributePaths = {"filiere", "campusFixe"})
     List<Groupe> findByCampusFixeIdAndAnneeEtude(Long campusId, Integer anneeEtude);
 }
