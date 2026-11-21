@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/groupes")
 @RequiredArgsConstructor
 @Tag(name = "Groupes & Filières", description = "Gestion pédagogique des groupes d'étudiants avec respect de la règle du campus unique")
-@CrossOrigin(origins = "*")
+
 public class GroupeController {
 
     private final GroupeService groupeService;
@@ -54,18 +54,27 @@ public class GroupeController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Créer un nouveau groupe avec assignation impérative à un campus fixe")
     public ResponseEntity<GroupeDto> createGroupe(@Valid @RequestBody CreateGroupeRequest request) {
         return new ResponseEntity<>(groupeService.createGroupe(request), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
+    public ResponseEntity<GroupeDto> updateGroupe(@PathVariable Long id, @Valid @RequestBody CreateGroupeRequest request) {
+        return ResponseEntity.ok(groupeService.updateGroupe(id, request));
+    }
+
     @PatchMapping("/{id}/effectif")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Mettre à jour l'effectif réel d'un groupe pour recalcul de capacité des salles")
     public ResponseEntity<GroupeDto> updateEffectif(@PathVariable Long id, @RequestParam int newEffectif) {
         return ResponseEntity.ok(groupeService.updateEffectif(id, newEffectif));
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Supprimer un groupe")
     public ResponseEntity<Void> deleteGroupe(@PathVariable Long id) {
         groupeService.deleteGroupe(id);

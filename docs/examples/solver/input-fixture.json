@@ -1,0 +1,306 @@
+{
+  "calendar": {
+    "days": [
+      "LUNDI",
+      "MARDI",
+      "MERCREDI",
+      "JEUDI",
+      "VENDREDI",
+      "SAMEDI"
+    ],
+    "slots": [
+      {
+        "code": "S1_08H30",
+        "heureDebut": "08:30",
+        "heureFin": "10:00",
+        "minutes": 90
+      },
+      {
+        "code": "S2_10H15",
+        "heureDebut": "10:15",
+        "heureFin": "11:45",
+        "minutes": 90
+      },
+      {
+        "code": "S4_13H45",
+        "heureDebut": "13:45",
+        "heureFin": "15:15",
+        "minutes": 90
+      },
+      {
+        "code": "S5_15H30",
+        "heureDebut": "15:30",
+        "heureFin": "17:00",
+        "minutes": 90
+      },
+      {
+        "code": "S6_17H15",
+        "heureDebut": "17:15",
+        "heureFin": "18:45",
+        "minutes": 90
+      }
+    ],
+    "lunchStart": "11:45",
+    "lunchEnd": "13:45",
+    "slotMinutes": 90,
+    "label": "Calendrier de démonstration configurable — horaires EMSI à confirmer"
+  },
+  "rooms": [
+    {
+      "id": "1",
+      "campusId": "A",
+      "type": "STANDARD",
+      "capacity": 40,
+      "pcs": 0,
+      "available": true
+    },
+    {
+      "id": "2",
+      "campusId": "A",
+      "type": "LI_PC",
+      "capacity": 35,
+      "pcs": 35,
+      "available": true
+    },
+    {
+      "id": "3",
+      "campusId": "A",
+      "type": "LR_RESEAUX",
+      "capacity": 30,
+      "pcs": 0,
+      "available": true
+    },
+    {
+      "id": "4",
+      "campusId": "B",
+      "type": "STANDARD",
+      "capacity": 40,
+      "pcs": 0,
+      "available": true
+    },
+    {
+      "id": "5",
+      "campusId": "B",
+      "type": "LI_PC",
+      "capacity": 35,
+      "pcs": 35,
+      "available": true
+    },
+    {
+      "id": "6",
+      "campusId": "B",
+      "type": "AMPHI",
+      "capacity": 80,
+      "pcs": 0,
+      "available": true
+    }
+  ],
+  "teachers": [
+    {
+      "id": "1",
+      "active": true,
+      "visiting": false,
+      "weeklyHours": 18,
+      "availability": []
+    },
+    {
+      "id": "2",
+      "active": true,
+      "visiting": false,
+      "weeklyHours": 18,
+      "availability": []
+    },
+    {
+      "id": "3",
+      "active": true,
+      "visiting": false,
+      "weeklyHours": 18,
+      "availability": []
+    },
+    {
+      "id": "4",
+      "active": true,
+      "visiting": true,
+      "weeklyHours": 9,
+      "availability": [
+        {
+          "jour": "LUNDI",
+          "creneaux": [
+            "S1_08H30",
+            "S2_10H15",
+            "S4_13H45",
+            "S5_15H30",
+            "S6_17H15"
+          ]
+        },
+        {
+          "jour": "MERCREDI",
+          "creneaux": [
+            "S1_08H30",
+            "S2_10H15",
+            "S4_13H45",
+            "S5_15H30",
+            "S6_17H15"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "active": true,
+      "visiting": true,
+      "weeklyHours": 9,
+      "availability": [
+        {
+          "jour": "JEUDI",
+          "creneaux": [
+            "S1_08H30",
+            "S2_10H15",
+            "S4_13H45",
+            "S5_15H30",
+            "S6_17H15"
+          ]
+        },
+        {
+          "jour": "VENDREDI",
+          "creneaux": [
+            "S1_08H30",
+            "S2_10H15",
+            "S4_13H45",
+            "S5_15H30",
+            "S6_17H15"
+          ]
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "1",
+      "campusId": "A",
+      "filiereId": "F1",
+      "size": 25
+    },
+    {
+      "id": "2",
+      "campusId": "A",
+      "filiereId": "F1",
+      "size": 20
+    },
+    {
+      "id": "3",
+      "campusId": "B",
+      "filiereId": "F2",
+      "size": 25
+    }
+  ],
+  "elements": [
+    {
+      "id": "1",
+      "moduleId": "M1",
+      "filiereId": "F1",
+      "roomType": "STANDARD"
+    },
+    {
+      "id": "2",
+      "moduleId": "M2",
+      "filiereId": "F1",
+      "roomType": "LI_PC"
+    },
+    {
+      "id": "3",
+      "moduleId": "M3",
+      "filiereId": "F1",
+      "roomType": "STANDARD"
+    },
+    {
+      "id": "4",
+      "moduleId": "M4",
+      "filiereId": "F1",
+      "roomType": "LR_RESEAUX"
+    },
+    {
+      "id": "5",
+      "moduleId": "M5",
+      "filiereId": "F2",
+      "roomType": "STANDARD"
+    },
+    {
+      "id": "6",
+      "moduleId": "M6",
+      "filiereId": "F2",
+      "roomType": "LI_PC"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "1",
+      "groupId": "1",
+      "elementId": "1",
+      "teacherId": "1",
+      "weeklySessions": 3
+    },
+    {
+      "id": "2",
+      "groupId": "1",
+      "elementId": "2",
+      "teacherId": "4",
+      "weeklySessions": 3
+    },
+    {
+      "id": "3",
+      "groupId": "2",
+      "elementId": "3",
+      "teacherId": "2",
+      "weeklySessions": 3
+    },
+    {
+      "id": "4",
+      "groupId": "2",
+      "elementId": "4",
+      "teacherId": "3",
+      "weeklySessions": 3
+    },
+    {
+      "id": "5",
+      "groupId": "3",
+      "elementId": "5",
+      "teacherId": "1",
+      "weeklySessions": 3
+    },
+    {
+      "id": "6",
+      "groupId": "3",
+      "elementId": "6",
+      "teacherId": "5",
+      "weeklySessions": 3
+    }
+  ],
+  "qualifications": [
+    {
+      "teacherId": "1",
+      "moduleId": "M1"
+    },
+    {
+      "teacherId": "4",
+      "moduleId": "M2"
+    },
+    {
+      "teacherId": "2",
+      "moduleId": "M3"
+    },
+    {
+      "teacherId": "3",
+      "moduleId": "M4"
+    },
+    {
+      "teacherId": "1",
+      "moduleId": "M5"
+    },
+    {
+      "teacherId": "5",
+      "moduleId": "M6"
+    }
+  ],
+  "existing": []
+}

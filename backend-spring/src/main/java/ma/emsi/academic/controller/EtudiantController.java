@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/etudiants")
 @RequiredArgsConstructor
 @Tag(name = "Gestion des Étudiants", description = "CRUD complet des étudiants, affectation de groupe et statut d'assiduité")
-@CrossOrigin(origins = "*")
+
 @SecurityRequirement(name = "bearerAuth")
 public class EtudiantController {
 
@@ -48,18 +48,21 @@ public class EtudiantController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_SCOLARITE','RESPONSABLE_FILIERE')")
     @Operation(summary = "Inscrire un nouvel étudiant dans un groupe")
     public ResponseEntity<EtudiantDto> createEtudiant(@Valid @RequestBody CreateEtudiantRequest request) {
         return new ResponseEntity<>(etudiantService.createEtudiant(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_SCOLARITE','RESPONSABLE_FILIERE')")
     @Operation(summary = "Mettre à jour les informations d'un étudiant")
     public ResponseEntity<EtudiantDto> updateEtudiant(@PathVariable Long id, @Valid @RequestBody CreateEtudiantRequest request) {
         return ResponseEntity.ok(etudiantService.updateEtudiant(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_SCOLARITE','RESPONSABLE_FILIERE')")
     @Operation(summary = "Supprimer le dossier d'un étudiant")
     public ResponseEntity<Void> deleteEtudiant(@PathVariable Long id) {
         etudiantService.deleteEtudiant(id);

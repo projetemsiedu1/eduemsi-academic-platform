@@ -1,528 +1,527 @@
-'use client';
-
-import React, { useState } from 'react';
-import { X, Save, Plus, Edit2, Info } from 'lucide-react';
-import { useTimetable } from '@/context/TimetableContext';
-import {
+﻿"use client";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { useTimetable } from "@/context/TimetableContext";
+import { Modal } from "@/components/ui/modal";
+import type {
   Salle,
   Enseignant,
   Groupe,
   TypeSalle,
   TypeContrat,
-} from '@/types/timetable';
-
-export type ModalResourceType = 'salle' | 'enseignant' | 'groupe';
-
-interface ResourceModalProps {
+  DisponibiliteJour,
+} from "@/types/timetable";
+import { JOURS_SEMAINE, CRENEAUX_OFFICIELS_EMSI } from "@/types/timetable";
+export type ModalResourceType = "salle" | "enseignant" | "groupe" | "module";
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   resourceType: ModalResourceType;
   itemToEdit?: Salle | Enseignant | Groupe | null;
+  initialFiliereId?: string;
+  initialCampusId?: string;
+  onSaved?: () => void;
 }
-
-export function ResourceModal({
-  isOpen,
-  onClose,
-  resourceType,
-  itemToEdit,
-}: ResourceModalProps) {
-  if (!isOpen) return null;
-
-  const formKey = itemToEdit ? `${resourceType}-${itemToEdit.id}` : `${resourceType}-new`;
-
+export function ResourceModal(props: Props) {
+  const { busy } = useTimetable();
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
-        <ResourceForm
-          key={formKey}
-          resourceType={resourceType}
-          itemToEdit={itemToEdit}
-          onClose={onClose}
-        />
-      </div>
+    <Modal
+      open={props.isOpen}
+      onClose={props.onClose}
+      busy={busy}
+      title={`${props.itemToEdit ? "Modifier" : "Créer"} ${props.resourceType === "groupe" ? "un groupe" : props.resourceType === "salle" ? "une salle" : props.resourceType === "enseignant" ? "un enseignant" : "un module"}`}
+    >
+      <ResourceForm
+        key={`${props.resourceType}-${props.itemToEdit?.id ?? "new"}-${props.isOpen}`}
+        {...props}
+      />
+    </Modal>
+  );
+}
+function Field({
+  label,
+  name,
+  children,
+}: {
+  label: string;
+  name: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="planning-field">
+      <label htmlFor={"resource-" + name}>{label}</label>
+      {children}
     </div>
   );
 }
-
 function ResourceForm({
   resourceType,
   itemToEdit,
   onClose,
-}: {
-  resourceType: ModalResourceType;
-  itemToEdit?: Salle | Enseignant | Groupe | null;
-  onClose: () => void;
-}) {
-  const { campuses, filieres, options, addOrUpdateSalle, addOrUpdateEnseignant, addOrUpdateGroupe } =
-    useTimetable();
-
-  const salleToEdit = resourceType === 'salle' ? (itemToEdit as Salle | null) : null;
-  const ensToEdit = resourceType === 'enseignant' ? (itemToEdit as Enseignant | null) : null;
-  const grpToEdit = resourceType === 'groupe' ? (itemToEdit as Groupe | null) : null;
-
-  // État formulaire Salle
-  const [codeSalle, setCodeSalle] = useState(salleToEdit?.codeSalle || 'Lab TP-04');
-  const [campusId, setCampusId] = useState(salleToEdit?.campusId || campuses[0]?.id || '');
-  const [etage, setEtage] = useState(salleToEdit?.etage || '1er Étage');
-  const [typeSalle, setTypeSalle] = useState<TypeSalle>(salleToEdit?.typeSalle || 'STANDARD');
-  const [capacite, setCapacite] = useState(salleToEdit?.capacite || 35);
-  const [nbPc, setNbPc] = useState(salleToEdit?.nombrePcOperationnels || 0);
-  const [specsEquipements, setSpecsEquipements] = useState(
-    salleToEdit?.specsEquipements || 'Vidéoprojecteur HD, Climatisation'
+  onSaved,
+  initialFiliereId,
+  initialCampusId,
+}: Props) {
+  const ctx = useTimetable();
+  const item = itemToEdit as Partial<Salle & Enseignant & Groupe> | null;
+  const [selectedFiliere, setSelectedFiliere] = useState(
+    item?.filiereId ?? initialFiliereId ?? "",
   );
-
-  // État formulaire Enseignant
-  const [nom, setNom] = useState(ensToEdit?.nom || '');
-  const [prenom, setPrenom] = useState(ensToEdit?.prenom || '');
-  const [matricule, setMatricule] = useState(ensToEdit?.matricule || 'ENS-MRK-105');
-  const [email, setEmail] = useState(ensToEdit?.email || '');
-  const [telephone, setTelephone] = useState(ensToEdit?.telephone || '+212 6 00 00 00 00');
-  const [specialite, setSpecialite] = useState(
-    ensToEdit?.specialite || 'Génie Logiciel & Architecture'
+  const [contract, setContract] = useState(item?.typeContrat ?? "PERMANENT");
+  const [pending, setPending] = useState(false);
+  const [failure, setFailure] = useState("");
+  const [availability, setAvailability] = useState<DisponibiliteJour[]>(
+    (itemToEdit as Enseignant)?.disponibilites ?? [],
   );
-  const [typeContrat, setTypeContrat] = useState<TypeContrat>(ensToEdit?.typeContrat || 'PERMANENT');
-  const [heuresContractuelles, setHeuresContractuelles] = useState(
-    ensToEdit?.heuresContractuellesSemaine || 18
-  );
-
-  // État formulaire Groupe
-  const [codeGroupe, setCodeGroupe] = useState(grpToEdit?.codeGroupe || '5IIR 2DSI G3');
-  const [filiereId, setFiliereId] = useState(grpToEdit?.filiereId || filieres[0]?.id || '');
-  const [optionId, setOptionId] = useState(grpToEdit?.optionId || options[0]?.id || '');
-  const [anneeEtude, setAnneeEtude] = useState(grpToEdit?.anneeEtude || 5);
-  const [effectif, setEffectif] = useState(grpToEdit?.effectif || 30);
-  const [delegueNom, setDelegueNom] = useState(grpToEdit?.delegueNom || '');
-  const [campusFixeId, setCampusFixeId] = useState(grpToEdit?.campusFixeId || campuses[0]?.id || '');
-  const [laboRequis, setLaboRequis] = useState<TypeSalle>(grpToEdit?.laboratoiresRequis || 'LI_PC');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (resourceType === 'salle') {
-      const newSalle: Salle = {
-        id: salleToEdit?.id || `sal-custom-${Date.now()}`,
-        codeSalle,
-        campusId,
-        etage,
-        typeSalle,
-        capacite: Number(capacite),
-        nombrePcOperationnels: typeSalle === 'LI_PC' ? Number(nbPc || capacite) : 0,
-        specsEquipements,
-        estDisponible: true,
-      };
-      addOrUpdateSalle(newSalle);
-    } else if (resourceType === 'enseignant') {
-      const newEns: Enseignant = {
-        id: ensToEdit?.id || `ens-custom-${Date.now()}`,
-        matricule,
-        nom,
-        prenom,
-        email: email || `${prenom.toLowerCase()}.${nom.toLowerCase()}@emsi.ma`,
-        telephone,
-        specialite,
-        typeContrat,
-        heuresContractuellesSemaine: Number(heuresContractuelles),
-        estActif: true,
-        competencesModulesIds: ensToEdit?.competencesModulesIds || ['mod-iir-501'],
-        disponibilites: ensToEdit?.disponibilites || [
-          { jour: 'LUNDI', creneaux: ['S1_08H30', 'S2_10H15', 'S3_12H00', 'S4_13H45'] },
-          { jour: 'MARDI', creneaux: ['S1_08H30', 'S2_10H15', 'S3_12H00', 'S4_13H45'] },
-          { jour: 'MERCREDI', creneaux: ['S1_08H30', 'S2_10H15'] },
-        ],
-      };
-      addOrUpdateEnseignant(newEns);
-    } else if (resourceType === 'groupe') {
-      const newGrp: Groupe = {
-        id: grpToEdit?.id || `grp-custom-${Date.now()}`,
-        codeGroupe,
-        filiereId,
-        optionId: optionId || undefined,
-        anneeEtude: Number(anneeEtude),
-        effectif: Number(effectif),
-        delegueNom: delegueNom || 'Non renseigné',
-        campusFixeId,
-        laboratoiresRequis: laboRequis,
-      };
-      addOrUpdateGroupe(newGrp);
+  function slots(
+    jour: DisponibiliteJour["jour"],
+    slot: DisponibiliteJour["creneaux"][number],
+    checked: boolean,
+  ) {
+    setAvailability((previous) => {
+      const current = previous.find((d) => d.jour === jour)?.creneaux ?? [];
+      return [
+        ...previous.filter((d) => d.jour !== jour),
+        {
+          jour,
+          creneaux: checked
+            ? [...current, slot]
+            : current.filter((s) => s !== slot),
+        },
+      ].filter((d) => d.creneaux.length > 0);
+    });
+  }
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (pending) return;
+    setPending(true);
+    setFailure("");
+    ctx.clearFeedback();
+    const f = new FormData(event.currentTarget);
+    const str = (key: string) => String(f.get(key) ?? "").trim();
+    const num = (key: string) => Number(f.get(key));
+    let success = false;
+    try {
+      if (resourceType === "salle")
+        success = await ctx.addOrUpdateSalle({
+          id: itemToEdit?.id ?? crypto.randomUUID(),
+          codeSalle: str("code"),
+          campusId: str("campus"),
+          etage: (itemToEdit as Salle)?.etage ?? "",
+          typeSalle: str("type") as TypeSalle,
+          capacite: num("capacity"),
+          nombrePcOperationnels: num("pcs"),
+          specsEquipements: str("equipment"),
+          estDisponible: f.get("available") === "on",
+        });
+      if (resourceType === "enseignant")
+        success = await ctx.addOrUpdateEnseignant({
+          id: itemToEdit?.id ?? crypto.randomUUID(),
+          matricule: str("code"),
+          nom: str("nom"),
+          prenom: str("prenom"),
+          email: str("email"),
+          telephone: str("telephone"),
+          specialite: str("specialite"),
+          typeContrat: str("contrat") as TypeContrat,
+          heuresContractuellesSemaine: num("hours"),
+          disponibilites: availability,
+          estActif: f.get("active") === "on",
+          competencesModulesIds:
+            (itemToEdit as Enseignant)?.competencesModulesIds ?? [],
+        });
+      if (resourceType === "groupe")
+        success = await ctx.addOrUpdateGroupe({
+          id: itemToEdit?.id ?? crypto.randomUUID(),
+          codeGroupe: str("code"),
+          filiereId: str("filiere"),
+          optionId: str("option") || undefined,
+          anneeEtude: num("year"),
+          effectif: num("capacity"),
+          delegueNom: str("delegue"),
+          campusFixeId: str("campus"),
+          laboratoiresRequis:
+            f.getAll("group-type").map(String).join(",") || "STANDARD",
+        });
+      if (resourceType === "module")
+        success = await ctx.createModule({
+          code: str("code"),
+          intitule: str("intitule"),
+          filiereId: str("filiere"),
+          semestre: str("semestre"),
+          volumeHoraire: num("hours"),
+          typeSalleRequis: str("type"),
+        });
+      if (success) {
+        onSaved?.();
+        onClose();
+      } else
+        setFailure(
+          "L’enregistrement a été refusé. Vérifiez les valeurs ou les ressources déjà utilisées.",
+        );
+    } catch {
+      setFailure("Impossible d’enregistrer la ressource. Veuillez réessayer.");
+    } finally {
+      setPending(false);
     }
-
-    onClose();
-  };
-
-  const titles = {
-    salle: itemToEdit ? 'Modifier la Salle' : 'Ajouter une Nouvelle Salle',
-    enseignant: itemToEdit ? 'Modifier l’Enseignant' : 'Ajouter un Nouvel Enseignant',
-    groupe: itemToEdit ? 'Modifier le Groupe' : 'Créer un Nouveau Groupe',
-  };
-
+  }
+  const input = (name: string, options: Record<string, unknown> = {}) => (
+    <input id={"resource-" + name} name={name} {...options} />
+  );
+  const campus = (
+    <Field name="campus" label="Campus">
+      <select
+        id="resource-campus"
+        name="campus"
+        required
+        defaultValue={
+          (resourceType === "salle" ? item?.campusId : item?.campusFixeId) ??
+          initialCampusId ??
+          ""
+        }
+      >
+        <option value="">Choisir un campus</option>
+        {ctx.campuses.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.nom}
+          </option>
+        ))}
+      </select>
+    </Field>
+  );
+  const filiere = (
+    <Field name="filiere" label="Filière">
+      <select
+        id="resource-filiere"
+        name="filiere"
+        required
+        value={selectedFiliere}
+        onChange={(event) => setSelectedFiliere(event.target.value)}
+      >
+        <option value="">Choisir une filière</option>
+        {ctx.filieres.map((f) => (
+          <option key={f.id} value={f.id}>
+            {f.codeFiliere} — {f.intitule}
+          </option>
+        ))}
+      </select>
+    </Field>
+  );
+  const roomType = (
+    <Field name="type" label="Type de salle requis">
+      <select
+        id="resource-type"
+        name="type"
+        defaultValue={
+          resourceType === "salle"
+            ? item?.typeSalle
+            : (item?.laboratoiresRequis ?? "STANDARD")
+        }
+      >
+        <option value="STANDARD">Salle standard</option>
+        <option value="LI_PC">Laboratoire informatique</option>
+        <option value="LR_RESEAUX">Laboratoire réseaux</option>
+        <option value="AMPHI">Amphithéâtre</option>
+      </select>
+    </Field>
+  );
   return (
-    <>
-      {/* MODAL HEADER */}
-      <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emsi-primary flex items-center justify-center font-bold">
-            {itemToEdit ? <Edit2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          </div>
-          <div>
-            <h3 className="font-extrabold text-slate-900 text-sm">{titles[resourceType]}</h3>
-            <p className="text-[11px] text-slate-500">Formulaire interactif de démonstration</p>
-          </div>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+    <form
+      className="planning-resource-form"
+      onSubmit={submit}
+      aria-busy={pending}
+    >
+      <fieldset disabled={pending}>
+        <Field
+          name="code"
+          label={
+            resourceType === "enseignant"
+              ? "Matricule de l’enseignant"
+              : resourceType === "groupe"
+                ? "Code du groupe (ex. 2DSI G3)"
+                : "Code"
+          }
         >
-          <X className="w-4 h-4" />
+          {input("code", {
+            required: true,
+            maxLength: resourceType === "module" ? 40 : 50,
+            defaultValue:
+              item?.codeSalle ?? item?.matricule ?? item?.codeGroupe ?? "",
+          })}
+        </Field>
+        {resourceType === "salle" && (
+          <>
+            {campus}
+            {roomType}
+            <div className="planning-form-row">
+              <Field name="capacity" label="Capacité (places)">
+                {input("capacity", {
+                  type: "number",
+                  min: 1,
+                  max: 1000,
+                  required: true,
+                  defaultValue: item?.capacite ?? 30,
+                })}
+              </Field>
+              <Field name="pcs" label="Postes opérationnels">
+                {input("pcs", {
+                  type: "number",
+                  min: 0,
+                  max: 1000,
+                  required: true,
+                  defaultValue: item?.nombrePcOperationnels ?? 0,
+                })}
+              </Field>
+            </div>
+            <Field name="equipment" label="Équipements">
+              <textarea
+                id="resource-equipment"
+                name="equipment"
+                maxLength={2000}
+                rows={3}
+                defaultValue={item?.specsEquipements ?? ""}
+              />
+            </Field>
+            <label className="planning-checkbox">
+              <input
+                type="checkbox"
+                name="available"
+                defaultChecked={item?.estDisponible ?? true}
+              />
+              Salle disponible
+            </label>
+          </>
+        )}
+        {resourceType === "enseignant" && (
+          <>
+            <label className="planning-checkbox">
+              <input
+                type="checkbox"
+                name="active"
+                defaultChecked={item?.estActif ?? true}
+              />
+              Enseignant actif pour la planification
+            </label>
+            <div className="planning-form-row">
+              <Field name="nom" label="Nom">
+                {input("nom", {
+                  required: true,
+                  maxLength: 100,
+                  defaultValue: item?.nom ?? "",
+                })}
+              </Field>
+              <Field name="prenom" label="Prénom">
+                {input("prenom", {
+                  required: true,
+                  maxLength: 100,
+                  defaultValue: item?.prenom ?? "",
+                })}
+              </Field>
+            </div>
+            <Field name="email" label="Adresse e-mail">
+              {input("email", {
+                type: "email",
+                required: true,
+                maxLength: 150,
+                defaultValue: item?.email ?? "",
+              })}
+            </Field>
+            <Field name="telephone" label="Téléphone">
+              {input("telephone", {
+                type: "tel",
+                maxLength: 50,
+                defaultValue: item?.telephone ?? "",
+              })}
+            </Field>
+            <Field name="specialite" label="Spécialité">
+              {input("specialite", {
+                maxLength: 150,
+                defaultValue: item?.specialite ?? "",
+              })}
+            </Field>
+            <div className="planning-form-row">
+              <Field name="contrat" label="Contrat">
+                <select
+                  id="resource-contrat"
+                  name="contrat"
+                  value={contract}
+                  onChange={(e) => setContract(e.target.value as TypeContrat)}
+                >
+                  <option value="PERMANENT">Permanent</option>
+                  <option value="VACATAIRE">Vacataire</option>
+                </select>
+              </Field>
+              <Field name="hours" label="Heures contractuelles / semaine">
+                {input("hours", {
+                  type: "number",
+                  min: 1,
+                  max: 54,
+                  required: true,
+                  defaultValue: item?.heuresContractuellesSemaine ?? 18,
+                })}
+              </Field>
+            </div>
+            <details open={contract === "VACATAIRE"}>
+              <summary>
+                Disponibilités de l’enseignant ·{" "}
+                {availability.reduce((n, d) => n + d.creneaux.length, 0)}{" "}
+                créneaux sélectionnés
+              </summary>
+              <p className="planning-hint">
+                {contract === "VACATAIRE"
+                  ? "Les disponibilités d’un vacataire doivent être renseignées avant la planification. Cochez ses créneaux autorisés."
+                  : "Sans sélection, ce permanent n’a aucune restriction de disponibilité. Cochez des créneaux pour limiter sa disponibilité."}
+              </p>
+              {JOURS_SEMAINE.map((day) => (
+                <fieldset key={day.code} className="planning-availability">
+                  <legend>{day.label}</legend>
+                  {CRENEAUX_OFFICIELS_EMSI.map((slot) => (
+                    <label key={slot.code}>
+                      <input
+                        type="checkbox"
+                        disabled={Boolean(
+                          ctx.calendar &&
+                            !ctx.calendar.slots.some(
+                              (s) => s.code === slot.code,
+                            ) &&
+                            !availability.some(
+                              (d) =>
+                                d.jour === day.code &&
+                                d.creneaux.includes(slot.code),
+                            ),
+                        )}
+                        checked={availability.some(
+                          (d) =>
+                            d.jour === day.code &&
+                            d.creneaux.includes(slot.code),
+                        )}
+                        onChange={(e) =>
+                          slots(day.code, slot.code, e.target.checked)
+                        }
+                      />
+                      {slot.heureDebut}
+                      {ctx.calendar &&
+                      !ctx.calendar.slots.some((s) => s.code === slot.code)
+                        ? " (fermé)"
+                        : ""}
+                    </label>
+                  ))}
+                </fieldset>
+              ))}
+            </details>
+          </>
+        )}
+        {resourceType === "groupe" && (
+          <>
+            {filiere}
+            {campus}
+            <div className="planning-form-row">
+              <Field name="year" label="Année d’étude">
+                {input("year", {
+                  type: "number",
+                  min: 1,
+                  max: 5,
+                  required: true,
+                  defaultValue: item?.anneeEtude ?? 1,
+                })}
+              </Field>
+              <Field name="capacity" label="Effectif">
+                {input("capacity", {
+                  type: "number",
+                  min: 1,
+                  max: 1000,
+                  required: true,
+                  defaultValue: item?.effectif ?? 30,
+                })}
+              </Field>
+            </div>
+            <fieldset className="planning-group-requirements">
+              <legend>Besoins en salles</legend>
+              {(
+                [
+                  ["STANDARD", "Salle standard"],
+                  ["LI_PC", "Laboratoire informatique"],
+                  ["LR_RESEAUX", "Laboratoire réseaux"],
+                  ["AMPHI", "Amphithéâtre"],
+                ] as const
+              ).map(([value, label]) => (
+                <label key={value} className="planning-checkbox">
+                  <input
+                    type="checkbox"
+                    name="group-type"
+                    value={value}
+                    defaultChecked={(item?.laboratoiresRequis ?? "STANDARD")
+                      .split(",")
+                      .includes(value)}
+                  />
+                  {label}
+                </label>
+              ))}
+            </fieldset>
+            <Field name="option" label="Option">
+              <select
+                id="resource-option"
+                name="option"
+                defaultValue={item?.optionId ?? ""}
+              >
+                <option value="">Sans option</option>
+                {ctx.options
+                  .filter((o) => o.filiereId === selectedFiliere)
+                  .map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.intitule}
+                    </option>
+                  ))}
+              </select>
+            </Field>
+            <Field name="delegue" label="Nom du délégué">
+              {input("delegue", {
+                maxLength: 150,
+                defaultValue: item?.delegueNom ?? "",
+              })}
+            </Field>
+          </>
+        )}
+        {resourceType === "module" && (
+          <>
+            <Field name="intitule" label="Intitulé du module">
+              {input("intitule", { required: true, maxLength: 150 })}
+            </Field>
+            {filiere}
+            <Field name="semestre" label="Semestre">
+              <select id="resource-semestre" name="semestre">
+                <option value="S1">Semestre 1</option>
+                <option value="S2">Semestre 2</option>
+              </select>
+            </Field>
+            <Field name="hours" label="Volume horaire">
+              {input("hours", {
+                type: "number",
+                min: 1,
+                max: 600,
+                required: true,
+                defaultValue: 45,
+              })}
+            </Field>
+            {roomType}
+            <p className="planning-hint">
+              Un premier élément pédagogique sera créé avec le module.
+            </p>
+          </>
+        )}
+      </fieldset>
+      {(failure || ctx.error) && (
+        <p role="alert" className="planning-form-error">
+          {ctx.error || failure}
+        </p>
+      )}
+      <div className="planning-form-actions">
+        <button type="button" onClick={onClose} disabled={pending}>
+          Annuler
+        </button>
+        <button type="submit" className="planning-primary" disabled={pending}>
+          {pending ? "Enregistrement…" : "Enregistrer"}
         </button>
       </div>
-
-      {/* MODAL FORM */}
-      <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
-        {/* DISCLAIMER LOCAL STORAGE */}
-        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-2.5 text-[11px]">
-          <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-          <div>
-            <span className="font-bold">Mode Démonstration :</span> Les données sont enregistrées
-            instantanément dans l’état local React et le cache du navigateur. La synchronisation
-            MySQL Spring Boot sera active en Phase 2.
-          </div>
-        </div>
-
-        {/* FORMULAIRE SALLE */}
-        {resourceType === 'salle' && (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Code / Nom de la Salle *</label>
-                <input
-                  type="text"
-                  required
-                  value={codeSalle}
-                  onChange={(e) => setCodeSalle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                  placeholder="Ex: Lab TP-04"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Campus Rattaché *</label>
-                <select
-                  value={campusId}
-                  onChange={(e) => setCampusId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  {campuses.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nom}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Type de Salle *</label>
-                <select
-                  value={typeSalle}
-                  onChange={(e) => setTypeSalle(e.target.value as TypeSalle)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  <option value="STANDARD">Salle Standard</option>
-                  <option value="LI_PC">Lab Info PC</option>
-                  <option value="LR_RESEAUX">Lab Réseaux Cisco</option>
-                  <option value="AMPHI">Amphithéâtre</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Capacité (Places) *</label>
-                <input
-                  type="number"
-                  min="10"
-                  max="300"
-                  required
-                  value={capacite}
-                  onChange={(e) => setCapacite(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Nb PC Équipés</label>
-                <input
-                  type="number"
-                  min="0"
-                  max={capacite}
-                  value={nbPc}
-                  onChange={(e) => setNbPc(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Étage / Emplacement</label>
-              <input
-                type="text"
-                value={etage}
-                onChange={(e) => setEtage(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                placeholder="Ex: 2ème Étage, Aile Nord"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Spécifications Équipements</label>
-              <textarea
-                rows={2}
-                value={specsEquipements}
-                onChange={(e) => setSpecsEquipements(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                placeholder="Vidéoprojecteur 4K, Climatisation, Switch..."
-              />
-            </div>
-          </>
-        )}
-
-        {/* FORMULAIRE ENSEIGNANT */}
-        {resourceType === 'enseignant' && (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Prénom *</label>
-                <input
-                  type="text"
-                  required
-                  value={prenom}
-                  onChange={(e) => setPrenom(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                  placeholder="Ex: Tariq"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Nom de famille *</label>
-                <input
-                  type="text"
-                  required
-                  value={nom}
-                  onChange={(e) => setNom(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                  placeholder="Ex: Bouzid"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Matricule EMSI *</label>
-                <input
-                  type="text"
-                  required
-                  value={matricule}
-                  onChange={(e) => setMatricule(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs font-mono"
-                  placeholder="Ex: ENS-MRK-088"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Statut Contractuel *</label>
-                <select
-                  value={typeContrat}
-                  onChange={(e) => {
-                    const t = e.target.value as TypeContrat;
-                    setTypeContrat(t);
-                    if (t === 'PERMANENT') setHeuresContractuelles(18);
-                    else setHeuresContractuelles(8);
-                  }}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  <option value="PERMANENT">Permanent (Quota 18h)</option>
-                  <option value="VACATAIRE">Vacataire (Priorité 1 Solveur)</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Email Institutionnel</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                  placeholder="prenom.nom@emsi.ma"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Heures Hebdo *</label>
-                <input
-                  type="number"
-                  min="2"
-                  max="30"
-                  value={heuresContractuelles}
-                  onChange={(e) => setHeuresContractuelles(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Téléphone de Contact</label>
-                <input
-                  type="text"
-                  value={telephone}
-                  onChange={(e) => setTelephone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                  placeholder="+212 6..."
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Spécialité Pédagogique *</label>
-                <input
-                  type="text"
-                  required
-                  value={specialite}
-                  onChange={(e) => setSpecialite(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                  placeholder="Ex: Intelligence Artificielle & MLOps"
-                />
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* FORMULAIRE GROUPE */}
-        {resourceType === 'groupe' && (
-          <>
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Code du Groupe *</label>
-                <input
-                  type="text"
-                  required
-                  value={codeGroupe}
-                  onChange={(e) => setCodeGroupe(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs font-bold"
-                  placeholder="Ex: 5IIR 2DSI G3"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Année d&apos;étude *</label>
-                <select
-                  value={anneeEtude}
-                  onChange={(e) => setAnneeEtude(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  <option value={3}>3e Année</option>
-                  <option value={4}>4e Année</option>
-                  <option value={5}>5e Année</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Effectif Étudiants *</label>
-                <input
-                  type="number"
-                  min="5"
-                  max="60"
-                  required
-                  value={effectif}
-                  onChange={(e) => setEffectif(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Filière *</label>
-                <select
-                  value={filiereId}
-                  onChange={(e) => setFiliereId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  {filieres.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.codeFiliere} — {f.intitule}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Option (si 5e année)</label>
-                <select
-                  value={optionId}
-                  onChange={(e) => setOptionId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  <option value="">Aucune option (Tronc commun)</option>
-                  {options.map((o) => (
-                    <option key={o.id} value={o.id}>
-                      {o.codeOption} — {o.intitule}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Campus Fixe *</label>
-                <select
-                  value={campusFixeId}
-                  onChange={(e) => setCampusFixeId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  {campuses.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.nom}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Besoin Matériel</label>
-                <select
-                  value={laboRequis}
-                  onChange={(e) => setLaboRequis(e.target.value as TypeSalle)}
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs bg-white"
-                >
-                  <option value="LI_PC">Labo Informatique PC</option>
-                  <option value="LR_RESEAUX">Labo Réseaux Cisco</option>
-                  <option value="STANDARD">Salle Standard</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block font-bold text-slate-700 mb-1">Nom du Délégué</label>
-              <input
-                type="text"
-                value={delegueNom}
-                onChange={(e) => setDelegueNom(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:border-emsi-primary text-xs"
-                placeholder="Ex: Yassine Tazi"
-              />
-            </div>
-          </>
-        )}
-
-        {/* ACTIONS MODAL */}
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-slate-300 font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-xl bg-emsi-primary hover:bg-emsi-dark text-white font-bold transition-all shadow-sm flex items-center gap-1.5"
-          >
-            <Save className="w-3.5 h-3.5" />
-            <span>{itemToEdit ? 'Enregistrer les modifications' : 'Créer la ressource'}</span>
-          </button>
-        </div>
-      </form>
-    </>
+    </form>
   );
 }

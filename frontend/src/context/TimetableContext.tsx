@@ -1,7 +1,16 @@
-'use client';
+﻿"use client";
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+  type ReactNode,
+} from "react";
+import type {
   Campus,
   Salle,
   Enseignant,
@@ -11,8 +20,7 @@ import {
   Module,
   ElementModule,
   Seance,
-  TimetableStats,
-} from '@/types/timetable';
+} from "@/types/timetable";
 import {
   INITIAL_CAMPUSES,
   INITIAL_SALLES,
@@ -24,13 +32,12 @@ import {
   INITIAL_ELEMENTS,
   INITIAL_SEANCES,
   computeTimetableStats,
-  loadStoredResource,
-  saveStoredResource,
-  clearStoredResources,
-} from '@/data/timetable-mock';
-import { checkTimetableConflicts, VerificationReport } from '@/lib/timetable-checker';
+} from "@/data/timetable-mock";
+import { checkTimetableConflicts } from "@/lib/timetable-checker";
+import { ApiClient, ApiError } from "@/lib/api-client";
+import type { SolverCalendar } from "@/types/solver";
 
-interface TimetableContextType {
+export interface TimetableData {
   campuses: Campus[];
   salles: Salle[];
   enseignants: Enseignant[];
@@ -40,233 +47,412 @@ interface TimetableContextType {
   modules: Module[];
   elements: ElementModule[];
   seances: Seance[];
-  stats: TimetableStats;
-  verificationReport: VerificationReport;
-  isCustomScenario: boolean;
-
-  // Actions CRUD locales
-  addOrUpdateSalle: (salle: Salle) => void;
-  deleteSalle: (id: string) => void;
-  addOrUpdateEnseignant: (ens: Enseignant) => void;
-  deleteEnseignant: (id: string) => void;
-  addOrUpdateGroupe: (grp: Groupe) => void;
-  deleteGroupe: (id: string) => void;
-  addOrUpdateSeance: (seance: Seance) => void;
-  deleteSeance: (id: string) => void;
-
-  // Démonstration
-  injectTestConflictScenario: () => void;
-  resetToInitialData: () => void;
+}
+const EMPTY: TimetableData = {
+  campuses: [],
+  salles: [],
+  enseignants: [],
+  filieres: [],
+  options: [],
+  groupes: [],
+  modules: [],
+  elements: [],
+  seances: [],
+};
+const DEMO: TimetableData = {
+  campuses: INITIAL_CAMPUSES,
+  salles: INITIAL_SALLES,
+  enseignants: INITIAL_ENSEIGNANTS,
+  filieres: INITIAL_FILIERES,
+  options: INITIAL_OPTIONS,
+  groupes: INITIAL_GROUPES,
+  modules: INITIAL_MODULES,
+  elements: INITIAL_ELEMENTS,
+  seances: INITIAL_SEANCES,
+};
+export interface ModuleInput {
+  code: string;
+  intitule: string;
+  filiereId: string;
+  semestre: string;
+  volumeHoraire: number;
+  typeSalleRequis: string;
 }
 
-const TimetableContext = createContext<TimetableContextType | undefined>(undefined);
+type ContextValue = TimetableData & {
+  calendar: SolverCalendar | null;
+  calendarError: string;
+  stats: ReturnType<typeof computeTimetableStats>;
+  verificationReport: ReturnType<typeof checkTimetableConflicts>;
+  mode: "live" | "demo";
+  loading: boolean;
+  busy: boolean;
+  error: string;
+  notice: string;
+  mobileMenuOpen: boolean;
+  setMobileMenuOpen: (open: boolean) => void;
+  reload: () => Promise<void>;
+  switchMode: (mode: "live" | "demo") => void;
+  clearFeedback: () => void;
+  addOrUpdateSalle: (item: Salle) => Promise<boolean>;
+  deleteSalle: (id: string) => Promise<boolean>;
+  addOrUpdateEnseignant: (item: Enseignant) => Promise<boolean>;
+  deleteEnseignant: (id: string) => Promise<boolean>;
+  addOrUpdateGroupe: (item: Groupe) => Promise<boolean>;
+  deleteGroupe: (id: string) => Promise<boolean>;
+  addOrUpdateSeance: (item: Seance) => Promise<boolean>;
+  deleteSeance: (id: string) => Promise<boolean>;
+  createModule: (input: ModuleInput) => Promise<boolean>;
+  injectTestConflictScenario: () => void;
+  resetToInitialData: () => void;
+  isCustomScenario: boolean;
+};
+const TimetableContext = createContext<ContextValue | null>(null);
 
-export function TimetableProvider({ children }: { children: React.ReactNode }) {
-  const [campuses, setCampuses] = useState<Campus[]>(INITIAL_CAMPUSES);
-  const [salles, setSalles] = useState<Salle[]>(INITIAL_SALLES);
-  const [enseignants, setEnseignants] = useState<Enseignant[]>(INITIAL_ENSEIGNANTS);
-  const [filieres] = useState<Filiere[]>(INITIAL_FILIERES);
-  const [options] = useState<OptionFiliere[]>(INITIAL_OPTIONS);
-  const [groupes, setGroupes] = useState<Groupe[]>(INITIAL_GROUPES);
-  const [modules, setModules] = useState<Module[]>(INITIAL_MODULES);
-  const [elements, setElements] = useState<ElementModule[]>(INITIAL_ELEMENTS);
-  const [seances, setSeances] = useState<Seance[]>(INITIAL_SEANCES);
-  const [isCustomScenario, setIsCustomScenario] = useState<boolean>(false);
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+function workspaceError(reason: unknown): string {
+  if (reason instanceof ApiError && reason.status === 404)
+    return "Le service de planning est absent du backend démarré. Relancez le backend à jour depuis le dossier backend-spring, puis réessayez.";
+  if (reason instanceof ApiError && reason.status === 403)
+    return "Votre compte ne dispose pas des droits de planification.";
+  return reason instanceof Error
+    ? reason.message
+    : "Impossible de charger le planning.";
+}
 
-  // Chargement depuis localStorage au montage client
+export function TimetableProvider({ children }: { children: ReactNode }) {
+  const [calendar, setCalendar] = useState<SolverCalendar | null>(null);
+  const [calendarError, setCalendarError] = useState("");
+  const [data, setData] = useState<TimetableData>(EMPTY);
+  const [mode, setMode] = useState<"live" | "demo">("live");
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCustomScenario, setIsCustomScenario] = useState(false);
+  const mutation = useRef(false);
+  const generation = useRef(0);
+
   useEffect(() => {
-    try {
-      const storedCampuses = loadStoredResource<Campus[]>('campuses', INITIAL_CAMPUSES);
-      const storedSalles = loadStoredResource<Salle[]>('salles', INITIAL_SALLES);
-      const storedEnseignants = loadStoredResource<Enseignant[]>('enseignants', INITIAL_ENSEIGNANTS);
-      const storedGroupes = loadStoredResource<Groupe[]>('groupes', INITIAL_GROUPES);
-      const storedModules = loadStoredResource<Module[]>('modules', INITIAL_MODULES);
-      const storedElements = loadStoredResource<ElementModule[]>('elements', INITIAL_ELEMENTS);
-      const storedSeances = loadStoredResource<Seance[]>('seances', INITIAL_SEANCES);
+    let active = true;
+    if (mode === "live") {
+      ApiClient.get<SolverCalendar>("/planning/solver/calendar")
+        .then((value) => {
+          if (active) {
+            setCalendar(value);
+            setCalendarError("");
+          }
+        })
+        .catch(() => {
+          if (active) {
+            setCalendar(null);
+            setCalendarError(
+              "Le calendrier du solveur est indisponible. Vérifiez que le backend est à jour.",
+            );
+          }
+        });
+    }
+    return () => {
+      active = false;
+    };
+  }, [mode]);
 
-      setCampuses(storedCampuses);
-      setSalles(storedSalles);
-      setEnseignants(storedEnseignants);
-      setGroupes(storedGroupes);
-      setModules(storedModules);
-      setElements(storedElements);
-      setSeances(storedSeances);
+  const reload = useCallback(async () => {
+    const ticket = ++generation.current;
+    setLoading(true);
+    setError("");
+    try {
+      const snapshot = await ApiClient.get<TimetableData>(
+        "/planning/workspace",
+      );
+      if (
+        !snapshot ||
+        Object.keys(EMPTY).some(
+          (key) => !Array.isArray(snapshot[key as keyof TimetableData]),
+        )
+      )
+        throw new Error("Le format des données de planning est invalide.");
+      if (ticket === generation.current) setData(snapshot);
+    } catch (reason) {
+      if (ticket === generation.current) setError(workspaceError(reason));
     } finally {
-      setIsLoaded(true);
+      if (ticket === generation.current) setLoading(false);
     }
   }, []);
-
-  // Sauvegarde automatique lors des modifications après chargement initial
   useEffect(() => {
-    if (!isLoaded) return;
-    saveStoredResource('campuses', campuses);
-    saveStoredResource('salles', salles);
-    saveStoredResource('enseignants', enseignants);
-    saveStoredResource('groupes', groupes);
-    saveStoredResource('modules', modules);
-    saveStoredResource('elements', elements);
-    saveStoredResource('seances', seances);
-  }, [campuses, salles, enseignants, groupes, modules, elements, seances, isLoaded]);
-
-  // Recalcul des KPIs
-  const stats = useMemo(
-    () => computeTimetableStats(campuses, salles, enseignants, modules, groupes, seances),
-    [campuses, salles, enseignants, modules, groupes, seances]
-  );
-
-  // Exécution temps réel du vérificateur de conflits
-  const verificationReport = useMemo(
-    () =>
-      checkTimetableConflicts({
-        seances,
-        salles,
-        groupes,
-        enseignants,
-        elements,
-        campuses,
-      }),
-    [seances, salles, groupes, enseignants, elements, campuses]
-  );
-
-  const addOrUpdateSalle = useCallback((salle: Salle) => {
-    setSalles((prev) => {
-      const index = prev.findIndex((s) => s.id === salle.id);
-      if (index >= 0) {
-        const copy = [...prev];
-        copy[index] = salle;
-        return copy;
-      }
-      return [...prev, salle];
-    });
-  }, []);
-
-  const deleteSalle = useCallback((id: string) => {
-    setSalles((prev) => prev.filter((s) => s.id !== id));
-  }, []);
-
-  const addOrUpdateEnseignant = useCallback((ens: Enseignant) => {
-    setEnseignants((prev) => {
-      const index = prev.findIndex((e) => e.id === ens.id);
-      if (index >= 0) {
-        const copy = [...prev];
-        copy[index] = ens;
-        return copy;
-      }
-      return [...prev, ens];
-    });
-  }, []);
-
-  const deleteEnseignant = useCallback((id: string) => {
-    setEnseignants((prev) => prev.filter((e) => e.id !== id));
-  }, []);
-
-  const addOrUpdateGroupe = useCallback((grp: Groupe) => {
-    setGroupes((prev) => {
-      const index = prev.findIndex((g) => g.id === grp.id);
-      if (index >= 0) {
-        const copy = [...prev];
-        copy[index] = grp;
-        return copy;
-      }
-      return [...prev, grp];
-    });
-  }, []);
-
-  const deleteGroupe = useCallback((id: string) => {
-    setGroupes((prev) => prev.filter((g) => g.id !== id));
-  }, []);
-
-  const addOrUpdateSeance = useCallback((seance: Seance) => {
-    setSeances((prev) => {
-      const index = prev.findIndex((s) => s.id === seance.id);
-      if (index >= 0) {
-        const copy = [...prev];
-        copy[index] = seance;
-        return copy;
-      }
-      return [...prev, seance];
-    });
-  }, []);
-
-  const deleteSeance = useCallback((id: string) => {
-    setSeances((prev) => prev.filter((s) => s.id !== id));
-  }, []);
-
-  // Démonstration : injecte intentionnellement deux conflits réels pour démontrer le détecteur
-  const injectTestConflictScenario = useCallback(() => {
-    setIsCustomScenario(true);
-    // On duplique une séance pour créer :
-    // 1. Double réservation de la Salle 102 le Lundi à 08h30
-    // 2. Collision horaire de Pr. Benassou sur deux groupes simultanés
-    const conflitSeance1: Seance = {
-      id: 'conf-sim-01',
-      groupeId: 'grp-5iir-2dsi-g2',
-      salleId: 'sal-102', // même salle que 5IIR G1
-      enseignantId: 'ens-benassou', // même prof
-      elementModuleId: 'elem-501-cm',
-      jourSemaine: 'LUNDI',
-      numeroCreneau: 'S1_08H30',
-      spanSeances: 1,
-      statutAffectation: 'MANUEL',
+    let active = true;
+    const ticket = ++generation.current;
+    ApiClient.get<TimetableData>("/planning/workspace")
+      .then((snapshot) => {
+        if (
+          !snapshot ||
+          Object.keys(EMPTY).some(
+            (key) => !Array.isArray(snapshot[key as keyof TimetableData]),
+          )
+        )
+          throw new Error("Le format des données de planning est invalide.");
+        if (active && ticket === generation.current) setData(snapshot);
+      })
+      .catch((reason) => {
+        if (active && ticket === generation.current)
+          setError(workspaceError(reason));
+      })
+      .finally(() => {
+        if (active && ticket === generation.current) setLoading(false);
+      });
+    return () => {
+      active = false;
     };
-
-    setSeances((prev) => {
-      const filtered = prev.filter((s) => s.id !== 'conf-sim-01');
-      return [...filtered, conflitSeance1];
-    });
   }, []);
 
-  // Rétablir données initiales
-  const resetToInitialData = useCallback(() => {
-    clearStoredResources();
-    setCampuses(INITIAL_CAMPUSES);
-    setSalles(INITIAL_SALLES);
-    setEnseignants(INITIAL_ENSEIGNANTS);
-    setGroupes(INITIAL_GROUPES);
-    setModules(INITIAL_MODULES);
-    setElements(INITIAL_ELEMENTS);
-    setSeances(INITIAL_SEANCES);
+  function switchMode(next: "live" | "demo") {
+    if (mutation.current) return;
+    generation.current++;
+    setMode(next);
+    setError("");
+    setNotice("");
     setIsCustomScenario(false);
-  }, []);
+    if (next === "demo") {
+      setData(structuredClone(DEMO));
+      setLoading(false);
+    } else {
+      setData(EMPTY);
+      void reload();
+    }
+  }
 
+  async function mutate(
+    resource: "salles" | "enseignants" | "groupes" | "seances",
+    itemOrId: Salle | Enseignant | Groupe | Seance | string,
+  ) {
+    if (mutation.current) return false;
+    let persisted = false;
+    mutation.current = true;
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const isDelete = typeof itemOrId === "string";
+      const id = isDelete ? itemOrId : itemOrId.id;
+      if (mode === "demo") {
+        if (
+          isDelete &&
+          data.seances.some((s) =>
+            resource === "salles"
+              ? s.salleId === id
+              : resource === "groupes"
+                ? s.groupeId === id
+                : resource === "enseignants"
+                  ? s.enseignantId === id
+                  : false,
+          )
+        )
+          throw new Error(
+            "Cette ressource est utilisée par des séances. Réaffectez-les avant suppression.",
+          );
+        setData((previous) => ({
+          ...previous,
+          [resource]: isDelete
+            ? previous[resource].filter((x) => x.id !== id)
+            : [...previous[resource].filter((x) => x.id !== id), itemOrId],
+        }));
+        setNotice(
+          "Démonstration mise à jour. Aucune donnée envoyée au serveur.",
+        );
+        return true;
+      }
+      const path =
+        resource === "seances" ? "/planning/seances" : "/" + resource;
+      if (isDelete) await ApiClient.delete(path + "/" + id);
+      else {
+        let body: unknown = itemOrId;
+        if (resource === "salles") {
+          const s = itemOrId as Salle;
+          body = { ...s, campusId: Number(s.campusId) };
+        }
+        if (resource === "enseignants") {
+          const e = itemOrId as Enseignant;
+          body = {
+            ...e,
+            disponibilitesFixesJson: JSON.stringify(e.disponibilites),
+          };
+        }
+        if (resource === "groupes") {
+          const g = itemOrId as Groupe;
+          body = {
+            ...g,
+            filiereId: Number(g.filiereId),
+            campusFixeId: Number(g.campusFixeId),
+            optionSpecialite:
+              data.options.find((o) => o.id === g.optionId)?.intitule ?? null,
+          };
+        }
+        if (resource === "seances") {
+          const s = itemOrId as Seance;
+          body = {
+            ...s,
+            groupeId: Number(s.groupeId),
+            salleId: Number(s.salleId),
+            enseignantId: Number(s.enseignantId),
+            elementModuleId: Number(s.elementModuleId),
+          };
+        }
+        if (/^\d+$/.test(id)) await ApiClient.put(path + "/" + id, body);
+        else await ApiClient.post(path, body);
+      }
+      persisted = true;
+      const updated = await ApiClient.get<TimetableData>("/planning/workspace");
+      setData(updated);
+      setNotice("Modification enregistrée sur le serveur.");
+      return true;
+    } catch (reason) {
+      if (persisted) {
+        setError(
+          "La modification est enregistrée, mais les données n’ont pas pu être rechargées. Cliquez sur Actualiser avant de continuer.",
+        );
+        return true;
+      }
+      setError(
+        reason instanceof Error ? reason.message : "La modification a échoué.",
+      );
+      return false;
+    } finally {
+      mutation.current = false;
+      setBusy(false);
+    }
+  }
+  async function createModule(input: ModuleInput) {
+    if (mutation.current) return false;
+    mutation.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      if (mode === "demo") {
+        const id = crypto.randomUUID();
+        setData((previous) => ({
+          ...previous,
+          modules: [
+            ...previous.modules,
+            {
+              id,
+              codeModule: input.code,
+              intitule: input.intitule,
+              filiereId: input.filiereId,
+              semestre: input.semestre,
+              volumeHoraireTotal: input.volumeHoraire,
+            },
+          ],
+          elements: [
+            ...previous.elements,
+            {
+              id: id + "-01",
+              moduleId: id,
+              codeElement: input.code + "-01",
+              intitule: input.intitule,
+              volumeHoraire: input.volumeHoraire,
+              typeElement:
+                input.typeSalleRequis === "STANDARD" ? "COURS" : "TP",
+              necessitePc: input.typeSalleRequis === "LI_PC",
+              typeSalleRequis: input.typeSalleRequis as Salle["typeSalle"],
+            },
+          ],
+        }));
+      } else {
+        await ApiClient.post("/planning/modules", {
+          ...input,
+          filiereId: Number(input.filiereId),
+        });
+        setData(await ApiClient.get<TimetableData>("/planning/workspace"));
+      }
+      setNotice(
+        mode === "demo"
+          ? "Module ajouté à la démonstration."
+          : "Module et élément pédagogique enregistrés.",
+      );
+      return true;
+    } catch (reason) {
+      setError(
+        reason instanceof Error ? reason.message : "Création impossible.",
+      );
+      return false;
+    } finally {
+      mutation.current = false;
+      setBusy(false);
+    }
+  }
+  function injectTestConflictScenario() {
+    if (mode !== "demo" || !data.seances.length) return;
+    setData((previous) => ({
+      ...previous,
+      seances: [
+        ...previous.seances.filter((s) => s.id !== "conf-sim-01"),
+        { ...previous.seances[0], id: "conf-sim-01" },
+      ],
+    }));
+    setIsCustomScenario(true);
+  }
+  const stats = useMemo(
+    () =>
+      computeTimetableStats(
+        data.campuses,
+        data.salles,
+        data.enseignants,
+        data.modules,
+        data.groupes,
+        data.seances,
+      ),
+    [data],
+  );
+  const verificationReport = useMemo(
+    () => checkTimetableConflicts(data),
+    [data],
+  );
   return (
     <TimetableContext.Provider
       value={{
-        campuses,
-        salles,
-        enseignants,
-        filieres,
-        options,
-        groupes,
-        modules,
-        elements,
-        seances,
+        ...data,
+        calendar: mode === "live" ? calendar : null,
+        calendarError: mode === "live" ? calendarError : "",
         stats,
         verificationReport,
-        isCustomScenario,
-        addOrUpdateSalle,
-        deleteSalle,
-        addOrUpdateEnseignant,
-        deleteEnseignant,
-        addOrUpdateGroupe,
-        deleteGroupe,
-        addOrUpdateSeance,
-        deleteSeance,
+        mode,
+        loading,
+        busy,
+        error,
+        notice,
+        mobileMenuOpen,
+        setMobileMenuOpen,
+        reload,
+        switchMode,
+        clearFeedback: () => {
+          setError("");
+          setNotice("");
+        },
+        addOrUpdateSalle: (item) => mutate("salles", item),
+        deleteSalle: (id) => mutate("salles", id),
+        addOrUpdateEnseignant: (item) => mutate("enseignants", item),
+        deleteEnseignant: (id) => mutate("enseignants", id),
+        addOrUpdateGroupe: (item) => mutate("groupes", item),
+        deleteGroupe: (id) => mutate("groupes", id),
+        addOrUpdateSeance: (item) => mutate("seances", item),
+        deleteSeance: (id) => mutate("seances", id),
+        createModule,
         injectTestConflictScenario,
-        resetToInitialData,
+        isCustomScenario,
+        resetToInitialData: () => {
+          if (mode === "demo") {
+            setData(structuredClone(DEMO));
+            setIsCustomScenario(false);
+          }
+        },
       }}
     >
       {children}
     </TimetableContext.Provider>
   );
 }
-
 export function useTimetable() {
   const context = useContext(TimetableContext);
-  if (!context) {
-    throw new Error('useTimetable doit être utilisé à l’intérieur de TimetableProvider');
-  }
+  if (!context) throw new Error("TimetableProvider est requis.");
   return context;
 }
-

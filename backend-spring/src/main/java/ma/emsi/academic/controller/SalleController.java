@@ -25,7 +25,7 @@ import java.util.List;
 @RequestMapping("/api/v1/salles")
 @RequiredArgsConstructor
 @Tag(name = "Salles & Infrastructure", description = "Gestion des salles de cours, laboratoires d'informatique (LI) et réseaux (LR) par campus")
-@CrossOrigin(origins = "*")
+
 public class SalleController {
 
     private final SalleService salleService;
@@ -60,18 +60,21 @@ public class SalleController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Créer une nouvelle salle sur un campus")
     public ResponseEntity<SalleDto> createSalle(@Valid @RequestBody CreateSalleRequest request) {
         return new ResponseEntity<>(salleService.createSalle(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Mettre à jour les spécifications d'une salle")
     public ResponseEntity<SalleDto> updateSalle(@PathVariable Long id, @Valid @RequestBody CreateSalleRequest request) {
         return ResponseEntity.ok(salleService.updateSalle(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Supprimer une salle")
     public ResponseEntity<Void> deleteSalle(@PathVariable Long id) {
         salleService.deleteSalle(id);
@@ -79,6 +82,7 @@ public class SalleController {
     }
 
     @PostMapping(value = "/import-excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Importer en masse un parc de salles depuis un fichier Excel (.xlsx)")
     public ResponseEntity<List<SalleDto>> importerSalles(
             @RequestParam("file") MultipartFile file,

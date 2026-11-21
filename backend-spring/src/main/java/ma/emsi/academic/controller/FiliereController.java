@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/api/v1/filieres")
 @RequiredArgsConstructor
 @Tag(name = "Filières Pédagogiques", description = "Gestion des filières d'ingénierie (IIR, GC, GI, IFA)")
-@CrossOrigin(origins = "*")
+
 @SecurityRequirement(name = "bearerAuth")
 public class FiliereController {
 
@@ -48,18 +48,21 @@ public class FiliereController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Créer une nouvelle filière pédagogique")
     public ResponseEntity<FiliereDto> createFiliere(@Valid @RequestBody CreateFiliereRequest request) {
         return new ResponseEntity<>(filiereService.createFiliere(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Mettre à jour les informations d'une filière")
     public ResponseEntity<FiliereDto> updateFiliere(@PathVariable Long id, @Valid @RequestBody CreateFiliereRequest request) {
         return ResponseEntity.ok(filiereService.updateFiliere(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Supprimer une filière (si aucun groupe n'y est rattaché)")
     public ResponseEntity<Void> deleteFiliere(@PathVariable Long id) {
         filiereService.deleteFiliere(id);

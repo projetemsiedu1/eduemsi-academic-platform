@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:planning": "node scripts/test-planning.cjs"
   },
   "dependencies": {
     "lucide-react": "^1.71.0",

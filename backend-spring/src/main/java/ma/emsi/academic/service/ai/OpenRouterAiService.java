@@ -28,8 +28,6 @@ public class OpenRouterAiService {
     @Value("${openrouter.api.key:}")
     private String configuredApiKey;
 
-    // Clé OpenRouter protégée (évite le blocage Git Push Protection secret scanning)
-    private static final String DEFAULT_ENCODED_KEY = "c2stb3ItdjEtZTA5NTE5NDAwOWNlOTc3OGE4ZmU2ZWJlMGY3NzNmODA3NDMzZmQyZTc2MTQ0ZjYwOGI4YWQ0MjQ3ZTg2MTliMg==";
 
     public String resolveApiKey() {
         if (configuredApiKey != null && !configuredApiKey.isBlank() && !configuredApiKey.equals("FREE_TIER_DEMO_KEY")) {
@@ -39,7 +37,7 @@ public class OpenRouterAiService {
         if (envKey != null && !envKey.isBlank()) {
             return envKey.trim();
         }
-        return new String(Base64.getDecoder().decode(DEFAULT_ENCODED_KEY)).trim();
+        return "";
     }
 
     @Value("${openrouter.api.url:https://openrouter.ai/api/v1/chat/completions}")
