@@ -12,6 +12,8 @@ import {
   LogOut,
   ArrowLeft,
   BookOpen,
+  UserCheck,
+  ShieldCheck,
 } from "lucide-react";
 import { logout } from "@/lib/auth";
 import { useTimetable } from "@/context/TimetableContext";
@@ -45,6 +47,16 @@ export function TimetableSidebar({
       href: "/timetable/exams",
       label: "Planning des examens",
       icon: BookOpen,
+    },
+    {
+      href: "/timetable/student",
+      label: "Espace Étudiant",
+      icon: UserCheck,
+    },
+    {
+      href: "/timetable/teacher",
+      label: "Espace Enseignant",
+      icon: ShieldCheck,
     },
   ];
   return (
