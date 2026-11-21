@@ -43,6 +43,19 @@ export function loginErrorMessage(error: unknown): string {
   return 'Une erreur inattendue est survenue. Veuillez réessayer dans un instant.';
 }
 
+export function logout(): void {
+  ApiClient.clearToken();
+  if (typeof window !== 'undefined') {
+    try {
+      sessionStorage.clear();
+      localStorage.removeItem('emsi_auth_token');
+      localStorage.removeItem('emsi_auth_expires_at');
+    } catch {
+      // Storage access restrictions
+    }
+  }
+}
+
 const roleLabels: Record<string, string> = {
   ROLE_SUPER_ADMIN: 'Administrateur',
   ROLE_RESPONSABLE_FILIERE: 'Responsable de filière',

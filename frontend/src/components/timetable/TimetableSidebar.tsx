@@ -12,7 +12,7 @@ import {
   LogOut,
   ArrowLeft,
 } from "lucide-react";
-import { ApiClient } from "@/lib/api-client";
+import { logout } from "@/lib/auth";
 import { useTimetable } from "@/context/TimetableContext";
 export function TimetableSidebar({
   onCloseMobile,
@@ -88,7 +88,7 @@ export function TimetableSidebar({
         </Link>
         <button
           onClick={() => {
-            ApiClient.clearToken();
+            logout();
             router.replace("/login");
           }}
         >

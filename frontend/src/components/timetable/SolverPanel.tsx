@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { ApiClient } from "@/lib/api-client";
 import { useTimetable } from "@/context/TimetableContext";
 import { Modal } from "@/components/ui/modal";
@@ -626,6 +627,30 @@ export function SolverPanel() {
                       }
                     />
                   </div>
+                  {result.proposalState === "ACCEPTED" && (
+                    <div style={{ marginTop: "1rem", padding: "1rem", backgroundColor: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: "0.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
+                      <div style={{ color: "#065f46", fontSize: "0.95rem", fontWeight: 600 }}>
+                        Planning validé avec succès par Google OR-Tools CP-SAT ! Toutes les séances ont été enregistrées sans conflit.
+                      </div>
+                      <Link
+                        href="/timetable/groups"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          padding: "0.5rem 1rem",
+                          borderRadius: "0.375rem",
+                          textDecoration: "none",
+                          backgroundColor: "#059669",
+                          color: "#ffffff",
+                          fontWeight: 600,
+                          fontSize: "0.875rem"
+                        }}
+                      >
+                        Consulter la grille des groupes →
+                      </Link>
+                    </div>
+                  )}
                   {result.proposalState === "PENDING" && (
                     <div className="planning-form-actions">
                       <button
