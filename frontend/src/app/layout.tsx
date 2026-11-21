@@ -22,7 +22,11 @@ export const metadata: Metadata = {
   icons: { icon: "/brand/univora-icon.png", apple: "/brand/univora-icon.png" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="fr"

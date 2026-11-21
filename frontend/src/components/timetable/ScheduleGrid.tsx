@@ -11,7 +11,7 @@ import { MapPin, Laptop, Lock, User, Users, Clock } from "lucide-react";
 
 interface ScheduleGridProps {
   seances: Seance[];
-  viewMode: "groupe" | "enseignant";
+  viewMode: "groupe" | "enseignant" | "salle";
   activeEntityTitle: string;
   activeEntitySubtitle?: string;
   campusName?: string;
@@ -106,6 +106,8 @@ export function ScheduleGrid({
             <span className="text-xs font-bold   text-emsi-primary px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
               {viewMode === "groupe"
                 ? "Emploi du Temps Étudiant"
+                : viewMode === "salle"
+                ? "Occupation de la Salle"
                 : "Planning Enseignant"}
             </span>
             {campusName && (
@@ -290,34 +292,64 @@ export function ScheduleGrid({
 
                                   {/* DETAILS LIEU & INTERVENANT */}
                                   <div className="space-y-0.5 text-xs">
-                                    {viewMode === "groupe" ? (
-                                      <div className="flex items-center gap-1 text-slate-700 font-semibold truncate">
-                                        <User className="w-3 h-3 text-slate-500 shrink-0" />
-                                        <span>
-                                          Pr. {ens ? ens.nom : "Enseignant"}
-                                        </span>
-                                      </div>
+                                    {viewMode === "salle" ? (
+                                      <>
+                                        <div className="flex items-center gap-1 text-slate-700 font-semibold truncate">
+                                          <Users className="w-3 h-3 text-slate-500 shrink-0" />
+                                          <span>
+                                            {grp?.codeGroupe || "Groupe"}
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center gap-1 text-slate-700 font-semibold truncate">
+                                          <User className="w-3 h-3 text-slate-500 shrink-0" />
+                                          <span>
+                                            Pr. {ens ? ens.nom : "Enseignant"}
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center justify-between text-slate-600 font-medium pt-0.5">
+                                          <span className="text-xs text-slate-500">
+                                            {grp?.effectif ? `${grp.effectif} étud.` : ""}
+                                          </span>
+                                          {isTpPc && (
+                                            <span className="flex items-center gap-0.5 text-xs font-bold text-emerald-700">
+                                              <Laptop className="w-2.5 h-2.5" />
+                                              PC
+                                            </span>
+                                          )}
+                                        </div>
+                                      </>
                                     ) : (
-                                      <div className="flex items-center gap-1 text-slate-700 font-semibold truncate">
-                                        <Users className="w-3 h-3 text-slate-500 shrink-0" />
-                                        <span>
-                                          {grp?.codeGroupe || "Groupe"}
-                                        </span>
-                                      </div>
-                                    )}
+                                      <>
+                                        {viewMode === "groupe" ? (
+                                          <div className="flex items-center gap-1 text-slate-700 font-semibold truncate">
+                                            <User className="w-3 h-3 text-slate-500 shrink-0" />
+                                            <span>
+                                              Pr. {ens ? ens.nom : "Enseignant"}
+                                            </span>
+                                          </div>
+                                        ) : (
+                                          <div className="flex items-center gap-1 text-slate-700 font-semibold truncate">
+                                            <Users className="w-3 h-3 text-slate-500 shrink-0" />
+                                            <span>
+                                              {grp?.codeGroupe || "Groupe"}
+                                            </span>
+                                          </div>
+                                        )}
 
-                                    <div className="flex items-center justify-between text-slate-600 font-medium">
-                                      <span className="flex items-center gap-1 truncate font-bold text-emsi-primary">
-                                        <MapPin className="w-3 h-3 shrink-0" />
-                                        {sal?.codeSalle || "Salle"}
-                                      </span>
-                                      {isTpPc && (
-                                        <span className="flex items-center gap-0.5 text-xs font-bold text-emerald-700">
-                                          <Laptop className="w-2.5 h-2.5" />
-                                          PC
-                                        </span>
-                                      )}
-                                    </div>
+                                        <div className="flex items-center justify-between text-slate-600 font-medium">
+                                          <span className="flex items-center gap-1 truncate font-bold text-emsi-primary">
+                                            <MapPin className="w-3 h-3 shrink-0" />
+                                            {sal?.codeSalle || "Salle"}
+                                          </span>
+                                          {isTpPc && (
+                                            <span className="flex items-center gap-0.5 text-xs font-bold text-emerald-700">
+                                              <Laptop className="w-2.5 h-2.5" />
+                                              PC
+                                            </span>
+                                          )}
+                                        </div>
+                                      </>
+                                    )}
                                   </div>
                                 </div>
                               );

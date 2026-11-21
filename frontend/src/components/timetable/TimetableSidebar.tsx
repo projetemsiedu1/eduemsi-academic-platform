@@ -7,6 +7,7 @@ import {
   Layers,
   Users,
   GraduationCap,
+  Building2,
   Sliders,
   X,
   LogOut,
@@ -35,6 +36,11 @@ export function TimetableSidebar({
       href: "/timetable/teachers",
       label: "Planning des enseignants",
       icon: GraduationCap,
+    },
+    {
+      href: "/timetable/rooms",
+      label: "Occupation des salles",
+      icon: Building2,
     },
     {
       href: "/timetable/constraints",
