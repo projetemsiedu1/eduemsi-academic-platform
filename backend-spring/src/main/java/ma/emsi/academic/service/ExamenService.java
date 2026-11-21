@@ -20,6 +20,11 @@ public interface ExamenService {
     List<ConvocationEtudiantDto> getConvocationsEtudiant(String emailOuUsername);
     List<ConvocationEtudiantDto> getConvocationsEtudiantById(Long etudiantId);
 
+    // Espace Enseignant / Surveillants & Contrôle de salle anti-triche
+    List<ExamenDto> getSurveillancesEnseignant(String emailOuUsername);
+    List<ExamenDto> getSurveillancesEnseignantById(Long enseignantId);
+    ExamenAffectationDto updatePresenceEtudiant(Long affectationId, String statutPresence);
+
     // Ordonnancement automatique avec contraintes (Jours, Modules/Jour, Décalage)
     List<ExamenDto> autoPlanifierExamens(AutoPlanificationExamensRequest request);
 }

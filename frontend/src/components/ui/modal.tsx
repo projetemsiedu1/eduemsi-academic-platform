@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { X } from "lucide-react";
 
 export function Modal({
@@ -16,27 +16,36 @@ export function Modal({
   children: ReactNode;
   busy?: boolean;
 }) {
-  const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    const node = dialog.current;
-    if (open && node && !node.open) node.showModal();
-    if (!open && node?.open) node.close();
-  }, [open]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !busy) {
+        onClose();
+      }
+    };
+    if (open) {
+      document.body.style.overflow = "hidden";
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, busy, onClose]);
+
+  if (!open) return null;
+
   return (
-    <dialog
-      ref={dialog}
-      className="planning-modal"
+    <div
+      className="planning-modal-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !busy) onClose();
+      }}
+      role="dialog"
+      aria-modal="true"
       aria-label={title}
-      onCancel={(event) => {
-        event.preventDefault();
-        if (!busy) onClose();
-      }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget && !busy) onClose();
-      }}
     >
-      <div className="planning-modal-content">
-        <header>
+      <div className="planning-modal-card">
+        <header className="planning-modal-header">
           <h2>{title}</h2>
           <button
             type="button"
@@ -47,8 +56,8 @@ export function Modal({
             <X size={20} />
           </button>
         </header>
-        {children}
+        <div className="planning-modal-body">{children}</div>
       </div>
-    </dialog>
+    </div>
   );
 }

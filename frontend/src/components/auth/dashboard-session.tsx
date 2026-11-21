@@ -8,6 +8,7 @@ import { ApiClient, ApiError } from '@/lib/api-client';
 import { roleLabel, type AcademicUser } from '@/lib/auth';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
+import { TeacherSurveillances } from '@/components/timetable/TeacherSurveillances';
 import type { ConvocationEtudiant } from '@/types/exams';
 
 export function DashboardSession() {
@@ -106,7 +107,13 @@ export function DashboardSession() {
               </div>
             )}
 
+            {/* SECTION SURVEILLANCE & CONTRÔLE DE SALLE POUR L'ENSEIGNANT */}
+            {['ROLE_PROFESSEUR_PERMANENT', 'ROLE_PROFESSEUR_VACATAIRE', 'ROLE_SUPER_ADMIN', 'ROLE_RESPONSABLE_PLANNING'].includes(user.role) && (
+              <TeacherSurveillances />
+            )}
+
             {/* SECTION NOTIFICATION & CONVOCATIONS D'EXAMENS POUR L'ÉTUDIANT */}
+            {['ROLE_ETUDIANT', 'ROLE_SUPER_ADMIN', 'ROLE_RESPONSABLE_PLANNING'].includes(user.role) && (
             <section
               style={{
                 marginTop: '2rem',
@@ -241,6 +248,7 @@ export function DashboardSession() {
                 </div>
               )}
             </section>
+            )}
           </>
         ) : error ? (
           <div role="alert">

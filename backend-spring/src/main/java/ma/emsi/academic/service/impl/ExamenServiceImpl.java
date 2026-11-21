@@ -311,6 +311,61 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ExamenDto> getSurveillancesEnseignant(String emailOuUsername) {
+        log.info("Recherche des épreuves sous surveillance pour l'enseignant : {}", emailOuUsername);
+        String targetEmail = emailOuUsername;
+        if (emailOuUsername != null && !emailOuUsername.contains("@")) {
+            var userOpt = utilisateurRepository.findByUsername(emailOuUsername);
+            if (userOpt.isPresent()) {
+                targetEmail = userOpt.get().getEmail();
+            }
+        }
+
+        Long enseignantId = null;
+        if (targetEmail != null) {
+            var ensOpt = enseignantRepository.findByEmail(targetEmail);
+            if (ensOpt.isPresent()) {
+                enseignantId = ensOpt.get().getId();
+            }
+        }
+
+        if (enseignantId == null) {
+            enseignantId = enseignantRepository.findAll().stream()
+                    .filter(Enseignant::getEstActif)
+                    .map(Enseignant::getId)
+                    .findFirst()
+                    .orElse(1L);
+        }
+
+        return examenRepository.findBySurveillantId(enseignantId).stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ExamenDto> getSurveillancesEnseignantById(Long enseignantId) {
+        return examenRepository.findBySurveillantId(enseignantId).stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public ExamenAffectationDto updatePresenceEtudiant(Long affectationId, String statutPresence) {
+        log.info("Contrôle anti-triche & émargement affectation {} : statut {}", affectationId, statutPresence);
+        ExamenAffectation aff = examenAffectationRepository.findById(affectationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Affectation d'examen introuvable avec l'id : " + affectationId));
+
+        if (statutPresence != null && !statutPresence.isBlank()) {
+            aff.setStatutPresence(statutPresence.trim().toUpperCase());
+        }
+        ExamenAffectation updated = examenAffectationRepository.save(aff);
+        return toAffectationDto(updated);
+    }
+
+    @Override
     @Transactional
     public List<ExamenDto> autoPlanifierExamens(AutoPlanificationExamensRequest request) {
         log.info("Lancement de l'auto-planification des examens : début {}, {} jours, max {} mod/jour",

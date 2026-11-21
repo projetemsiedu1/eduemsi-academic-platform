@@ -277,6 +277,27 @@ try {
         Record-Test "Examens" "Espace Etudiant - Notification & Numero de Table" $false "Echec connexion etudiant"
     }
 
+    # 6.b Espace Enseignant : Surveillances d'Examens & Emargement anti-triche
+    $profToken = $null
+    try {
+        $profLogin = Invoke-RestMethod -Uri "$BackendUrl/auth/login" -Method Post -ContentType "application/json" -Body (@{ username = "prof_permanent"; password = "Emsi@2026!" } | ConvertTo-Json) -TimeoutSec 10
+        $profToken = $profLogin.accessToken
+    } catch {}
+
+    if ($profToken) {
+        $profHeaders = @{ Authorization = "Bearer $profToken"; "Content-Type" = "application/json" }
+        $surveillances = Invoke-RestMethod -Uri "$BackendUrl/examens/surveillances/me" -Method Get -Headers $profHeaders -TimeoutSec 10
+        Record-Test "Examens" "Espace Enseignant - Surveillances & Controle Salle (/surveillances/me)" ($surveillances -ne $null) "Surveillances assignees: $($surveillances.Count)"
+
+        if ($distribution -and $distribution.Count -gt 0) {
+            $affId = $distribution[0].id
+            $pointage = Invoke-RestMethod -Uri "$BackendUrl/examens/affectations/$affId/presence?statut=PRESENT" -Method Put -Headers $profHeaders -TimeoutSec 10
+            Record-Test "Examens" "Controle anti-triche - Pointage et conformite table (/affectations/{id}/presence)" ($pointage.statutPresence -eq "PRESENT") "Statut: $($pointage.statutPresence)"
+        }
+    } else {
+        Record-Test "Examens" "Espace Enseignant - Surveillances & Controle Salle" $false "Echec connexion enseignant"
+    }
+
     # 7. Tester Auto-planificateur de session avec contraintes (Jours, Modules/Jour, Espacement)
     $autoPlanifPayload = @{
         dateDebut = "2026-07-01"

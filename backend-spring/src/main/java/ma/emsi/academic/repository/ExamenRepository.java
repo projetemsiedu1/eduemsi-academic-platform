@@ -40,4 +40,7 @@ public interface ExamenRepository extends JpaRepository<Examen, Long> {
                                          @Param("debut") LocalTime debut,
                                          @Param("fin") LocalTime fin,
                                          @Param("ensId") Long ensId);
+
+    @Query("SELECT e FROM Examen e WHERE e.surveillantPrincipal.id = :ensId OR e.surveillantSecondaire.id = :ensId ORDER BY e.dateExamen ASC, e.heureDebut ASC")
+    List<Examen> findBySurveillantId(@Param("ensId") Long ensId);
 }

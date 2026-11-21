@@ -110,6 +110,32 @@ public class ExamenController {
     }
 
     // -------------------------------------------------------------------------
+    // ESPACE ENSEIGNANT : SURVEILLANCE DES SALLES & CONTRÔLE ANTI-TRICHE
+    // -------------------------------------------------------------------------
+
+    @GetMapping("/surveillances/me")
+    @Operation(summary = "Consulter ses surveillances d'examens et sessions sous son contrôle (Enseignant connecté)")
+    public ResponseEntity<List<ExamenDto>> getMesSurveillances(Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "professeur";
+        return ResponseEntity.ok(examenService.getSurveillancesEnseignant(username));
+    }
+
+    @GetMapping("/surveillances/enseignant/{enseignantId}")
+    @Operation(summary = "Consulter les surveillances d'un enseignant par son ID")
+    public ResponseEntity<List<ExamenDto>> getSurveillancesEnseignant(@PathVariable Long enseignantId) {
+        return ResponseEntity.ok(examenService.getSurveillancesEnseignantById(enseignantId));
+    }
+
+    @PutMapping("/affectations/{affectationId}/presence")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_SCOLARITE','PROFESSEUR_PERMANENT','PROFESSEUR_VACATAIRE')")
+    @Operation(summary = "Émargement et contrôle anti-triche : pointer la présence de l'étudiant et conformité de la place")
+    public ResponseEntity<ExamenAffectationDto> pointerPresence(
+            @PathVariable Long affectationId,
+            @RequestParam String statut) {
+        return ResponseEntity.ok(examenService.updatePresenceEtudiant(affectationId, statut));
+    }
+
+    // -------------------------------------------------------------------------
     // PLANIFICATION AUTOMATIQUE AVEC CONTRAINTES DE SESSION
     // -------------------------------------------------------------------------
 
