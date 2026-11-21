@@ -21,4 +21,5 @@ public class EnseignantDto {
     private TypeContrat typeContrat;
     private Integer heuresContractuellesSemaine;
     private Integer heuresPlanifiees;
+    private Boolean estActif;
 }

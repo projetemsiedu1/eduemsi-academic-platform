@@ -10,7 +10,7 @@ export async function GET() {
       headers: { 'Origin': 'http://localhost:3000' }
     });
     backendStatus = res.ok || res.status === 200 || res.status === 405 ? 'ONLINE' : `HTTP_${res.status}`;
-  } catch (err) {
+  } catch {
     backendStatus = 'OFFLINE_OR_UNREACHABLE';
   }
 

@@ -17,6 +17,7 @@ import java.util.List;
 
 @Repository
 public interface AbsenceRepository extends JpaRepository<Absence, Long>, JpaSpecificationExecutor<Absence> {
+    boolean existsBySeanceId(Long seanceId);
 
     @EntityGraph(attributePaths = {"etudiant", "seance", "seance.elementModule"})
     Page<Absence> findByEtudiantId(Long etudiantId, Pageable pageable);

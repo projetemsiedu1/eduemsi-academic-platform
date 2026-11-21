@@ -60,6 +60,7 @@ public class FiliereServiceImpl implements FiliereService {
     @Override
     @Transactional
     public FiliereDto createFiliere(CreateFiliereRequest request) {
+        request.setCode(request.getCode().trim().toUpperCase(java.util.Locale.ROOT));
         if (filiereRepository.findByCode(request.getCode()).isPresent()) {
             throw new BadRequestException("Une filière avec le code '" + request.getCode() + "' existe déjà.");
         }
@@ -74,6 +75,7 @@ public class FiliereServiceImpl implements FiliereService {
     @Override
     @Transactional
     public FiliereDto updateFiliere(Long id, CreateFiliereRequest request) {
+        request.setCode(request.getCode().trim().toUpperCase(java.util.Locale.ROOT));
         Filiere filiere = filiereRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Filiere introuvable avec l'identifiant : " + id));
 
@@ -96,6 +98,9 @@ public class FiliereServiceImpl implements FiliereService {
                 .orElseThrow(() -> new ResourceNotFoundException("Filiere introuvable avec l'identifiant : " + id));
         if (filiere.getGroupes() != null && !filiere.getGroupes().isEmpty()) {
             throw new BadRequestException("Impossible de supprimer cette filière car elle contient " + filiere.getGroupes().size() + " groupe(s) actif(s).");
+        }
+        if (filiere.getModules() != null && !filiere.getModules().isEmpty()) {
+            throw new BadRequestException("Cette filière contient des modules. Leur contenu est conservé : réaffectez-les avant de supprimer la filière.");
         }
         filiereRepository.delete(filiere);
     }

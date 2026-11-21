@@ -33,6 +33,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements AuthService {
+    @org.springframework.beans.factory.annotation.Autowired
+    private org.springframework.core.env.Environment environment;
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
@@ -96,7 +98,8 @@ public class AuthServiceImpl implements AuthService {
             campus = campusRepository.findAll().stream().findFirst().orElse(null);
         }
 
-        RoleEnum userRole = request.getRole() != null ? request.getRole() : RoleEnum.ROLE_ETUDIANT;
+        // Public registration never grants administrative or planning privileges.
+        RoleEnum userRole = RoleEnum.ROLE_ETUDIANT;
 
         Utilisateur newUser = Utilisateur.builder()
                 .username(request.getUsername())
@@ -174,6 +177,9 @@ public class AuthServiceImpl implements AuthService {
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void seedDefaultUsersIfEmpty() {
+        if (java.util.Arrays.stream(environment.getActiveProfiles()).noneMatch(p -> p.equals("local") || p.equals("dev") || p.equals("test"))) {
+            return;
+        }
         if (utilisateurRepository.count() > 0) {
             log.info("Des utilisateurs existent déjà dans la base de données. Pas de seeding nécessaire.");
             return;

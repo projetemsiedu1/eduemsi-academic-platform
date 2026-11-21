@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("/api/v1/enseignants")
 @RequiredArgsConstructor
 @Tag(name = "Corps Enseignant", description = "Gestion des professeurs permanents (quota 18h) et vacataires (priorité CP-SAT P1)")
-@CrossOrigin(origins = "*")
+
 @SecurityRequirement(name = "bearerAuth")
 public class EnseignantController {
 
@@ -56,18 +56,21 @@ public class EnseignantController {
     }
 
     @PostMapping
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Ajouter un nouvel enseignant (Permanent ou Vacataire)")
     public ResponseEntity<EnseignantDto> createEnseignant(@Valid @RequestBody CreateEnseignantRequest request) {
         return new ResponseEntity<>(enseignantService.createEnseignant(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Mettre à jour les informations d'un enseignant")
     public ResponseEntity<EnseignantDto> updateEnseignant(@PathVariable Long id, @Valid @RequestBody CreateEnseignantRequest request) {
         return ResponseEntity.ok(enseignantService.updateEnseignant(id, request));
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_PLANNING','RESPONSABLE_FILIERE')")
     @Operation(summary = "Supprimer un enseignant (si aucune séance de cours n'est affectée)")
     public ResponseEntity<Void> deleteEnseignant(@PathVariable Long id) {
         enseignantService.deleteEnseignant(id);

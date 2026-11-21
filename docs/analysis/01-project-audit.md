@@ -1,5 +1,7 @@
 # RAPPORT D'AUDIT TECHNIQUE ET CONTEXTUEL DU PROJET (PHASE A)
 
+> Complément du 11 novembre 2026 : les constats et corrections vérifiés des parcours Responsable planning sont documentés dans [la réorganisation des ressources et du planning](reorganisation-planning-2026-11-11.md). Les sections historiques ci-dessous restent conservées ; elles ne constituent pas une preuve du fonctionnement actuel de chaque module.
+
 **Projet :** EMSI Campus ERP (Univora) — Système Intégré de Gestion Universitaire & Campus Intelligent  
 **Établissement :** École Marocaine des Sciences de l'Ingénieur (EMSI Marrakech — Campus Guéliz & Targa)  
 **Encadrement :** Pr. ZGANDRI (Encadrante Académique), Pr. AIT OUNEJJAR Lahoussaine (Président de Jury)  

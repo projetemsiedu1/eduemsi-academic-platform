@@ -1,70 +1,45 @@
-version: '3.8'
-
+﻿# Local development stack. Set the required secrets in an untracked .env file.
 services:
-  # -------------------------------------------------------------
-  # Base de Données Relationnelle PostgreSQL 16
-  # -------------------------------------------------------------
-  postgres:
-    image: postgres:16-alpine
-    container_name: emsi-postgres-db
+  mysql:
+    image: mysql:8.4
     environment:
-      POSTGRES_DB: emsi_academic_db
-      POSTGRES_USER: emsi_admin
-      POSTGRES_PASSWORD: emsi_secure_password_2026
-    ports:
-      - "5432:5432"
+      MYSQL_DATABASE: emsi_academic_db
+      MYSQL_USER: emsi_app
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:?Define DATABASE_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Define MYSQL_ROOT_PASSWORD in .env}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./backend-spring/src/main/resources/db/migration/V1__init_schema.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - emsi-network
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U emsi_admin -d emsi_academic_db"]
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_PASSWORD mysql --user=emsi_app --execute='SELECT 1' emsi_academic_db"]
       interval: 10s
       timeout: 5s
-      retries: 5
-
-  # -------------------------------------------------------------
-  # Backend API Spring Boot 3.3 (Java 21, OR-Tools, Gemini AI)
-  # -------------------------------------------------------------
+      retries: 15
+    networks: [emsi]
   backend:
-    build:
-      context: ./backend-spring
-      dockerfile: Dockerfile
-    container_name: emsi-backend-api
+    build: ./backend-spring
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/emsi_academic_db
-      SPRING_DATASOURCE_USERNAME: emsi_admin
-      SPRING_DATASOURCE_PASSWORD: emsi_secure_password_2026
-      SPRING_PROFILES_ACTIVE: prod
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-AIzaSyPlaceholderFreeTierKey}
-    ports:
-      - "8080:8080"
-    networks:
-      - emsi-network
-
-  # -------------------------------------------------------------
-  # Frontend Web Angular 18 Standalone & Tailwind CSS
-  # -------------------------------------------------------------
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/emsi_academic_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: emsi_app
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD:?Define DATABASE_PASSWORD in .env}
+      APP_JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET in .env (at least 64 bytes)}
+      APP_CORS_ALLOWED_ORIGINS: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      SERVER_PORT: 8085
+    ports: ["8085:8085"]
+    networks: [emsi]
   frontend:
     build:
-      context: ./frontend-angular
-      dockerfile: Dockerfile
-    container_name: emsi-frontend-web
-    depends_on:
-      - backend
-    ports:
-      - "4200:80"
-    networks:
-      - emsi-network
-
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8085/api/v1}
+    depends_on: [backend]
+    ports: ["3000:3000"]
+    networks: [emsi]
 volumes:
-  postgres_data:
-    driver: local
-
+  mysql_data:
 networks:
-  emsi-network:
-    driver: bridge
+  emsi:

@@ -76,6 +76,8 @@ public class EtudiantServiceImpl implements EtudiantService {
     @Override
     @Transactional
     public EtudiantDto createEtudiant(CreateEtudiantRequest request) {
+        request.setMatricule(request.getMatricule().trim().toUpperCase(java.util.Locale.ROOT));
+        request.setEmail(request.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
         if (etudiantRepository.existsByMatricule(request.getMatricule())) {
             throw new BadRequestException("Un étudiant avec le matricule '" + request.getMatricule() + "' existe déjà.");
         }
@@ -109,6 +111,8 @@ public class EtudiantServiceImpl implements EtudiantService {
     @Override
     @Transactional
     public EtudiantDto updateEtudiant(Long id, CreateEtudiantRequest request) {
+        request.setMatricule(request.getMatricule().trim().toUpperCase(java.util.Locale.ROOT));
+        request.setEmail(request.getEmail().trim().toLowerCase(java.util.Locale.ROOT));
         Etudiant etudiant = etudiantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Étudiant introuvable avec l'identifiant : " + id));
 
@@ -140,7 +144,7 @@ public class EtudiantServiceImpl implements EtudiantService {
         // Recalcul du statut de radiation
         if (etudiant.getTotalHeuresModuleSemestre().compareTo(BigDecimal.ZERO) > 0) {
             BigDecimal seuil = etudiant.getTotalHeuresModuleSemestre().multiply(BigDecimal.valueOf(0.20));
-            etudiant.setEstRadieExamen(etudiant.getCumulHeuresAbsence().compareTo(seuil) > 0);
+            etudiant.setEstRadieExamen(etudiant.getCumulHeuresAbsence().compareTo(seuil) >= 0);
         }
 
         Etudiant updated = etudiantRepository.save(etudiant);

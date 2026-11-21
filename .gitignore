@@ -21,6 +21,12 @@ target/
 Thumbs.db
 
 # Environment & Temp
+.integration/
+.planning-backups/
+.taste-skill/
 *.log
 .env
 .env.local
+.env.*
+!.env.example
+!**/.env.example

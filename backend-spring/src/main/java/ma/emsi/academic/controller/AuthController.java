@@ -21,7 +21,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentification & Sécurité RBAC", description = "Gestion des sessions JWT, contrôle d'accès par rôle et gestion de compte")
-@CrossOrigin(origins = "*")
+
 public class AuthController {
 
     private final AuthService authService;
