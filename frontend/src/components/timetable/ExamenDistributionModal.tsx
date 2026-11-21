@@ -72,7 +72,7 @@ export function ExamenDistributionModal({ open, onClose, examen }: Props) {
       title={`Plan de Salle & Distribution des Tables — ${examen.codeModule || "Examen"}`}
       busy={distributing}
     >
-      <div className="space-y-4 text-sm">
+      <div className="space-y-4 text-sm" style={{ padding: "1.5rem" }}>
         {/* En-tête informatif de l'épreuve */}
         <div className="bg-slate-50 dark:bg-zinc-800/60 p-3.5 rounded-xl border border-slate-200 dark:border-zinc-700 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
           <div>

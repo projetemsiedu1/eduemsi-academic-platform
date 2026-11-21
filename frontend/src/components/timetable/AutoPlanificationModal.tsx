@@ -53,7 +53,7 @@ export function AutoPlanificationModal({ open, onClose, onSuccess }: Props) {
       title="Planification Automatique des Examens (Solveur de Session)"
       busy={loading}
     >
-      <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+      <form onSubmit={handleSubmit} className="space-y-4 text-sm" style={{ padding: "1.5rem" }}>
         <p className="text-xs text-slate-500 dark:text-zinc-400">
           Le solveur ordonnance automatiquement l&apos;ensemble des épreuves en respectant la durée de session,
           le décalage entre examens, la capacité des salles et l&apos;absence totale de collision.

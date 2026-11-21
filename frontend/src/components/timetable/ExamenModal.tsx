@@ -92,7 +92,7 @@ export function ExamenModal({
       title="Planifier une épreuve d'examen"
       busy={busy}
     >
-      <form onSubmit={handleSubmit} className="planning-form" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <form onSubmit={handleSubmit} className="planning-resource-form" style={{ display: "flex", flexDirection: "column", gap: "1.25rem", padding: "1.5rem" }}>
         {error && (
           <div style={{ padding: "0.75rem", backgroundColor: "#fee2e2", color: "#b91c1c", borderRadius: "0.375rem", fontSize: "0.875rem" }} role="alert">
             {error}
@@ -257,7 +257,7 @@ export function ExamenModal({
           />
         </div>
 
-        <div className="planning-form-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "0.5rem" }}>
+        <div className="planning-form-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "0.75rem", paddingTop: "1rem", borderTop: "1px solid var(--border)" }}>
           <button type="button" onClick={onClose} disabled={busy}>
             Annuler
           </button>
