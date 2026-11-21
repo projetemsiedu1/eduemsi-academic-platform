@@ -32,7 +32,14 @@ public class CpSatTimetableSolver {
         var campusUse = new HashMap<String, BoolVar>();
         var teacherDays = new HashMap<String, List<BoolVar>>();
         int serial = 0;
-        for (var requirement : p.requirements()) {
+        // Priorisation mathématique P1 : ordonnancement prioritaire des enseignants vacataires (contraintes de calendrier serrées)
+        var sortedRequirements = p.requirements().stream()
+                .sorted(Comparator.comparing(r -> {
+                    var t = p.teachers().stream().filter(x -> x.id().equals(r.teacherId())).findFirst().orElse(null);
+                    return t != null && t.visiting() ? 0 : 1;
+                }))
+                .toList();
+        for (var requirement : sortedRequirements) {
             var teacher = p.teachers().stream().filter(t -> t.id().equals(requirement.teacherId())).findFirst().orElseThrow();
             var group = p.groups().stream().filter(g -> g.id().equals(requirement.groupId())).findFirst().orElseThrow();
             var element = p.elements().stream().filter(e -> e.id().equals(requirement.elementId())).findFirst().orElseThrow();

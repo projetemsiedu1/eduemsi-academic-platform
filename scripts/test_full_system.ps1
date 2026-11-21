@@ -36,6 +36,7 @@ $frontendRoutes = @(
     @{ Path = "/timetable/groups"; Name = "Planning par Groupes" },
     @{ Path = "/timetable/teachers"; Name = "Planning par Enseignants" },
     @{ Path = "/timetable/constraints"; Name = "Gestion des Contraintes" },
+    @{ Path = "/timetable/exams"; Name = "Planification des Examens" },
     @{ Path = "/api/health"; Name = "Route de Sante API Next.js" }
 )
 
@@ -198,9 +199,69 @@ try {
 }
 
 # ----------------------------------------------------------------------
-# 6. TEST DU SERVICE D'INTELLIGENCE ARTIFICIELLE (OPENROUTER AI)
+# 6. TEST DU MODULE DE PLANIFICATION DES EXAMENS
 # ----------------------------------------------------------------------
-Write-Host "`n--- 6. Test du Service d'Intelligence Artificielle ---" -ForegroundColor Yellow
+Write-Host "`n--- 6. Validation du Module de Planification des Examens ---" -ForegroundColor Yellow
+
+$testExamenId = $null
+try {
+    # 1. Lister les examens existants
+    $examList = Invoke-RestMethod -Uri "$BackendUrl/examens" -Method Get -Headers $planningHeaders -TimeoutSec 10
+    Record-Test "Examens" "Recuperation liste des examens (/examens)" ($examList -ne $null) "Total: $($examList.Count)"
+
+    # 2. Creer un examen de test
+    $examPayload = @{
+        moduleId = 1
+        groupeId = 1
+        salleId = 1
+        surveillantPrincipalId = 1
+        dateExamen = "2026-06-15"
+        heureDebut = "09:00"
+        heureFin = "11:00"
+        dureeMinutes = 120
+        session = "NORMALE"
+        consignes = "Calculatrice non autorisee. Documents interdits."
+    } | ConvertTo-Json
+
+    $createdExam = Invoke-RestMethod -Uri "$BackendUrl/examens" -Method Post -Headers $planningHeaders -Body $examPayload -TimeoutSec 10
+    $testExamenId = $createdExam.id
+    Record-Test "Examens" "Creation examen session NORMALE" ($testExamenId -ne $null) "ID: $testExamenId - Module: $($createdExam.moduleNom)"
+
+    # 3. Tester detection de conflit (meme salle, meme date, chevauchement d'heure)
+    $conflictDetected = $false
+    try {
+        $conflictPayload = @{
+            moduleId = 2
+            groupeId = 2
+            salleId = 1
+            surveillantPrincipalId = 2
+            dateExamen = "2026-06-15"
+            heureDebut = "10:00"
+            heureFin = "12:00"
+            dureeMinutes = 120
+            session = "NORMALE"
+            consignes = "Test collision"
+        } | ConvertTo-Json
+        $resp = Invoke-RestMethod -Uri "$BackendUrl/examens" -Method Post -Headers $planningHeaders -Body $conflictPayload -TimeoutSec 10
+    } catch {
+        $statusCode = $_.Exception.Response.StatusCode.value__
+        $conflictDetected = ($statusCode -in @(400, 409) -or $_.Exception.Message -like "*400*" -or $_.Exception.Message -like "*409*" -or $_.Exception.Message -like "*Conflit*")
+    }
+    Record-Test "Examens" "Anti-collision salle/horaire detecte (Validation Conflit)" $conflictDetected "Protection chevauchement activee"
+
+    # 4. Suppression de l'examen de test pour nettoyer
+    if ($testExamenId) {
+        Invoke-RestMethod -Uri "$BackendUrl/examens/$testExamenId" -Method Delete -Headers $planningHeaders -TimeoutSec 10
+        Record-Test "Examens" "Nettoyage examen de test (DELETE /examens/$testExamenId)" $true "Supprime avec succes"
+    }
+} catch {
+    Record-Test "Examens" "Module Examens Exception" $false $_.Exception.Message
+}
+
+# ----------------------------------------------------------------------
+# 7. TEST DU SERVICE D'INTELLIGENCE ARTIFICIELLE (OPENROUTER AI)
+# ----------------------------------------------------------------------
+Write-Host "`n--- 7. Test du Service d'Intelligence Artificielle ---" -ForegroundColor Yellow
 
 try {
     $cvBody = @{

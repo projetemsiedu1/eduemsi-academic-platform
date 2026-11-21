@@ -11,6 +11,7 @@ import {
   X,
   LogOut,
   ArrowLeft,
+  BookOpen,
 } from "lucide-react";
 import { logout } from "@/lib/auth";
 import { useTimetable } from "@/context/TimetableContext";
@@ -39,6 +40,11 @@ export function TimetableSidebar({
       href: "/timetable/constraints",
       label: "Planifier les cours",
       icon: Sliders,
+    },
+    {
+      href: "/timetable/exams",
+      label: "Planning des examens",
+      icon: BookOpen,
     },
   ];
   return (

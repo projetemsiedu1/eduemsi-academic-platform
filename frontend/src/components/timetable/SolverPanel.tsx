@@ -288,6 +288,45 @@ export function SolverPanel() {
               {notice}
             </p>
           )}
+
+          <div className="bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 my-4">
+            <h3 className="font-semibold text-emerald-900 dark:text-emerald-300 text-sm flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Règles et Contraintes Garanties par le Moteur CP-SAT (Google OR-Tools)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 text-xs text-emerald-800 dark:text-emerald-200">
+              <div className="bg-white/80 dark:bg-zinc-900/80 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900">
+                <span className="font-bold block text-emerald-950 dark:text-emerald-100 mb-0.5">1. Priorité Vacataires (P1)</span>
+                Les vacataires avec plages restreintes sont planifiés en priorité absolue avant les permanents.
+              </div>
+              <div className="bg-white/80 dark:bg-zinc-900/80 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900">
+                <span className="font-bold block text-emerald-950 dark:text-emerald-100 mb-0.5">2. Séances 1h30 & 3h00</span>
+                Support natif des séances de 1h30 (1 créneau) et 3h00 (2 créneaux consécutifs sans coupure).
+              </div>
+              <div className="bg-white/80 dark:bg-zinc-900/80 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900">
+                <span className="font-bold block text-emerald-950 dark:text-emerald-100 mb-0.5">3. Campus Unique / Jour</span>
+                Zéro déplacement inter-campus le même jour pour les enseignants et pour les groupes.
+              </div>
+              <div className="bg-white/80 dark:bg-zinc-900/80 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900">
+                <span className="font-bold block text-emerald-950 dark:text-emerald-100 mb-0.5">4. Capacité & Postes PC</span>
+                Contrôle strict des effectifs et allocation de salles machines avec au moins 1 PC par étudiant.
+              </div>
+              <div className="bg-white/80 dark:bg-zinc-900/80 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900">
+                <span className="font-bold block text-emerald-950 dark:text-emerald-100 mb-0.5">5. Zéro Collision Horaires</span>
+                Vérification absolue de non-chevauchement (Enseignant, Salle, Groupe) et habilitation vérifiée.
+              </div>
+              <div className="bg-white/80 dark:bg-zinc-900/80 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-900">
+                <span className="font-bold block text-emerald-950 dark:text-emerald-100 mb-0.5">6. Module Examens Dédié</span>
+                Planification des épreuves et surveillants :{" "}
+                <Link href="/timetable/exams" className="underline font-semibold text-emerald-700 dark:text-emerald-400">
+                  Ouvrir le module Examens →
+                </Link>
+              </div>
+            </div>
+          </div>
+
           <div className="planning-form-actions">
             <button
               className="planning-primary"

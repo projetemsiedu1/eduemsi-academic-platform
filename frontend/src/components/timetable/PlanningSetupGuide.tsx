@@ -42,6 +42,13 @@ export function PlanningSetupGuide() {
       href: "/timetable/groups",
       icon: Calendar,
     },
+    {
+      step: 6,
+      title: "Planning des Examens",
+      desc: "Sessions normales et rattrapages avec surveillants",
+      href: "/timetable/exams",
+      icon: CheckCircle2,
+    },
   ];
 
   return (
@@ -51,7 +58,7 @@ export function PlanningSetupGuide() {
           Parcours de Planification Académique
         </h2>
         <span style={{ fontSize: "0.85rem", color: "var(--emsi-green-dark, #059669)", fontWeight: 600 }}>
-          Workflow Responsable Planning (5 étapes)
+          Workflow Responsable Planning (6 étapes)
         </span>
       </div>
       <p style={{ color: "#64748b", fontSize: "0.95rem", margin: "0 0 1.25rem 0" }}>
