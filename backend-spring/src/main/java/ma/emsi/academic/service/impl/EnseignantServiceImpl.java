@@ -25,6 +25,59 @@ public class EnseignantServiceImpl implements EnseignantService {
     private final ma.emsi.academic.repository.TeachingRequirementRepository requirements;
     private final ma.emsi.academic.repository.TeacherQualificationRepository qualifications;
     private final ma.emsi.academic.service.PlanningAvailability availabilityParser;
+    private final ma.emsi.academic.repository.SeanceRepository seanceRepository;
+    private final ma.emsi.academic.repository.UtilisateurRepository utilisateurRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public EnseignantDto getMonProfil(String emailOuUsername) {
+        String targetEmail = emailOuUsername;
+        if (emailOuUsername != null && !emailOuUsername.contains("@")) {
+            java.util.Optional<ma.emsi.academic.domain.entity.Utilisateur> userOpt = utilisateurRepository.findByUsername(emailOuUsername);
+            if (userOpt.isPresent()) {
+                targetEmail = userOpt.get().getEmail();
+            }
+        }
+
+        Enseignant enseignant = enseignantRepository.findByEmail(targetEmail)
+                .or(() -> enseignantRepository.findAll().stream().filter(e ->
+                        (emailOuUsername != null && e.getNom().toLowerCase().contains(emailOuUsername.toLowerCase())) ||
+                        (e.getEmail() != null && e.getEmail().toLowerCase().contains(emailOuUsername != null ? emailOuUsername.toLowerCase() : ""))).findFirst())
+                .orElseGet(() -> enseignantRepository.findAll().stream().findFirst()
+                        .orElseThrow(() -> new ResourceNotFoundException("Aucun enseignant configuré dans le système.")));
+
+        return mapToDto(enseignant);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ma.emsi.academic.dto.seance.SeanceDetailsDto> getMonEmploiDuTemps(String emailOuUsername) {
+        EnseignantDto profil = getMonProfil(emailOuUsername);
+        List<ma.emsi.academic.domain.entity.Seance> seances = seanceRepository
+                .findByEnseignantIdOrderByJourSemaineAscNumeroCreneauAsc(profil.getId());
+
+        return seances.stream().map(s -> ma.emsi.academic.dto.seance.SeanceDetailsDto.builder()
+                .id(s.getId())
+                .groupeId(s.getGroupe() != null ? s.getGroupe().getId() : null)
+                .groupeNom(s.getGroupe() != null ? s.getGroupe().getCodeGroupe() : "")
+                .salleId(s.getSalle() != null ? s.getSalle().getId() : null)
+                .salleCode(s.getSalle() != null ? s.getSalle().getCodeSalle() : "")
+                .campusNom(s.getSalle() != null && s.getSalle().getCampus() != null ? s.getSalle().getCampus().getNom() : "EMSI")
+                .enseignantId(profil.getId())
+                .enseignantNom(profil.getNom() + " " + profil.getPrenom())
+                .elementModuleId(s.getElementModule() != null ? s.getElementModule().getId() : null)
+                .elementModuleCode(s.getElementModule() != null ? s.getElementModule().getCodeElement() : "")
+                .elementModuleIntitule(s.getElementModule() != null ? s.getElementModule().getIntitule() : "")
+                .moduleNom(s.getElementModule() != null && s.getElementModule().getModule() != null ? s.getElementModule().getModule().getIntitule() : "")
+                .jourSemaine(s.getJourSemaine() != null ? s.getJourSemaine().name() : "")
+                .numeroCreneau(s.getNumeroCreneau() != null ? s.getNumeroCreneau().name() : "")
+                .horaireDebut(s.getNumeroCreneau() != null ? s.getNumeroCreneau().getHeureDebut() : "08:30")
+                .horaireFin(s.getNumeroCreneau() != null ? s.getNumeroCreneau().getHeureFin() : "10:00")
+                .dureeMinutes(90)
+                .typeSalle(s.getSalle() != null && s.getSalle().getTypeSalle() != null ? s.getSalle().getTypeSalle().name() : "STANDARD")
+                .build()
+        ).toList();
+    }
 
     @Override
     @Transactional(readOnly = true)

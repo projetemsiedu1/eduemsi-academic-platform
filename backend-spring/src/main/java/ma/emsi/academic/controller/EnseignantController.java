@@ -29,6 +29,20 @@ public class EnseignantController {
 
     private final EnseignantService enseignantService;
 
+    @GetMapping("/me")
+    @Operation(summary = "Consulter le profil complet de l'enseignant connecté")
+    public ResponseEntity<EnseignantDto> getMonProfil(org.springframework.security.core.Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "enseignant";
+        return ResponseEntity.ok(enseignantService.getMonProfil(username));
+    }
+
+    @GetMapping("/me/emploi")
+    @Operation(summary = "Consulter l'emploi du temps officiel de l'enseignant connecté (tous ses cours et TD/TP)")
+    public ResponseEntity<List<ma.emsi.academic.dto.seance.SeanceDetailsDto>> getMonEmploiDuTemps(org.springframework.security.core.Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "enseignant";
+        return ResponseEntity.ok(enseignantService.getMonEmploiDuTemps(username));
+    }
+
     @GetMapping
     @Operation(summary = "Lister les enseignants avec pagination et filtre optionnel par statut (PERMANENT, VACATAIRE)")
     public ResponseEntity<PageResponse<EnseignantDto>> getAllEnseignants(

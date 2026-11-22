@@ -116,6 +116,27 @@ try {
     Record-Test "CRUD Lecture" "Absences (/absences)" ($absences -ne $null) "Service Absences repond"
 } catch { Record-Test "CRUD Lecture" "Absences" $false $_.Exception.Message }
 
+try {
+    $campuses = Invoke-RestMethod -Uri "$BackendUrl/campuses" -Method Get -Headers $planningHeaders -TimeoutSec 10
+    Record-Test "CRUD Lecture" "Campus Universitaires (/campuses)" ($campuses.Count -gt 0) "Total: $($campuses.Count)"
+} catch { Record-Test "CRUD Lecture" "Campus Universitaires" $false $_.Exception.Message }
+
+try {
+    $modules = Invoke-RestMethod -Uri "$BackendUrl/modules" -Method Get -Headers $planningHeaders -TimeoutSec 10
+    $count = if ($modules.totalElements) { $modules.totalElements } else { $modules.Count }
+    Record-Test "CRUD Lecture" "Catalogue Modules (/modules)" ($modules -ne $null) "Total: $count"
+} catch { Record-Test "CRUD Lecture" "Catalogue Modules" $false $_.Exception.Message }
+
+try {
+    $pfes = Invoke-RestMethod -Uri "$BackendUrl/pfe" -Method Get -Headers $planningHeaders -TimeoutSec 10
+    Record-Test "CRUD Lecture" "Projets PFE & Jurys (/pfe)" ($pfes.Count -gt 0) "Total: $($pfes.Count)"
+} catch { Record-Test "CRUD Lecture" "Projets PFE & Jurys" $false $_.Exception.Message }
+
+try {
+    $teacherEmploi = Invoke-RestMethod -Uri "$BackendUrl/enseignants/me/emploi" -Method Get -Headers $planningHeaders -TimeoutSec 10
+    Record-Test "CRUD Lecture" "Espace Enseignant Emploi (/enseignants/me/emploi)" ($teacherEmploi -ne $null) "Seances: $($teacherEmploi.Count)"
+} catch { Record-Test "CRUD Lecture" "Espace Enseignant Emploi" $false $_.Exception.Message }
+
 # ----------------------------------------------------------------------
 # 4. TEST DE CREATION DYNAMIQUE CRUD (ECRITURE)
 # ----------------------------------------------------------------------

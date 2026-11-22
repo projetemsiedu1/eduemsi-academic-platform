@@ -63,6 +63,15 @@ public class AbsenceController {
         return ResponseEntity.ok(absenceService.enregistrerAbsence(etudiantId, seanceId, motif));
     }
 
+    @PostMapping("/{id}/justifier-etudiant")
+    @Operation(summary = "Soumettre un motif ou certificat pour justifier une absence (Étudiant)")
+    public ResponseEntity<AbsenceDto> deposerJustificationEtudiant(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> body) {
+        String motif = body.getOrDefault("motif", "Certificat médical / Dispense").toString();
+        return ResponseEntity.ok(absenceService.justifierAbsence(id, motif, true));
+    }
+
     @PatchMapping("/{id}/justifier")
     @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('SUPER_ADMIN','RESPONSABLE_SCOLARITE','RESPONSABLE_FILIERE')")
     @Operation(summary = "Justifier ou requalifier une absence d'étudiant avec motif")
