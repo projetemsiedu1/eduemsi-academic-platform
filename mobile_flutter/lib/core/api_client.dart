@@ -6,6 +6,7 @@ import '../models/user_model.dart';
 import '../models/convocation_model.dart';
 import '../models/seance_model.dart';
 import '../models/examen_model.dart';
+import '../models/pfe_model.dart';
 import 'constants.dart';
 
 class ApiClient {
@@ -223,7 +224,55 @@ class ApiClient {
   }
 
   static Future<List<SeanceModel>> getEmploiDuTempsEnseignant() async {
+    final url = Uri.parse('${AppConstants.baseUrl}/enseignants/me/emploi');
+    try {
+      final response = await http.get(url, headers: _headers()).timeout(const Duration(seconds: 6));
+      if (response.statusCode == 200) {
+        final List list = jsonDecode(utf8.decode(response.bodyBytes));
+        if (list.isNotEmpty) {
+          return list.map((item) => SeanceModel.fromJson(item as Map<String, dynamic>)).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Erreur getEmploiDuTempsEnseignant: $e');
+    }
     return _generateDemoSeances(isStudent: false);
+  }
+
+  // ---------------------------------------------------------------------------
+  // PFE & SOUTENANCES (CONSULTATION ÉTUDIANT & ENSEIGNANT)
+  // ---------------------------------------------------------------------------
+  static Future<PfeModel?> getMonPfe() async {
+    final url = Uri.parse('${AppConstants.baseUrl}/pfe/me');
+    try {
+      final response = await http.get(url, headers: _headers()).timeout(const Duration(seconds: 6));
+      if (response.statusCode == 204 || response.body.trim().isEmpty) {
+        return null;
+      }
+      if (response.statusCode == 200) {
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        if (data is Map<String, dynamic> && data['id'] != null) {
+          return PfeModel.fromJson(data);
+        }
+      }
+    } catch (e) {
+      debugPrint('Erreur getMonPfe: $e');
+    }
+    return null;
+  }
+
+  static Future<List<PfeModel>> getMesJurys() async {
+    final url = Uri.parse('${AppConstants.baseUrl}/pfe/jurys/me');
+    try {
+      final response = await http.get(url, headers: _headers()).timeout(const Duration(seconds: 6));
+      if (response.statusCode == 200) {
+        final List list = jsonDecode(utf8.decode(response.bodyBytes));
+        return list.map((item) => PfeModel.fromJson(item as Map<String, dynamic>)).toList();
+      }
+    } catch (e) {
+      debugPrint('Erreur getMesJurys: $e');
+    }
+    return [];
   }
 
   // ---------------------------------------------------------------------------

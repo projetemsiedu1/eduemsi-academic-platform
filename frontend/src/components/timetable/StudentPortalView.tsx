@@ -25,7 +25,9 @@ import {
   FileText,
   AlertCircle,
   Check,
+  Award,
 } from "lucide-react";
+import { StudentPfeTab } from "./StudentPfeTab";
 
 export function StudentPortalView() {
   const [profil, setProfil] = useState<EtudiantProfil | null>(null);
@@ -34,7 +36,7 @@ export function StudentPortalView() {
   const [bilanAbsence, setBilanAbsence] = useState<BilanAbsence | null>(null);
   const [notifications, setNotifications] = useState<ScolariteNotification[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"NOTIFICATIONS" | "PLANNING" | "ABSENCES" | "CONVOCATIONS">("NOTIFICATIONS");
+  const [activeTab, setActiveTab] = useState<"NOTIFICATIONS" | "PLANNING" | "ABSENCES" | "CONVOCATIONS" | "PFE">("NOTIFICATIONS");
   const [markingId, setMarkingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -94,7 +96,7 @@ export function StudentPortalView() {
     <div className="planning-overview" style={{ padding: "1.5rem" }}>
       <TimetableHeader
         title={`Espace Étudiant · ${profil ? `${profil.prenom} ${profil.nom}` : "Chargement..."}`}
-        description="Consultez votre profil académique officiel, votre emploi du temps hebdomadaire, vos convocations d'examens et vos notifications de scolarité."
+        subtitle="Consultez votre profil académique officiel, votre emploi du temps hebdomadaire, vos convocations d'examens et vos notifications de scolarité."
       />
 
       {/* BANDEAU PROFIL ÉTUDIANT */}
@@ -293,6 +295,26 @@ export function StudentPortalView() {
         >
           <ShieldCheck size={16} />
           Convocations & Tables d&apos;Examen ({convocations.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab("PFE")}
+          style={{
+            padding: "0.6rem 1rem",
+            fontWeight: 600,
+            fontSize: "0.9rem",
+            border: 0,
+            borderBottom: activeTab === "PFE" ? "2px solid var(--emsi-green-dark)" : "2px solid transparent",
+            backgroundColor: "transparent",
+            color: activeTab === "PFE" ? "var(--emsi-green-dark)" : "var(--muted)",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+          }}
+        >
+          <Award size={16} />
+          Mon PFE & Soutenance
         </button>
       </div>
 
@@ -634,6 +656,9 @@ export function StudentPortalView() {
               )}
             </div>
           )}
+
+          {/* ONGLET 5 : MON PFE & SOUTENANCE */}
+          {activeTab === "PFE" && <StudentPfeTab profil={profil} />}
         </>
       )}
     </div>

@@ -37,6 +37,10 @@ public class Enseignant extends BaseEntity {
     @Column(name = "specialite", length = 150)
     private String specialite;
 
+    @Column(name = "grade", length = 80)
+    @Builder.Default
+    private String grade = "Docteur";
+
     /**
      * VACATAIRE (Priorité 1 absolue dans le solveur CP-SAT) vs PERMANENT (Quotas 18h)
      */

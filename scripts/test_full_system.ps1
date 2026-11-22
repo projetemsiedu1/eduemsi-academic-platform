@@ -37,6 +37,7 @@ $frontendRoutes = @(
     @{ Path = "/timetable/teachers"; Name = "Planning par Enseignants" },
     @{ Path = "/timetable/constraints"; Name = "Gestion des Contraintes" },
     @{ Path = "/timetable/exams"; Name = "Planification des Examens" },
+    @{ Path = "/timetable/pfe"; Name = "Gestion PFE et Soutenances" },
     @{ Path = "/api/health"; Name = "Route de Sante API Next.js" }
 )
 
@@ -355,6 +356,109 @@ try {
     Record-Test "Intelligence Artificielle" "Analyse CV & Matching Filiere" ($aiResp -ne $null) "Reponse IA recue"
 } catch {
     Record-Test "Intelligence Artificielle" "Analyse CV & Matching Filiere" $true "Service IA connecte"
+}
+
+# ----------------------------------------------------------------------
+# 8. VALIDATION COMPLETE DU WORKFLOW PFE & SOUTENANCES
+# ----------------------------------------------------------------------
+Write-Host "`n--- 8. Validation du Workflow PFE & Soutenances ---" -ForegroundColor Yellow
+
+$createdTestPfeId = $null
+try {
+    $sujetsCat = Invoke-RestMethod -Uri "$BackendUrl/pfe/sujets" -Method Get -Headers $adminHeaders -TimeoutSec 10
+    Record-Test "PFE" "Catalogue sujets PFE (/pfe/sujets)" ($sujetsCat.Count -gt 0) "Sujets: $($sujetsCat.Count)"
+
+    $targetPfeId = $null
+    if ($studentToken) {
+        $stuHeaders = @{ Authorization = "Bearer $studentToken"; "Content-Type" = "application/json" }
+        $existingMe = $null
+        try {
+            $respMe = Invoke-WebRequest -Uri "$BackendUrl/pfe/me" -Method Get -Headers $stuHeaders -TimeoutSec 10 -UseBasicParsing
+            if ($respMe.StatusCode -eq 200 -and $respMe.Content) {
+                $existingMe = $respMe.Content | ConvertFrom-Json
+            }
+        } catch {}
+
+        if (-not $existingMe -or -not $existingMe.id) {
+            $stageBody = @{
+                titre = "Architecture Cloud Test E2E $rnd"
+                resume = "Prototype microservices Java Spring Boot et Next.js avec supervision automatisee."
+                technologiesCles = "Java, Spring Boot, Next.js, Docker"
+                entrepriseAccueil = "EMSI Innovation Lab"
+            } | ConvertTo-Json
+            $submitted = Invoke-RestMethod -Uri "$BackendUrl/pfe/me" -Method Post -Headers $stuHeaders -Body $stageBody -TimeoutSec 10
+            $createdTestPfeId = $submitted.id
+            $targetPfeId = $submitted.id
+            Record-Test "PFE" "Soumission sujet stage etudiant (POST /pfe/me)" ($submitted.statut -eq "SOUMIS") "ID: $targetPfeId"
+
+            $valBody = @{ accepte = $true; commentaire = "Sujet valide pour test E2E." } | ConvertTo-Json
+            $validated = Invoke-RestMethod -Uri "$BackendUrl/pfe/$targetPfeId/valider-sujet" -Method Patch -Headers $adminHeaders -Body $valBody -TimeoutSec 10
+            Record-Test "PFE" "Validation sujet par responsable (PATCH /valider-sujet)" ($validated.statut -eq "EN_ATTENTE_JURY") "Statut: $($validated.statut)"
+        }
+    }
+
+    if (-not $targetPfeId) {
+        $pendingList = Invoke-RestMethod -Uri "$BackendUrl/pfe?statut=EN_ATTENTE_JURY" -Method Get -Headers $adminHeaders -TimeoutSec 10
+        if ($pendingList -and $pendingList.Count -gt 0) {
+            $targetPfeId = $pendingList[0].id
+        }
+    }
+
+    if ($targetPfeId) {
+        $proposed = Invoke-RestMethod -Uri "$BackendUrl/pfe/$targetPfeId/proposer-jury" -Method Post -Headers $adminHeaders -TimeoutSec 20
+        $has4 = ($proposed.jury -and $proposed.jury.encadrant -and $proposed.jury.rapporteur -and $proposed.jury.examinateurIa -and $proposed.jury.presidentHdr)
+        Record-Test "PFE" "Proposition jury IA 4 membres (/proposer-jury)" $has4 "Score: $($proposed.scoreMatching)%"
+
+        $sallesList = Invoke-RestMethod -Uri "$BackendUrl/salles" -Method Get -Headers $adminHeaders -TimeoutSec 10
+        $salleId = if ($sallesList.content) { $sallesList.content[0].id } else { $sallesList[0].id }
+
+        $encId = [long]$proposed.jury.encadrant.id
+        $rapId = [long]$proposed.jury.rapporteur.id
+        $exaId = [long]$proposed.jury.examinateurIa.id
+        $presId = [long]$proposed.jury.presidentHdr.id
+
+        $juryBody = @{
+            encadrantId = $encId
+            rapporteurId = $rapId
+            examinateurIaId = $exaId
+            presidentHdrId = $presId
+            salleSoutenanceId = $salleId
+            dateSoutenance = "2027-06-20T09:00:00"
+            scoreAffiniteIa = [double]$proposed.scoreMatching
+            justificationIa = $proposed.justification
+        } | ConvertTo-Json
+        $planned = Invoke-RestMethod -Uri "$BackendUrl/pfe/$targetPfeId/jury" -Method Post -Headers $adminHeaders -Body $juryBody -TimeoutSec 10
+        Record-Test "PFE" "Planification jury et convocation (POST /jury)" ($planned.statut -eq "JURY_AFFECTE") "Statut: $($planned.statut)"
+
+        $evalBody = @{ noteTechnique = 5; noteRapport = 4; noteDemo = 4; noteReponses = 3; commentaire = "Tres bon travail." } | ConvertTo-Json
+        $allEvaluated = $true
+        foreach ($mId in @($encId, $rapId, $exaId, $presId)) {
+            $ev = Invoke-RestMethod -Uri "$BackendUrl/pfe/$targetPfeId/evaluations/$mId" -Method Put -Headers $adminHeaders -Body $evalBody -TimeoutSec 10
+            if ($ev.total -ne 16) { $allEvaluated = $false }
+        }
+        Record-Test "PFE" "Saisie des 4 grilles EMSI /20 (/evaluations)" $allEvaluated "Note moyenne: 16/20"
+
+        $lockedPv = Invoke-RestMethod -Uri "$BackendUrl/pfe/$targetPfeId/pv/verrouiller" -Method Post -Headers $adminHeaders -TimeoutSec 10
+        $pvWebResp = Invoke-WebRequest -Uri "$BackendUrl/pfe/$targetPfeId/pv" -Method Get -Headers $adminHeaders -TimeoutSec 10 -UseBasicParsing
+        $pvJsonText = [System.Text.Encoding]::UTF8.GetString($pvWebResp.RawContentStream.ToArray())
+        $pvFetched = $pvJsonText | ConvertFrom-Json
+        $expectedMention = "Tr$([char]0x00E8)s Bien"
+        $pvOk = ($pvFetched.pvVerrouille -eq $true -and [double]$pvFetched.noteFinale -eq 16.0 -and $pvFetched.mention -eq $expectedMention)
+        Record-Test "PFE" "Verrouillage et lecture PV (/pv/verrouiller & /pv)" $pvOk "Note: $($pvFetched.noteFinale)/20 - Mention: $($pvFetched.mention)"
+    } else {
+        Record-Test "PFE" "Workflow complet PFE" $false "Aucun projet PFE disponible pour le test"
+    }
+} catch {
+    Record-Test "PFE" "Workflow complet PFE" $false $_.Exception.Message
+} finally {
+    if ($createdTestPfeId) {
+        try {
+            Invoke-RestMethod -Uri "$BackendUrl/pfe/$createdTestPfeId" -Method Delete -Headers $adminHeaders -TimeoutSec 10
+            Record-Test "PFE" "Nettoyage PFE de test (DELETE /pfe/$createdTestPfeId)" $true "Supprime avec succes"
+        } catch {
+            Record-Test "PFE" "Nettoyage PFE de test (DELETE /pfe/$createdTestPfeId)" $false $_.Exception.Message
+        }
+    }
 }
 
 # ----------------------------------------------------------------------

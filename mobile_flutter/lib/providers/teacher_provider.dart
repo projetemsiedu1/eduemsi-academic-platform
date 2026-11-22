@@ -1,17 +1,20 @@
 import 'package:flutter/foundation.dart';
 import '../core/api_client.dart';
 import '../models/examen_model.dart';
+import '../models/pfe_model.dart';
 import '../models/seance_model.dart';
 
 class TeacherProvider extends ChangeNotifier {
   List<SeanceModel> _seances = [];
   List<ExamenModel> _supervisions = [];
+  List<PfeModel> _mesJurys = [];
   List<ExamenAffectationModel> _currentRoomPlaces = [];
   bool _isLoading = false;
   bool _isLoadingPlaces = false;
 
   List<SeanceModel> get seances => _seances;
   List<ExamenModel> get supervisions => _supervisions;
+  List<PfeModel> get mesJurys => _mesJurys;
   List<ExamenAffectationModel> get currentRoomPlaces => _currentRoomPlaces;
   bool get isLoading => _isLoading;
   bool get isLoadingPlaces => _isLoadingPlaces;
@@ -24,10 +27,12 @@ class TeacherProvider extends ChangeNotifier {
       final results = await Future.wait([
         ApiClient.getEmploiDuTempsEnseignant(),
         ApiClient.getSurveillancesEnseignant(),
+        ApiClient.getMesJurys(),
       ]);
 
       _seances = results[0] as List<SeanceModel>;
       _supervisions = results[1] as List<ExamenModel>;
+      _mesJurys = results[2] as List<PfeModel>;
     } catch (e) {
       debugPrint('Erreur TeacherProvider: $e');
     } finally {

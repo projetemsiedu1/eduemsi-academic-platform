@@ -5,5 +5,6 @@ public enum StatutPfe {
     EN_ATTENTE_JURY,
     JURY_AFFECTE,
     SOUTENU,
-    AJOURNE
+    AJOURNE,
+    REJETE
 }

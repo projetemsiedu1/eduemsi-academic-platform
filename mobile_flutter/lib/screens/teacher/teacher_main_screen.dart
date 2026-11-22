@@ -6,6 +6,7 @@ import '../../providers/teacher_provider.dart';
 import '../auth/login_screen.dart';
 import 'teacher_timetable_tab.dart';
 import 'teacher_supervisions_tab.dart';
+import 'teacher_jurys_tab.dart';
 
 class TeacherMainScreen extends StatefulWidget {
   const TeacherMainScreen({super.key});
@@ -28,11 +29,13 @@ class _TeacherMainScreenState extends State<TeacherMainScreen> {
   final List<Widget> _tabs = const [
     TeacherTimetableTab(),
     TeacherSupervisionsTab(),
+    TeacherJurysTab(),
   ];
 
   final List<String> _titles = const [
     'Planning d\'Enseignement',
     'Surveillances & Contrôle',
+    'Jurys & Soutenances PFE',
   ];
 
   @override
@@ -106,6 +109,11 @@ class _TeacherMainScreenState extends State<TeacherMainScreen> {
             icon: Icon(Icons.shield_outlined),
             activeIcon: Icon(Icons.shield_rounded),
             label: 'Surveillances',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.workspace_premium_outlined),
+            activeIcon: Icon(Icons.workspace_premium_rounded),
+            label: 'Jurys PFE',
           ),
         ],
       ),

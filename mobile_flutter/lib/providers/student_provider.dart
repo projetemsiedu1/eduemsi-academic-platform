@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../core/api_client.dart';
 import '../models/convocation_model.dart';
+import '../models/pfe_model.dart';
 import '../models/seance_model.dart';
 
 class StudentProvider extends ChangeNotifier {
@@ -8,12 +9,14 @@ class StudentProvider extends ChangeNotifier {
   List<ConvocationModel> _convocations = [];
   List<AbsenceModel> _absences = [];
   List<Map<String, dynamic>> _notifications = [];
+  PfeModel? _monPfe;
   bool _isLoading = false;
 
   List<SeanceModel> get seances => _seances;
   List<ConvocationModel> get convocations => _convocations;
   List<AbsenceModel> get absences => _absences;
   List<Map<String, dynamic>> get notifications => _notifications;
+  PfeModel? get monPfe => _monPfe;
   int get unreadNotificationsCount => _notifications.where((n) => n['lu'] == false).length;
   bool get isLoading => _isLoading;
 
@@ -31,12 +34,14 @@ class StudentProvider extends ChangeNotifier {
         ApiClient.getConvocationsEtudiant(),
         ApiClient.getAbsencesEtudiant(),
         ApiClient.getNotifications(),
+        ApiClient.getMonPfe(),
       ]);
 
       _seances = results[0] as List<SeanceModel>;
       _convocations = results[1] as List<ConvocationModel>;
       _absences = results[2] as List<AbsenceModel>;
       _notifications = results[3] as List<Map<String, dynamic>>;
+      _monPfe = results[4] as PfeModel?;
     } catch (e) {
       debugPrint('Erreur StudentProvider: $e');
     } finally {

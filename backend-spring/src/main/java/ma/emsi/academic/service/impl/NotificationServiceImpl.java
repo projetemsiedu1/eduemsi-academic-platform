@@ -22,6 +22,27 @@ import java.util.List;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final ma.emsi.academic.repository.UtilisateurRepository utilisateurRepository;
+
+    @Override
+    @Transactional
+    public void notifierParEmail(String email, String titre, String message, String typeNotification, String lienAction) {
+        if (email == null || email.isBlank()) return;
+        String destinataireUsername = utilisateurRepository.findByEmail(email)
+                .map(ma.emsi.academic.domain.entity.Utilisateur::getUsername)
+                .orElse(email);
+        Notification notification = Notification.builder()
+                .titre(titre)
+                .message(message)
+                .typeNotification(typeNotification != null ? typeNotification : "SCOLARITE")
+                .destinataireUsername(destinataireUsername)
+                .destinataireRole(null)
+                .lienAction(lienAction)
+                .lu(false)
+                .dateEnvoi(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
+    }
 
     @Override
     @Transactional(readOnly = true)

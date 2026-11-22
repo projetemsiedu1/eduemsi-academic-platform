@@ -7,6 +7,7 @@ import '../auth/login_screen.dart';
 import 'student_timetable_tab.dart';
 import 'student_convocations_tab.dart';
 import 'student_absences_tab.dart';
+import 'student_pfe_tab.dart';
 
 class StudentMainScreen extends StatefulWidget {
   const StudentMainScreen({super.key});
@@ -30,12 +31,14 @@ class _StudentMainScreenState extends State<StudentMainScreen> {
     StudentTimetableTab(),
     StudentConvocationsTab(),
     StudentAbsencesTab(),
+    StudentPfeTab(),
   ];
 
   final List<String> _titles = const [
     'Emploi du Temps',
     'Convocations & Tables',
     'Suivi des Absences (20%)',
+    'Mon PFE & Soutenance',
   ];
 
   @override
@@ -115,6 +118,11 @@ class _StudentMainScreenState extends State<StudentMainScreen> {
             icon: Icon(Icons.hourglass_bottom_outlined),
             activeIcon: Icon(Icons.hourglass_bottom_rounded),
             label: 'Absences',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.workspace_premium_outlined),
+            activeIcon: Icon(Icons.workspace_premium_rounded),
+            label: 'PFE',
           ),
         ],
       ),

@@ -530,7 +530,7 @@ button:disabled { cursor: wait; }
  .planning-app .p-6 { padding: 20px 16px; }
 }
 @media print {
- .planning-desktop-nav, .planning-data-source, .planning-header, .planning-sidebar, .planning-feedback, .skip-link { display: none !important; }
+ .planning-desktop-nav, .planning-data-source, .planning-header, .planning-sidebar, .planning-feedback, .skip-link, .no-print { display: none !important; }
  .planning-main { margin-left: 0; }
  .planning-app { background: white; }
 }

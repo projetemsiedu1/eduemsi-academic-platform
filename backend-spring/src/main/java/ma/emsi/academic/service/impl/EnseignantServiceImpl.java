@@ -217,6 +217,7 @@ public class EnseignantServiceImpl implements EnseignantService {
                 .email(enseignant.getEmail())
                 .telephone(enseignant.getTelephone())
                 .specialite(enseignant.getSpecialite())
+                .grade(enseignant.getGrade())
                 .typeContrat(enseignant.getTypeContrat())
                 .heuresContractuellesSemaine(enseignant.getHeuresContractuellesSemaine())
                 .heuresPlanifiees(heuresPlanifiees)

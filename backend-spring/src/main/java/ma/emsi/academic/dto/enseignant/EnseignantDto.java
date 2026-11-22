@@ -18,6 +18,7 @@ public class EnseignantDto {
     private String email;
     private String telephone;
     private String specialite;
+    private String grade;
     private TypeContrat typeContrat;
     private Integer heuresContractuellesSemaine;
     private Integer heuresPlanifiees;

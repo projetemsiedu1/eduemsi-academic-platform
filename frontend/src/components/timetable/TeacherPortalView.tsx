@@ -3,16 +3,17 @@
 import { useState } from "react";
 import { TimetableHeader } from "@/components/timetable/TimetableHeader";
 import { TeacherSurveillances } from "@/components/timetable/TeacherSurveillances";
+import { TeacherJurysTab, TeacherSujetsTab } from "@/components/timetable/TeacherPfeSection";
 import { GraduationCap, ShieldCheck, Clock, Users } from "lucide-react";
 
 export function TeacherPortalView() {
-  const [activeTab, setActiveTab] = useState<"SURVEILLANCES" | "COURS">("SURVEILLANCES");
+  const [activeTab, setActiveTab] = useState<"SURVEILLANCES" | "COURS" | "SUJETS" | "JURYS">("SURVEILLANCES");
 
   return (
     <div className="planning-overview">
       <TimetableHeader
-        title="Espace Enseignant · Planning, Surveillances & Contrôle de Salle"
-        description="Gérez vos séances de cours, consultez votre planning de surveillance d'examen et effectuez l'émargement anti-triche des étudiants."
+        title="Espace Enseignant · Planning, Surveillances & PFE"
+        subtitle="Gérez vos séances de cours, surveillances d'examens, sujets PFE proposés et évaluations de jurys."
       />
 
       {/* STATS CARDS */}
@@ -55,7 +56,7 @@ export function TeacherPortalView() {
       </div>
 
       {/* ONGLETS NAVIGATION */}
-      <div style={{ display: "flex", gap: "0.5rem", borderBottom: "1px solid var(--border)", marginBottom: "1.5rem" }}>
+      <div style={{ display: "flex", gap: "0.5rem", borderBottom: "1px solid var(--border)", marginBottom: "1.5rem", flexWrap: "wrap" }}>
         <button
           onClick={() => setActiveTab("SURVEILLANCES")}
           style={{
@@ -90,9 +91,45 @@ export function TeacherPortalView() {
         >
           Planning des Cours Enseignés
         </button>
+        <button
+          onClick={() => setActiveTab("SUJETS")}
+          style={{
+            padding: "0.75rem 1.25rem",
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            borderBottom: activeTab === "SUJETS" ? "2px solid #059669" : "2px solid transparent",
+            color: activeTab === "SUJETS" ? "#059669" : "var(--muted)",
+            background: "none",
+            borderTop: 0,
+            borderLeft: 0,
+            borderRight: 0,
+            cursor: "pointer",
+          }}
+        >
+          Mes Sujets PFE (Catalogue)
+        </button>
+        <button
+          onClick={() => setActiveTab("JURYS")}
+          style={{
+            padding: "0.75rem 1.25rem",
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            borderBottom: activeTab === "JURYS" ? "2px solid #059669" : "2px solid transparent",
+            color: activeTab === "JURYS" ? "#059669" : "var(--muted)",
+            background: "none",
+            borderTop: 0,
+            borderLeft: 0,
+            borderRight: 0,
+            cursor: "pointer",
+          }}
+        >
+          Mes Jurys & Soutenances PFE
+        </button>
       </div>
 
       {activeTab === "SURVEILLANCES" && <TeacherSurveillances />}
+      {activeTab === "SUJETS" && <TeacherSujetsTab />}
+      {activeTab === "JURYS" && <TeacherJurysTab />}
 
       {activeTab === "COURS" && (
         <div style={{ backgroundColor: "var(--surface)", borderRadius: "0.75rem", border: "1px solid var(--border)", padding: "1.5rem" }}>

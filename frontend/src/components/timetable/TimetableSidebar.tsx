@@ -14,6 +14,7 @@ import {
   BookOpen,
   UserCheck,
   ShieldCheck,
+  Award,
 } from "lucide-react";
 import { logout } from "@/lib/auth";
 import { useTimetable } from "@/context/TimetableContext";
@@ -47,6 +48,11 @@ export function TimetableSidebar({
       href: "/timetable/exams",
       label: "Planning des examens",
       icon: BookOpen,
+    },
+    {
+      href: "/timetable/pfe",
+      label: "PFE & Soutenances",
+      icon: Award,
     },
     {
       href: "/timetable/student",

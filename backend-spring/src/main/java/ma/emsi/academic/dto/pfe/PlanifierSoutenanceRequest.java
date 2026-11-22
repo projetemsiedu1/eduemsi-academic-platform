@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlanifierSoutenanceRequest {
-    @NotNull(message = "L'ID du projet PFE est obligatoire")
     private Long pfeProjetId;
 
     @NotNull(message = "L'enseignant encadrant est obligatoire")
