@@ -26,6 +26,20 @@ public class EtudiantController {
 
     private final EtudiantService etudiantService;
 
+    @GetMapping("/me")
+    @Operation(summary = "Consulter le profil complet de l'étudiant connecté")
+    public ResponseEntity<EtudiantDto> getMonProfil(org.springframework.security.core.Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "etudiant";
+        return ResponseEntity.ok(etudiantService.getMonProfil(username));
+    }
+
+    @GetMapping("/me/emploi")
+    @Operation(summary = "Consulter l'emploi du temps officiel de l'étudiant connecté (séances de son groupe)")
+    public ResponseEntity<java.util.List<ma.emsi.academic.dto.seance.SeanceDetailsDto>> getMonEmploiDuTemps(org.springframework.security.core.Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "etudiant";
+        return ResponseEntity.ok(etudiantService.getMonEmploiDuTemps(username));
+    }
+
     @GetMapping
     @Operation(summary = "Lister tous les étudiants avec pagination")
     public ResponseEntity<PageResponse<EtudiantDto>> getAllEtudiants(

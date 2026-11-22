@@ -257,7 +257,22 @@ export function ExamenModal({
           />
         </div>
 
-        <div className="planning-form-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "0.75rem", paddingTop: "1rem", borderTop: "1px solid var(--border)" }}>
+        <div
+          className="planning-form-actions"
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "0.75rem",
+            marginTop: "1rem",
+            paddingTop: "1rem",
+            borderTop: "1px solid var(--border)",
+            position: "sticky",
+            bottom: "-1.5rem",
+            backgroundColor: "var(--surface)",
+            paddingBottom: "0.5rem",
+            zIndex: 5,
+          }}
+        >
           <button type="button" onClick={onClose} disabled={busy}>
             Annuler
           </button>

@@ -10,6 +10,7 @@ import java.util.List;
 public interface AbsenceService {
     PageResponse<AbsenceDto> getAllAbsences(Pageable pageable);
     List<AbsenceDto> getAbsencesByEtudiant(Long etudiantId);
+    ma.emsi.academic.dto.absence.BilanAbsenceEtudiantDto getBilanAbsencesEtudiant(String emailOuUsername);
     List<EtudiantAlerteAbsenceDto> getEtudiantsSeuilCritique();
     AbsenceDto enregistrerAbsence(Long etudiantId, Long seanceId, String motif);
     AbsenceDto justifierAbsence(Long absenceId, String motif, boolean justifiee);

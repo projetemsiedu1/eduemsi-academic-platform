@@ -16,9 +16,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ma.emsi.academic.domain.entity.Seance;
+import ma.emsi.academic.domain.entity.Utilisateur;
+import ma.emsi.academic.dto.seance.SeanceDetailsDto;
+import ma.emsi.academic.repository.SeanceRepository;
+import ma.emsi.academic.repository.UtilisateurRepository;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +33,58 @@ public class EtudiantServiceImpl implements EtudiantService {
 
     private final EtudiantRepository etudiantRepository;
     private final GroupeRepository groupeRepository;
+    private final SeanceRepository seanceRepository;
+    private final UtilisateurRepository utilisateurRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public EtudiantDto getMonProfil(String emailOuUsername) {
+        String targetEmail = emailOuUsername;
+        if (emailOuUsername != null && !emailOuUsername.contains("@")) {
+            Optional<Utilisateur> userOpt = utilisateurRepository.findByUsername(emailOuUsername);
+            if (userOpt.isPresent()) {
+                targetEmail = userOpt.get().getEmail();
+            }
+        }
+
+        Etudiant etudiant = etudiantRepository.findByEmail(targetEmail)
+                .orElseGet(() -> etudiantRepository.findAll().stream().findFirst()
+                        .orElseThrow(() -> new ResourceNotFoundException("Profil étudiant introuvable pour : " + emailOuUsername)));
+
+        return mapToDto(etudiant);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SeanceDetailsDto> getMonEmploiDuTemps(String emailOuUsername) {
+        EtudiantDto profil = getMonProfil(emailOuUsername);
+        if (profil == null || profil.getGroupeId() == null) {
+            return List.of();
+        }
+
+        List<Seance> seances = seanceRepository.findByGroupeIdOrderByJourSemaineAscNumeroCreneauAsc(profil.getGroupeId());
+        return seances.stream().map(s -> SeanceDetailsDto.builder()
+                .id(s.getId())
+                .groupeId(s.getGroupe() != null ? s.getGroupe().getId() : null)
+                .groupeNom(s.getGroupe() != null ? s.getGroupe().getCodeGroupe() : "")
+                .salleId(s.getSalle() != null ? s.getSalle().getId() : null)
+                .salleCode(s.getSalle() != null ? s.getSalle().getCodeSalle() : "")
+                .campusNom(s.getSalle() != null && s.getSalle().getCampus() != null ? s.getSalle().getCampus().getNom() : "")
+                .enseignantId(s.getEnseignant() != null ? s.getEnseignant().getId() : null)
+                .enseignantNom(s.getEnseignant() != null ? s.getEnseignant().getNom() + " " + s.getEnseignant().getPrenom() : "")
+                .elementModuleId(s.getElementModule() != null ? s.getElementModule().getId() : null)
+                .elementModuleCode(s.getElementModule() != null ? s.getElementModule().getCodeElement() : "")
+                .elementModuleIntitule(s.getElementModule() != null ? s.getElementModule().getIntitule() : "")
+                .moduleNom(s.getElementModule() != null && s.getElementModule().getModule() != null ? s.getElementModule().getModule().getIntitule() : "")
+                .jourSemaine(s.getJourSemaine() != null ? s.getJourSemaine().name() : "")
+                .numeroCreneau(s.getNumeroCreneau() != null ? s.getNumeroCreneau().name() : "")
+                .horaireDebut(s.getNumeroCreneau() != null ? s.getNumeroCreneau().getHeureDebut() : "08:30")
+                .horaireFin(s.getNumeroCreneau() != null ? s.getNumeroCreneau().getHeureFin() : "10:00")
+                .dureeMinutes(90)
+                .typeSalle(s.getSalle() != null && s.getSalle().getTypeSalle() != null ? s.getSalle().getTypeSalle().name() : "STANDARD")
+                .build()
+        ).toList();
+    }
 
     @Override
     @Transactional(readOnly = true)

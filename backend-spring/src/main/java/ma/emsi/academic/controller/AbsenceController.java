@@ -34,6 +34,13 @@ public class AbsenceController {
         return ResponseEntity.ok(absenceService.getAllAbsences(pageable));
     }
 
+    @GetMapping("/me")
+    @Operation(summary = "Consulter le bilan complet de ses absences et l'état de la règle des 20% (Étudiant connecté)")
+    public ResponseEntity<ma.emsi.academic.dto.absence.BilanAbsenceEtudiantDto> getMesAbsences(org.springframework.security.core.Authentication authentication) {
+        String username = authentication != null ? authentication.getName() : "etudiant";
+        return ResponseEntity.ok(absenceService.getBilanAbsencesEtudiant(username));
+    }
+
     @GetMapping("/etudiant/{etudiantId}")
     @Operation(summary = "Lister les absences d'un étudiant spécifique")
     public ResponseEntity<List<AbsenceDto>> getAbsencesByEtudiant(@PathVariable Long etudiantId) {

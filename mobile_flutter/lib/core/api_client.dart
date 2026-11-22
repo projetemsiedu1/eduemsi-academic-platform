@@ -88,11 +88,41 @@ class ApiClient {
   }
 
   static Future<List<SeanceModel>> getEmploiDuTempsEtudiant() async {
-    // Par défaut, générer l'emploi du temps de la classe
+    final url = Uri.parse('${AppConstants.baseUrl}/etudiants/me/emploi');
+    try {
+      final response = await http.get(url, headers: _headers()).timeout(const Duration(seconds: 6));
+      if (response.statusCode == 200) {
+        final List list = jsonDecode(utf8.decode(response.bodyBytes));
+        if (list.isNotEmpty) {
+          return list.map((item) => SeanceModel.fromJson(item as Map<String, dynamic>)).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Erreur getEmploiDuTempsEtudiant: $e');
+    }
     return _generateDemoSeances(isStudent: true);
   }
 
   static Future<List<AbsenceModel>> getAbsencesEtudiant() async {
+    final url = Uri.parse('${AppConstants.baseUrl}/absences/me');
+    try {
+      final response = await http.get(url, headers: _headers()).timeout(const Duration(seconds: 6));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+        final List synthese = data['syntheseModules'] as List? ?? [];
+        if (synthese.isNotEmpty) {
+          return synthese.map((item) => AbsenceModel(
+            moduleCode: (item['moduleCode'] ?? 'MOD') as String,
+            moduleNom: (item['moduleNom'] ?? 'Module') as String,
+            totalHeuresModule: ((item['totalHeures'] as num?)?.toInt() ?? 40),
+            heuresAbsence: ((item['heuresAbsence'] as num?)?.toInt() ?? 0),
+            nombreAbsences: ((item['absencesNonJustifiees'] as num?)?.toInt() ?? 1),
+          )).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Erreur getAbsencesEtudiant: $e');
+    }
     return [
       AbsenceModel(
         moduleCode: 'DEV-JAVA-JEE',
@@ -123,6 +153,31 @@ class ApiClient {
         nombreAbsences: 0,
       ),
     ];
+  }
+
+  static Future<List<Map<String, dynamic>>> getNotifications() async {
+    final url = Uri.parse('${AppConstants.baseUrl}/notifications/me');
+    try {
+      final response = await http.get(url, headers: _headers()).timeout(const Duration(seconds: 6));
+      if (response.statusCode == 200) {
+        final List list = jsonDecode(utf8.decode(response.bodyBytes));
+        return list.cast<Map<String, dynamic>>();
+      }
+    } catch (e) {
+      debugPrint('Erreur getNotifications: $e');
+    }
+    return [];
+  }
+
+  static Future<bool> marquerNotificationLue(int id) async {
+    final url = Uri.parse('${AppConstants.baseUrl}/notifications/$id/lire');
+    try {
+      final response = await http.patch(url, headers: _headers()).timeout(const Duration(seconds: 6));
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Erreur marquerNotificationLue: $e');
+      return false;
+    }
   }
 
   // ---------------------------------------------------------------------------

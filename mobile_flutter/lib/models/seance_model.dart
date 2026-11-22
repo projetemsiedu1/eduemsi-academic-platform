@@ -26,19 +26,19 @@ class SeanceModel {
   factory SeanceModel.fromJson(Map<String, dynamic> json) {
     return SeanceModel(
       id: json['id'] ?? 0,
-      jour: json['jour'] ?? 'LUNDI',
-      heureDebut: (json['heureDebut'] ?? '').toString().length >= 5
-          ? (json['heureDebut'] as String).substring(0, 5)
-          : (json['heureDebut'] ?? ''),
-      heureFin: (json['heureFin'] ?? '').toString().length >= 5
-          ? (json['heureFin'] as String).substring(0, 5)
-          : (json['heureFin'] ?? ''),
-      moduleIntitule: json['moduleIntitule'] ?? (json['module'] is Map ? json['module']['intitule'] : 'Module'),
-      moduleCode: json['moduleCode'] ?? (json['module'] is Map ? json['module']['codeModule'] : ''),
+      jour: json['jourSemaine'] ?? json['jour'] ?? 'LUNDI',
+      heureDebut: (json['horaireDebut'] ?? json['heureDebut'] ?? '08:30').toString().length >= 5
+          ? (json['horaireDebut'] ?? json['heureDebut'] ?? '08:30').toString().substring(0, 5)
+          : (json['horaireDebut'] ?? json['heureDebut'] ?? '08:30').toString(),
+      heureFin: (json['horaireFin'] ?? json['heureFin'] ?? '10:00').toString().length >= 5
+          ? (json['horaireFin'] ?? json['heureFin'] ?? '10:00').toString().substring(0, 5)
+          : (json['horaireFin'] ?? json['heureFin'] ?? '10:00').toString(),
+      moduleIntitule: json['elementModuleIntitule'] ?? json['moduleNom'] ?? json['moduleIntitule'] ?? 'Module',
+      moduleCode: json['elementModuleCode'] ?? json['moduleCode'] ?? '',
       salleCode: json['salleCode'] ?? (json['salle'] is Map ? json['salle']['codeSalle'] : ''),
       enseignantNom: json['enseignantNom'] ?? (json['enseignant'] is Map ? '${json['enseignant']['prenom']} ${json['enseignant']['nom']}' : ''),
-      groupeCode: json['groupeCode'] ?? (json['groupe'] is Map ? json['groupe']['codeGroupe'] : ''),
-      typeSeance: json['typeSeance'] ?? 'COURS',
+      groupeCode: json['groupeNom'] ?? json['groupeCode'] ?? (json['groupe'] is Map ? json['groupe']['codeGroupe'] : ''),
+      typeSeance: json['typeSalle'] == 'LI_PC' ? 'TP' : (json['typeSeance'] ?? 'COURS'),
     );
   }
 }
